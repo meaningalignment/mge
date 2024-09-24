@@ -10,4 +10,15 @@ export default defineConfig({
     }),
     tsconfigPaths(),
   ],
+  server: {
+    hmr: {
+      overlay: false,
+    },
+  },
+  css: {
+    devSourcemap: true,
+  },
+  optimizeDeps: {
+    include: ["react", "react-dom"],
+  },
 })

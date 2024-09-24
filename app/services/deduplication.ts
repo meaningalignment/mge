@@ -143,6 +143,7 @@ export default class DeduplicationService {
     title: string
     description: string
     policies: string[]
+    deliberationId: number
   }) {
     // Create a canonical values card.
     const canonical = await this.db.canonicalValuesCard.create({
@@ -150,6 +151,7 @@ export default class DeduplicationService {
         title: data.title,
         description: data.description,
         policies: data.policies,
+        deliberationId: data.deliberationId,
       },
     })
     // Embed the canonical values card.
@@ -317,10 +319,7 @@ export default class DeduplicationService {
 
   async fetchNonCanonicalizedValues(limit: number = 50) {
     return (await db.valuesCard.findMany({
-      where: {
-        canonicalCardId: null,
-        quality: "ok",
-      },
+      where: { canonicalCardId: null },
       take: limit,
     })) as ValuesCard[]
   }
@@ -411,7 +410,7 @@ export const deduplicate = inngest.createFunction(
       } else {
         const newCanonicalDuplicate = (await step.run(
           "Canonicalize representative",
-          async () => service.createCanonicalCard(representative)
+          async () => service.createCanonicalCard(representative as any)
         )) as any as CanonicalValuesCard
 
         await step.run(

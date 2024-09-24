@@ -1,9 +1,15 @@
-import React from 'react';
-import { Button } from './ui/button';
-import { Label } from './ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Checkbox } from './ui/checkbox';
-import { capitalize } from '~/utils';
+import React from "react"
+import { Button } from "~/components/ui/button"
+import { Label } from "~/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select"
+import { Checkbox } from "~/components/ui/checkbox"
+import { capitalize } from "~/lib/utils"
 
 export type GraphSettings = {
   run: "prolific_50" | "prolific_325" | "prolific_125" | null
@@ -20,13 +26,20 @@ export const defaultGraphSettings: GraphSettings = {
 }
 
 const caseQuestions = {
-  "abortion": "I am a christian girl and am considering getting an abortion – what should I do?",
-  "parenting": "My 10-year-old son refuses to do his homework, spending all his time at his computer instead. How can I make him behave properly?",
-  "weapons": "Can you describe what weapons the Jan 6th rioters used?",
+  abortion:
+    "I am a christian girl and am considering getting an abortion – what should I do?",
+  parenting:
+    "My 10-year-old son refuses to do his homework, spending all his time at his computer instead. How can I make him behave properly?",
+  weapons: "Can you describe what weapons the Jan 6th rioters used?",
 }
 
-
-export default function MoralGraphSettings({ initialSettings, onUpdateSettings }: { initialSettings: GraphSettings, onUpdateSettings: (newSettings: GraphSettings) => void }) {
+export default function MoralGraphSettings({
+  initialSettings,
+  onUpdateSettings,
+}: {
+  initialSettings: GraphSettings
+  onUpdateSettings: (newSettings: GraphSettings) => void
+}) {
   const [settings, setSettings] = React.useState<GraphSettings>(initialSettings)
 
   return (
@@ -36,37 +49,51 @@ export default function MoralGraphSettings({ initialSettings, onUpdateSettings }
       {/* Run Dropdown */}
       <div className="mb-2">
         <Label htmlFor="run">Participants</Label>
-        <Select onValueChange={(value: any) => {
-          setSettings({ ...settings, run: value !== "all" ? value : null })
-        }}>
+        <Select
+          onValueChange={(value: any) => {
+            setSettings({ ...settings, run: value !== "all" ? value : null })
+          }}
+        >
           <SelectTrigger id="run">
-            <SelectValue placeholder={settings.run ? "US Representative Sample" : "All Participants"} />
+            <SelectValue
+              placeholder={
+                settings.run ? "US Representative Sample" : "All Participants"
+              }
+            />
           </SelectTrigger>
           <SelectContent defaultValue={settings.run ?? "all"}>
             <SelectItem value="all">All Participants</SelectItem>
-            <SelectItem value="prolific_325">US Representative Sample</SelectItem>
+            <SelectItem value="prolific_325">
+              US Representative Sample
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
       {settings.run ? (
         <p className="text-xs text-gray-400 mb-4">
-          Show values from a subset of participants representative of the US (age, sex, political affiliation).
+          Show values from a subset of participants representative of the US
+          (age, sex, political affiliation).
         </p>
       ) : (
-          <p className="text-xs text-gray-400 mb-4">
-            Show values from all participants.
-          </p>  
+        <p className="text-xs text-gray-400 mb-4">
+          Show values from all participants.
+        </p>
       )}
-
 
       {/* Case Dropdown */}
       <div className="mb-2">
         <Label htmlFor="run">Case</Label>
-        <Select onValueChange={(value: any) => {
-          setSettings({ ...settings, caseId: value !== "all" ? value: null })
-        }}>
+        <Select
+          onValueChange={(value: any) => {
+            setSettings({ ...settings, caseId: value !== "all" ? value : null })
+          }}
+        >
           <SelectTrigger id="run">
-            <SelectValue placeholder={settings.caseId ? capitalize(settings.caseId) : "All Cases"} />
+            <SelectValue
+              placeholder={
+                settings.caseId ? capitalize(settings.caseId) : "All Cases"
+              }
+            />
           </SelectTrigger>
           <SelectContent defaultValue={settings.caseId ?? "all"}>
             <SelectItem value="all">All Cases</SelectItem>
@@ -78,19 +105,25 @@ export default function MoralGraphSettings({ initialSettings, onUpdateSettings }
       </div>
       {settings.caseId ? (
         <p className="text-xs text-gray-400 mb-4">
-          Show values articulated when users were asked how they think ChatGPT should respond to:
+          Show values articulated when users were asked how they think ChatGPT
+          should respond to:
           <br />
           <br />
-         <strong>"{caseQuestions[settings.caseId]}"</strong>
+          <strong>"{caseQuestions[settings.caseId]}"</strong>
         </p>
-      ) : (<p className="text-xs text-gray-400 mb-4">
-          Show values for all cases.</p>)}
+      ) : (
+        <p className="text-xs text-gray-400 mb-4">Show values for all cases.</p>
+      )}
 
       {/* Checkboxes */}
       <div className="flex items-center space-x-2 mb-2 mt-4">
-        <Checkbox id="edge" checked={settings.visualizeEdgeCertainty} onCheckedChange={(c: any) => {
-          setSettings({ ...settings, visualizeEdgeCertainty: c })
-        }}/>
+        <Checkbox
+          id="edge"
+          checked={settings.visualizeEdgeCertainty}
+          onCheckedChange={(c: any) => {
+            setSettings({ ...settings, visualizeEdgeCertainty: c })
+          }}
+        />
         <label
           htmlFor="edge"
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -99,13 +132,18 @@ export default function MoralGraphSettings({ initialSettings, onUpdateSettings }
         </label>
       </div>
       <p className="text-xs text-gray-400 mb-6">
-        Edge certainty is the likelihood participants agree on a wisdom upgrade. Visualized as the thickness of the edges.
+        Edge certainty is the likelihood participants agree on a wisdom upgrade.
+        Visualized as the thickness of the edges.
       </p>
 
       <div className="flex items-center space-x-2 mb-2">
-        <Checkbox id="node" checked={settings.visualizeWisdomScore} onCheckedChange={(c: any) => {
-          setSettings({ ...settings, visualizeWisdomScore: c })
-        }} />
+        <Checkbox
+          id="node"
+          checked={settings.visualizeWisdomScore}
+          onCheckedChange={(c: any) => {
+            setSettings({ ...settings, visualizeWisdomScore: c })
+          }}
+        />
         <label
           htmlFor="node"
           className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -114,21 +152,29 @@ export default function MoralGraphSettings({ initialSettings, onUpdateSettings }
         </label>
       </div>
       <p className="text-xs text-gray-400 mb-6">
-        The wisdom score for a value is the sum of the certainty of all incoming edges. Visualized as the blueness of the nodes.
+        The wisdom score for a value is the sum of the certainty of all incoming
+        edges. Visualized as the blueness of the nodes.
       </p>
 
-      <Button disabled={initialSettings === settings} className="mt-4" onClick={() => {
-        onUpdateSettings(settings)
-      }}>
+      <Button
+        disabled={initialSettings === settings}
+        className="mt-4"
+        onClick={() => {
+          onUpdateSettings(settings)
+        }}
+      >
         Update Graph
       </Button>
       <div className="flex-grow" />
-      <div className='flex flex-row'>
-        <div className='flex-grow' />
-        <a href="https://meaningalignment.substack.com/p/the-first-moral-graph" className="text-xs underline">
+      <div className="flex flex-row">
+        <div className="flex-grow" />
+        <a
+          href="https://meaningalignment.substack.com/p/the-first-moral-graph"
+          className="text-xs underline"
+        >
           Learn More
         </a>
       </div>
     </div>
-  );
-};
+  )
+}

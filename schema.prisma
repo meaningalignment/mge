@@ -28,11 +28,11 @@ model User {
 model Deliberation {
   id                         Int                         @id @default(autoincrement())
   title                      String
-  description                String?
+  welcomeText                String?
   createdAt                  DateTime                    @default(now())
   updatedAt                  DateTime                    @updatedAt
-  userId                     Int
-  user                       User                        @relation(fields: [userId], references: [id])
+  createdBy                  Int
+  user                       User                        @relation(fields: [createdBy], references: [id])
   valuesCards                ValuesCard[]
   edges                      Edge[]
   questions                  Question[]
@@ -154,7 +154,7 @@ model EdgeHypothesis {
 
 model ChoiceType {
   id                 String               @id
-  ChoiceTypesOnCases ChoiceTypesOnCases[]
+  ChoiceTypesForQuestions ChoiceTypesForQuestions[]
   Edge               Edge[]
   EdgeHypothesis     EdgeHypothesis[]
   deliberationId     Int
@@ -166,12 +166,12 @@ model Question {
   title              String
   question           String
   seedMessage        String               @default("OLD")
-  ChoiceTypesOnCases ChoiceTypesOnCases[]
+  ChoiceTypesForQuestions ChoiceTypesForQuestions[]
   deliberationId     Int
   deliberation       Deliberation         @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 }
 
-model ChoiceTypesOnCases {
+model ChoiceTypesForQuestions {
   choiceType   ChoiceType @relation(fields: [choiceTypeId], references: [id], onDelete: Cascade)
   question     Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
   choiceTypeId String
