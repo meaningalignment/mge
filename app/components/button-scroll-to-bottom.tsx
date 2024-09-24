@@ -1,4 +1,4 @@
-import { cn } from "../utils"
+import { cn } from "~/lib/utils"
 import { Button, type ButtonProps } from "./ui/button"
 import { IconArrowDown } from "./ui/icons"
 import { useAtBottom } from "~/hooks/use-at-bottom"

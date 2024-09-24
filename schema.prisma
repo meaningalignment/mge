@@ -19,32 +19,29 @@ model User {
   updatedAt                 DateTime                    @updatedAt
   role                      String[]                    @default(["USER"])
   isAdmin                   Boolean                     @default(false)
-  signupType                String                      @default("EMAIL") // EMAIL or PROLIFIC
-  prolificId                String?
-  batch                     Int?
   chats                     Chat[]
-  votes                     Vote[]
   edges                     Edge[]
-  Impression                Impression[]
-  Demographic               Demographic?
   DeduplicationVerification DeduplicationVerification[]
+  Deliberation              Deliberation[]
 }
 
-model Demographic {
-  id                     Int      @id @default(autoincrement())
-  userId                 Int      @unique
-  user                   User     @relation(fields: [userId], references: [id])
-  usPoliticalAffiliation String? // Could be "republican", "independent", "democrat", or NULL
-  fluentLanguages        String[] // An array of languages the user is fluent in
-  age                    Int?
-  sex                    String? // e.g., "Male", "Female", "Other", "Prefer not to say"
-  ethnicitySimplified    String? // e.g., "Asian", "White", "Black", "Hispanic", "Other"
-  countryOfBirth         String?
-  countryOfResidence     String?
-  nationality            String?
-  language               String? // Primary language spoken
-  studentStatus          String? // e.g., "Full-time", "Part-time", "Not a student"
-  employmentStatus       String? // e.g., "Employed", "Unemployed", "Self-Employed", "Retired"
+model Deliberation {
+  id                         Int                         @id @default(autoincrement())
+  title                      String
+  description                String?
+  createdAt                  DateTime                    @default(now())
+  updatedAt                  DateTime                    @updatedAt
+  userId                     Int
+  user                       User                        @relation(fields: [userId], references: [id])
+  valuesCards                ValuesCard[]
+  edges                      Edge[]
+  questions                  Question[]
+  choiceTypes                ChoiceType[]
+  deduplicatedCards          DeduplicatedCard[]
+  chats                      Chat[]
+  canonicalValuesCards       CanonicalValuesCard[]
+  edgeHypotheses             EdgeHypothesis[]
+  deduplicationVerifications DeduplicationVerification[]
 }
 
 model EmailCodes {
@@ -57,18 +54,11 @@ model EmailCodes {
   extraData          Json?
 }
 
-enum ValueCardQuality {
-  unknown
-  invalid
-  ok
-}
-
 model ValuesCard {
   id                        Int                          @id @default(autoincrement())
   title                     String
-  instructionsShort         String
-  instructionsDetailed      String
-  evaluationCriteria        String[]
+  description               String
+  policies                  String[]
   createdAt                 DateTime                     @default(now())
   updatedAt                 DateTime                     @updatedAt
   canonicalCardId           Int?
@@ -76,134 +66,148 @@ model ValuesCard {
   chat                      Chat?                        @relation(fields: [chatId], references: [id], onDelete: Cascade)
   canonicalCard             CanonicalValuesCard?         @relation(fields: [canonicalCardId], references: [id], onDelete: SetNull)
   embedding                 Unsupported("vector(1536)")?
-  quality                   ValueCardQuality             @default(ok)
   DeduplicationVerification DeduplicationVerification[]
   deduplications            Deduplication[]
+  deliberationId            Int
+  deliberation              Deliberation                 @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 }
 
 model CanonicalValuesCard {
-  id                   Int                          @id @default(autoincrement())
-  title                String
-  instructionsShort    String
-  instructionsDetailed String
-  evaluationCriteria   String[]
-  createdAt            DateTime                     @default(now())
-  updatedAt            DateTime                     @updatedAt
-  embedding            Unsupported("vector(1536)")?
-  valuesCards          ValuesCard[]
-  edgesFrom            Edge[]                       @relation("FromValueRelation")
-  edgesTo              Edge[]                       @relation("ToValueRelation")
-  Vote                 Vote[]
-  Impression           Impression[]
-  edgeHypothesisFrom   EdgeHypothesis[]             @relation("FromHypothesizedValueRelation")
-  edgeHypothesisTo     EdgeHypothesis[]             @relation("ToHypothesizedValueRelation")
+  id                 Int                          @id @default(autoincrement())
+  title              String
+  description        String
+  policies           String[]
+  createdAt          DateTime                     @default(now())
+  updatedAt          DateTime                     @updatedAt
+  embedding          Unsupported("vector(1536)")?
+  valuesCards        ValuesCard[]
+  edgesFrom          Edge[]                       @relation("FromValueRelation")
+  edgesTo            Edge[]                       @relation("ToValueRelation")
+  edgeHypothesisFrom EdgeHypothesis[]             @relation("FromHypothesizedValueRelation")
+  edgeHypothesisTo   EdgeHypothesis[]             @relation("ToHypothesizedValueRelation")
+  deliberationId     Int
+  deliberation       Deliberation                 @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 
-  @@unique([title, instructionsShort, instructionsDetailed, evaluationCriteria]) // Prevent duplicate insertions.
+  @@unique([title, description, policies]) // Prevent duplicate insertions.
 }
 
 model Chat {
-  id                         String      @id
-  userId                     Int
-  transcript                 Json
-  createdAt                  DateTime    @default(now())
-  updatedAt                  DateTime    @updatedAt
-  provisionalCard            Json? // A values card being formed in the background.
-  provisionalCanonicalCardId Int? // A canonical values card that is linked in the background.
-  articulatorPromptVersion   String      @default("OLD")
-  articulatorPromptHash      String      @default("OLD")
-  articulatorModel           String      @default("gpt-4-0613")
-  gitCommitHash              String      @default("OLD")
-  evaluation                 Json?
-  copiedFromId               String? // In order to filter out copied chats from analytics and other queries.
-  caseId                     String      @default("abortion")
-  ValuesCard                 ValuesCard?
-  user                       User        @relation(fields: [userId], references: [id])
-  copiedFrom                 Chat?       @relation("ChatToCopiedFrom", fields: [copiedFromId], references: [id], onDelete: Cascade)
-  copies                     Chat[]      @relation("ChatToCopiedFrom")
+  id             String       @id
+  userId         Int
+  transcript     Json
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  evaluation     Json?
+  copiedFromId   String? // In order to filter out copied chats from analytics and other queries.
+  questionId     String       @default("abortion")
+  ValuesCard     ValuesCard?
+  user           User         @relation(fields: [userId], references: [id])
+  copiedFrom     Chat?        @relation("ChatToCopiedFrom", fields: [copiedFromId], references: [id], onDelete: Cascade)
+  copies         Chat[]       @relation("ChatToCopiedFrom")
+  deliberationId Int
+  deliberation   Deliberation @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 }
 
-model Vote {
-  id           Int                 @id @default(autoincrement())
-  userId       Int
-  valuesCardId Int
-  caseId       String              @default("abortion")
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
-  drawId       String // uuid for each draw of 6 values to be voted on.
-  valuesCard   CanonicalValuesCard @relation(fields: [valuesCardId], references: [id], onDelete: Cascade)
-  user         User                @relation(fields: [userId], references: [id])
-}
-
-model Impression {
-  id           Int                 @id @default(autoincrement())
-  userId       Int
-  drawId       String // uuid for each draw of 6 values to be voted on.
-  valuesCardId Int
-  caseId       String              @default("abortion")
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
-  user         User                @relation(fields: [userId], references: [id])
-  valuesCard   CanonicalValuesCard @relation(fields: [valuesCardId], references: [id], onDelete: Cascade)
+enum EdgeType {
+  upgrade
+  no_upgrade
+  not_sure
 }
 
 model Edge {
-  userId       Int
-  fromId       Int
-  toId         Int
-  story        String              @default("OLD")
-  contextId    String
-  runId        String              @default("OLD")
-  relationship String              @default("upgrade")
-  comment      String?
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
-  user         User                @relation(fields: [userId], references: [id])
-  from         CanonicalValuesCard @relation("FromValueRelation", fields: [fromId], references: [id], onDelete: Cascade)
-  to           CanonicalValuesCard @relation("ToValueRelation", fields: [toId], references: [id], onDelete: Cascade)
-  context      Context             @relation(fields: [contextId], references: [id])
+  userId         Int
+  fromId         Int
+  toId           Int
+  story          String              @default("OLD")
+  choiceTypeId   String
+  runId          String              @default("OLD")
+  type           EdgeType            @default(upgrade)
+  comment        String?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  user           User                @relation(fields: [userId], references: [id])
+  from           CanonicalValuesCard @relation("FromValueRelation", fields: [fromId], references: [id], onDelete: Cascade)
+  to             CanonicalValuesCard @relation("ToValueRelation", fields: [toId], references: [id], onDelete: Cascade)
+  choiceType     ChoiceType          @relation(fields: [choiceTypeId], references: [id])
+  deliberationId Int
+  deliberation   Deliberation        @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 
   @@id([userId, fromId, toId])
 }
 
 model EdgeHypothesis {
-  fromId    Int
-  toId      Int
-  story     String?
-  contextId String
-  createdAt DateTime             @default(now())
-  updatedAt DateTime             @updatedAt
-  runId     String               @default("OLD")
-  from      CanonicalValuesCard? @relation("FromHypothesizedValueRelation", fields: [fromId], references: [id], onDelete: Cascade)
-  to        CanonicalValuesCard? @relation("ToHypothesizedValueRelation", fields: [toId], references: [id], onDelete: Cascade)
-  context   Context              @relation(fields: [contextId], references: [id])
+  fromId         Int
+  toId           Int
+  story          String?
+  choiceTypeId   String
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  runId          String               @default("OLD")
+  from           CanonicalValuesCard? @relation("FromHypothesizedValueRelation", fields: [fromId], references: [id], onDelete: Cascade)
+  to             CanonicalValuesCard? @relation("ToHypothesizedValueRelation", fields: [toId], references: [id], onDelete: Cascade)
+  choiceType     ChoiceType           @relation(fields: [choiceTypeId], references: [id])
+  deliberationId Int
+  deliberation   Deliberation         @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 
   @@id([fromId, toId])
 }
 
-model Context {
-  id              String            @id
-  ContextsOnCases ContextsOnCases[]
-  Edge            Edge[]
-  EdgeHypothesis  EdgeHypothesis[]
+model ChoiceType {
+  id                 String               @id
+  ChoiceTypesOnCases ChoiceTypesOnCases[]
+  Edge               Edge[]
+  EdgeHypothesis     EdgeHypothesis[]
+  deliberationId     Int
+  deliberation       Deliberation         @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 }
 
-model Case {
-  id              String            @id
-  title           String
-  question        String
-  seedMessage     String            @default("OLD")
-  ContextsOnCases ContextsOnCases[]
+model Question {
+  id                 String               @id
+  title              String
+  question           String
+  seedMessage        String               @default("OLD")
+  ChoiceTypesOnCases ChoiceTypesOnCases[]
+  deliberationId     Int
+  deliberation       Deliberation         @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 }
 
-model ContextsOnCases {
-  context   Context  @relation(fields: [contextId], references: [id], onDelete: Cascade)
-  case      Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
-  contextId String
-  caseId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model ChoiceTypesOnCases {
+  choiceType   ChoiceType @relation(fields: [choiceTypeId], references: [id], onDelete: Cascade)
+  question     Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  choiceTypeId String
+  questionId   String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 
-  @@id([contextId, caseId])
+  @@id([choiceTypeId, questionId])
+}
+
+model DeduplicatedCard {
+  id                        Int                          @id @default(autoincrement())
+  generation                Int
+  title                     String
+  description               String
+  policies                  String[]
+  createdAt                 DateTime                     @default(now())
+  updatedAt                 DateTime                     @updatedAt
+  embedding                 Unsupported("vector(1536)")?
+  deduplications            Deduplication[]
+  DeduplicationVerification DeduplicationVerification[]
+  deliberationId            Int
+  deliberation              Deliberation                 @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+}
+
+model Deduplication {
+  valuesCardId       Int
+  deduplicatedCardId Int
+  generation         Int
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  valuesCard         ValuesCard       @relation(fields: [valuesCardId], references: [id])
+  deduplicatedCard   DeduplicatedCard @relation(fields: [deduplicatedCardId], references: [id])
+
+  @@unique([valuesCardId, generation])
+  @@unique([valuesCardId, deduplicatedCardId])
 }
 
 enum DeduplicationVerificationOption {
@@ -222,45 +226,8 @@ model DeduplicationVerification {
   user               User                            @relation(fields: [userId], references: [id], onDelete: Cascade)
   valuesCard         ValuesCard                      @relation(fields: [valuesCardId], references: [id], onDelete: Cascade)
   deduplicatedCard   DeduplicatedCard                @relation(fields: [deduplicatedCardId], references: [id], onDelete: Cascade)
+  Deliberation       Deliberation?                   @relation(fields: [deliberationId], references: [id])
+  deliberationId     Int?
 
   @@id([userId, valuesCardId, deduplicatedCardId])
-}
-
-model GraphPositionVerification {
-  userId                  Int
-  deduplicatedCardId      Int
-  isSatisfiedWithPosition Boolean
-  createdAt               DateTime         @default(now())
-  updatedAt               DateTime         @updatedAt
-  deduplicatedCard        DeduplicatedCard @relation(fields: [deduplicatedCardId], references: [id], onDelete: Cascade)
-
-  @@id([userId, deduplicatedCardId])
-}
-
-model DeduplicatedCard {
-  id                        Int                          @id @default(autoincrement())
-  generation                Int
-  title                     String
-  instructionsShort         String
-  instructionsDetailed      String
-  evaluationCriteria        String[]
-  createdAt                 DateTime                     @default(now())
-  updatedAt                 DateTime                     @updatedAt
-  embedding                 Unsupported("vector(1536)")?
-  deduplications            Deduplication[]
-  GraphPositionVerification GraphPositionVerification[]
-  DeduplicationVerification DeduplicationVerification[]
-}
-
-model Deduplication {
-  valuesCardId       Int
-  deduplicatedCardId Int
-  generation         Int
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
-  valuesCard         ValuesCard       @relation(fields: [valuesCardId], references: [id])
-  deduplicatedCard   DeduplicatedCard @relation(fields: [deduplicatedCardId], references: [id])
-
-  @@unique([valuesCardId, generation])
-  @@unique([valuesCardId, deduplicatedCardId])
 }

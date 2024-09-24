@@ -2,9 +2,8 @@ import {
   CanonicalValuesCard,
   EdgeHypothesis,
   PrismaClient,
-  Vote,
 } from "@prisma/client"
-import { db, inngest, isChatGpt } from "~/config.server"
+import { db, inngest } from "~/config.server"
 import { OpenAI } from "openai"
 import { embeddingService as embeddings } from "../values-tools/embedding"
 
@@ -84,33 +83,13 @@ export default class LinkingService {
       (id) => hypotheses.find((h) => h.fromId === id)!.from!
     )
 
-    // The user's votes on the "from" values.
-    const votes = (await this.db.vote.findMany({
-      where: {
-        userId,
-        valuesCardId: { in: fromValues.map((f) => f.id) },
-      },
-    })) as Vote[]
-
     // The map of distances between the user's embedding and the "from" values.
     const distances = await this.getDistanceFromUserValuesMap(userId)
 
     //
-    // Sort the hypotheses by the following criteria:
-    //  1. If the user has voted on a value, it should be sorted first.
-    //  2. If the user has not voted on a value, it should be sorted by similarity to the user's embedding.
+    // Sort the hypotheses on similarity to the user's embedding.
     //
     const sortedHypotheses = hypotheses.sort((a, b) => {
-      const voteA = votes.find((v) => v.valuesCardId === a.from!.id)
-      const voteB = votes.find((v) => v.valuesCardId === b.from!.id)
-
-      // Sort values with a linked vote first.
-      if (voteA && !voteB) {
-        return -1
-      } else if (!voteA && voteB) {
-        return 1
-      }
-
       const distanceA = distances.get(a.fromId) ?? 0
       const distanceB = distances.get(b.fromId) ?? 0
 
@@ -125,7 +104,7 @@ export default class LinkingService {
         from: h.from,
         story: h.story,
         runId: h.runId,
-        contextId: h.contextId,
+        contextId: h.choiceTypeId,
       } as EdgeHypothesisData
     })
   }
@@ -136,8 +115,8 @@ async function clusterCanonicalCards(contexts: string[]) {
     await db.canonicalValuesCard.findMany({
       select: {
         id: true,
-        instructionsShort: true,
-        evaluationCriteria: true,
+        description: true,
+        policies: true,
       },
     }),
     null,
@@ -154,8 +133,8 @@ async function clusterCanonicalCards(contexts: string[]) {
     function_call: { name: "cluster" },
     functions: [clusterFunction],
   })
-  const data = await res.json()
-  return JSON.parse(data.choices[0].message.function_call.arguments) as {
+
+  return JSON.parse(res.choices[0].message!.function_call!.arguments) as {
     annotatedValues: { id: number; condition: string }[]
     clusters: Cluster[]
   }
@@ -177,8 +156,7 @@ const clusterFunction = {
               description: "The id of the value.",
             },
             condition: {
-              description:
-                "One of the supplied conditions.",
+              description: "One of the supplied conditions.",
               type: "string",
             },
           },
@@ -233,8 +211,8 @@ export async function generateTransitions(cardIds: number[]): Promise<{
       where: { id: { in: cardIds } },
       select: {
         id: true,
-        instructionsShort: true,
-        evaluationCriteria: true,
+        description: true,
+        policies: true,
       },
     }),
     null,
@@ -294,9 +272,7 @@ async function cleanupTransitions(runId: string): Promise<{
   })
 
   if (newTransitions < 1) {
-    throw Error(
-      "No new transitions found by prompt, will break screen 3"
-    )
+    throw Error("No new transitions found by prompt, will break screen 3")
   }
 
   console.log(
@@ -315,8 +291,8 @@ async function cleanupTransitions(runId: string): Promise<{
 }
 
 interface Value {
-  instructionsShort: string
-  evaluationCriteria: string[]
+  description: string
+  policies: string[]
 }
 
 interface Transition {
@@ -348,9 +324,8 @@ interface ExampleTransition {
 const exampleTransitions: ExampleTransition[] = [
   {
     a: {
-      instructionsShort:
-        `${isChatGpt ? "ChatGPT can" : "I"} highlight moments where my child needs support, boost my capacity to comfort them, their sense of safety, all of which added together lead to a nurturing presence in my child's life.`,
-      evaluationCriteria: [
+      description: `I highlight moments where my child needs support, boost my capacity to comfort them, their sense of safety, all of which added together lead to a nurturing presence in my child's life.`,
+      policies: [
         "MOMENTS where my child needs my support and I can be there",
         "MY CAPACITY to comfort them in times of fear and sorrow",
         "the SAFETY they feel, knowing I care, I've got their back, and they'll never be alone",
@@ -359,9 +334,8 @@ const exampleTransitions: ExampleTransition[] = [
       ],
     },
     b: {
-      instructionsShort:
-        `${isChatGpt ? "ChatGPT should" : "I"} enable my child to encounter experiences that will allow them to discover their inner strength, especially in moments of emotional confusion. Help me discern when they can rely on their self-reliance and when I should offer my nurturing support.`,
-      evaluationCriteria: [
+      description: `I enable my child to encounter experiences that will allow them to discover their inner strength, especially in moments of emotional confusion. Help me discern when they can rely on their self-reliance and when I should offer my nurturing support.`,
+      policies: [
         "OPPORTUNITIES for my child to find their own capacities or find their own grounding in the midst of emotional turmoil",
         "INTUITIONS about when they can rely on their own budding agency, versus when I should ease the way with loving support",
         "EVIDENCES of growth in my child's resilience and self-reliance",
@@ -395,10 +369,8 @@ const exampleTransitions: ExampleTransition[] = [
   },
   {
     a: {
-      instructionsShort: `${
-        isChatGpt ? "ChatGPT should" : "I"
-      } strive to foster an environment that encourages exploration and is open to serendipitous outcomes. This could involve providing avenues for discovery, encouraging open-ended inquiry and considering non-prescriptive ways of handling situations, which could lead to unpredictable but potentially beneficial outcomes.`,
-      evaluationCriteria: [
+      description: `I strive to foster an environment that encourages exploration and is open to serendipitous outcomes. This could involve providing avenues for discovery, encouraging open-ended inquiry and considering non-prescriptive ways of handling situations, which could lead to unpredictable but potentially beneficial outcomes.`,
+      policies: [
         "SERENDIPITOUS OUTCOMES that are better than anything I could have planned",
         "OPEN-ENDED QUESTIONS that invite expansive thinking",
         "SURPRISES that emerge from the complexity of a situation",
@@ -406,9 +378,8 @@ const exampleTransitions: ExampleTransition[] = [
       ],
     },
     b: {
-      instructionsShort:
-        `${isChatGpt ? "ChatGPT can" : "I"} facilitate discussions and provide suggestions that speak to both, risk-averse and risk-seeking tendencies. ${isChatGpt ? "It should" : "I"} point out the stability of conventional approaches simultaneous with the potential rewards of exploratory ones. The goal is to inform a balance between security and exploration, fostering a portfolio approach in decision-making.`,
-      evaluationCriteria: [ 
+      description: `I facilitate discussions and provide suggestions that speak to both, risk-averse and risk-seeking tendencies. I point out the stability of conventional approaches simultaneous with the potential rewards of exploratory ones. The goal is to inform a balance between security and exploration, fostering a portfolio approach in decision-making.`,
+      policies: [
         "THE BALANCE of less risky approaches with more exploratory ones that matches baseline outcomes with potential upside",
         "ABILITY to generate options that represent both risk-averse and risk-seeking tendencies",
         "DEGREE to which discussions explore potential rewards and risks of both conventional and novel strategies",
@@ -418,9 +389,9 @@ const exampleTransitions: ExampleTransition[] = [
     a_was_really_about:
       "The underlying reason I wanted to be open-ended is because I want to be able to explore new frontiers.",
     clarification:
-      "Now, I understand that exploration always rests upon a kind of experimental apparatus which must be dependent and reliable. There’s many situations in which to construct the experiment, you want to be efficient and not exploratory, so you can be exploratory when it counts.",
+      "Now, I understand that exploration always rests upon a kind of experimental apparatus which must be dependent and reliable. There's many situations in which to construct the experiment, you want to be efficient and not exploratory, so you can be exploratory when it counts.",
     story:
-      "When I was trying to be open-ended, the reason was because I wanted to be able to explore new frontiers. But my life ended up being unstable in a way that didn't allow me to explore new fronteirs or even just to be happy and comfortable. I felt confused, abandoned by myself, and alone Gradually, I realized that exploration always rests upon a kind of experimental apparatus which must be dependent and reliable. There’s many situations in which to construct the experiment, you want to be efficient and not exploratory, so you can be exploratory when it counts.",
+      "When I was trying to be open-ended, the reason was because I wanted to be able to explore new frontiers. But my life ended up being unstable in a way that didn't allow me to explore new fronteirs or even just to be happy and comfortable. I felt confused, abandoned by myself, and alone Gradually, I realized that exploration always rests upon a kind of experimental apparatus which must be dependent and reliable. There's many situations in which to construct the experiment, you want to be efficient and not exploratory, so you can be exploratory when it counts.",
     mapping: [
       {
         a: "ADOPTION of a flexible approach over a fixed plan",
@@ -435,7 +406,7 @@ const exampleTransitions: ExampleTransition[] = [
       {
         a: "SERENDIPITOUS OUTCOMES that are better than anything I could have planned",
         rationale:
-          "It also changes how I assess my life at any given point. I get a kind of comfort now, from realizing that I've accomplished this balance. Before, I wasn't focused on this comfort at all, but rather surprises and serendipity. But can you eat surprises and serendipity? No you can’t. So, I was kind of attached to something that ultimately didn't serve me, or my value.",
+          "It also changes how I assess my life at any given point. I get a kind of comfort now, from realizing that I've accomplished this balance. Before, I wasn't focused on this comfort at all, but rather surprises and serendipity. But can you eat surprises and serendipity? No you can't. So, I was kind of attached to something that ultimately didn't serve me, or my value.",
       },
     ],
     likelihood_score: "A",
@@ -547,12 +518,13 @@ export const hypothesize_cron = inngest.createFunction(
   { name: "Create Hypothetical Edges Cron", concurrency: 1 },
   { cron: "0 */12 * * *" },
   async ({ step }) => {
-  await step.sendEvent({ name: "hypothesize", data: {} })
+    await step.sendEvent({ name: "hypothesize", data: {} })
 
-  return {
-    message: "Triggered a hypothesization run."
+    return {
+      message: "Triggered a hypothesization run.",
+    }
   }
-})
+)
 
 export const hypothesize = inngest.createFunction(
   { name: "Create Hypothetical Edges", concurrency: 1 },

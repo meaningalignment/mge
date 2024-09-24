@@ -1,7 +1,7 @@
 import { DeduplicatedCard, ValuesCard } from "@prisma/client"
 import OpenAI from "openai"
 import { db, inngest } from "~/config.server"
-import { calculateAverageEmbedding } from "~/utils"
+import { calculateAverageEmbedding } from "~/lib/utils"
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -13,8 +13,8 @@ const openai = new OpenAI({
  * `pgvector` is not supported by Prisma, hence the raw queries.
  */
 export default class EmbeddingService {
-  private toEmbeddingString(card: { evaluationCriteria: string[] }) {
-    return card.evaluationCriteria.sort().join("\n")
+  private toEmbeddingString(card: { policies: string[] }) {
+    return card.policies.sort().join("\n")
   }
 
   private async embed(str: string): Promise<number[]> {
@@ -48,11 +48,9 @@ export default class EmbeddingService {
     )}::vector WHERE id = ${card.id};`
   }
 
-  async embedCandidate(card: {
-    evaluationCriteria: string[]
-  }): Promise<number[]> {
+  async embedCandidate(card: { policies: string[] }): Promise<number[]> {
     const syntheticCard = {
-      evaluationCriteria: card.evaluationCriteria ?? [],
+      policies: card.policies ?? [],
     } as ValuesCard
 
     const input = this.toEmbeddingString(syntheticCard)
@@ -60,13 +58,13 @@ export default class EmbeddingService {
   }
 
   async getNonCanonicalCardsWithoutEmbedding(): Promise<Array<ValuesCard>> {
-    return (await db.$queryRaw`SELECT id, title, "instructionsShort", "instructionsDetailed", "evaluationCriteria" FROM "ValuesCard" WHERE "ValuesCard".embedding IS NULL`) as ValuesCard[]
+    return (await db.$queryRaw`SELECT id, title, "description", "policies" FROM "ValuesCard" WHERE "ValuesCard".embedding IS NULL`) as ValuesCard[]
   }
 
   async getDeduplicatedCardsWithoutEmbedding(): Promise<
     Array<DeduplicatedCard>
   > {
-    return (await db.$queryRaw`SELECT id, title, "instructionsShort", "instructionsDetailed", "evaluationCriteria", embedding::text FROM "DeduplicatedCard" WHERE "DeduplicatedCard".embedding IS NULL`) as DeduplicatedCard[]
+    return (await db.$queryRaw`SELECT id, title, "description", "policies", embedding::text FROM "DeduplicatedCard" WHERE "DeduplicatedCard".embedding IS NULL`) as DeduplicatedCard[]
   }
 
   async getUserEmbedding(userId: number): Promise<number[]> {

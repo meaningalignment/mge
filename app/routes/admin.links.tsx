@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node"
 import { NavLink, Outlet, useLoaderData } from "@remix-run/react"
 import { db } from "~/config.server"
-import { cn } from "~/utils"
+import { cn } from "~/lib/utils"
 
 export async function loader() {
   const edges = await db.edge.findMany({
@@ -73,7 +73,7 @@ export default function AdminChats() {
                 <div>{edge.user.name}</div>
                 <div>{edge.user.email}</div>
                 <div className="text-xs text-neutral-500">{edge.createdAt}</div>
-                <StatusBadge status={edge.relationship} />
+                <StatusBadge status={edge.type} />
               </li>
             </NavLink>
           ))}

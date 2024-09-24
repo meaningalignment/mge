@@ -1,6 +1,6 @@
-import { Outlet } from "@remix-run/react";
-import AdminHeader from "~/components/admin-header";
-import { useCurrentUser } from "~/root";
+import { Outlet } from "@remix-run/react"
+import AdminHeader from "~/components/admin-header"
+import { useCurrentUser } from "~/root"
 
 function NotAuthorized() {
   return (
@@ -12,14 +12,16 @@ function NotAuthorized() {
 }
 
 export default function Admin() {
-  const user = useCurrentUser();
+  const user = useCurrentUser()
 
   if (!user || !user.isAdmin) {
     return <NotAuthorized />
   }
 
-  return <>
-    <AdminHeader />
-    <Outlet />
-  </>
+  return (
+    <>
+      <AdminHeader />
+      <Outlet />
+    </>
+  )
 }

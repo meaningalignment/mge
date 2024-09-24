@@ -6,9 +6,8 @@ export interface MoralGraphSummary {
 export interface Value {
   id: number
   title: string
-  instructionsShort: string
-  instructionsDetailed: string
-  evaluationCriteria: string[]
+  description: string
+  policies: string[]
   pageRank?: number
   votes?: number
 }

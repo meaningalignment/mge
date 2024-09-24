@@ -1,34 +1,29 @@
-import { attentionPoliciesCriteria, definitionOfASourceOfMeaning } from "./prompt-segments"
+import {
+  attentionPoliciesCriteria,
+  definitionOfASourceOfMeaning,
+} from "./prompt-segments"
 import { gpt4 } from "./gpt"
 import { json } from "@remix-run/node"
-import { db, isChatGpt } from "~/config.server"
+import { db } from "~/config.server"
 import { embeddingService } from "./embedding"
 import { CanonicalValuesCard } from "@prisma/client"
 import { dftStyle, personalStyle } from "./value-styles"
 
-const valueStyle = isChatGpt ? dftStyle : personalStyle
-
-async function regenerateInstructionsDetailed(evaluationCriteria: string[]) {
-  return await gpt4(regenPrompt, evaluationCriteria.join("\n"))
+async function critiqueValuesCard(policies: string[]) {
+  return await gpt4(critiquePrompt, policies.join("\n"))
 }
 
-async function critiqueValuesCard(evaluationCriteria: string[]) {
-  return await gpt4(critiquePrompt, evaluationCriteria.join("\n"))
+async function generateTitles(policies: string[]) {
+  return await gpt4(titlesPrompt, policies.join("\n"))
 }
-
-async function generateTitles(evaluationCriteria: string[]) {
-  return await gpt4(titlesPrompt, evaluationCriteria.join("\n"))
-}
-
 
 export async function updateCardFromForm(formData: FormData) {
   const cardId = Number(formData.get("cardId"))
   const cardType = formData.get("cardType") as string
   const title = formData.get("title") as string
-  const instructionsShort = formData.get("instructionsShort") as string
-  const instructionsDetailed = formData.get("instructionsDetailed") as string
-  const evaluationCriteria = JSON.parse(formData.get("evaluationCriteria") as string || "[]")
-  const data = { title, instructionsShort, instructionsDetailed, evaluationCriteria }
+  const description = formData.get("description") as string
+  const policies = JSON.parse((formData.get("policies") as string) || "[]")
+  const data = { title, description, policies }
   if (cardType === "canonical") {
     await db.canonicalValuesCard.update({ where: { id: cardId }, data })
   } else if (cardType === "personal") {
@@ -40,18 +35,17 @@ export async function updateCardFromForm(formData: FormData) {
 
 export async function runTaskFromForm(formData: FormData) {
   const task = formData.get("task") as string
-  const evaluationCriteria = JSON.parse(formData.get("evaluationCriteria") as string || "[]")
-  if (task === 'regenerateInstructionsDetailed') {
-    const result = await regenerateInstructionsDetailed(evaluationCriteria)
+  const policies = JSON.parse((formData.get("policies") as string) || "[]")
+  if (task === "critiquepolicies") {
+    const result = await critiqueValuesCard(policies)
     return json(result)
-  } else if (task === 'critiqueEvaluationCriteria') {
-    const result = await critiqueValuesCard(evaluationCriteria)
+  } else if (task === "generateTitles") {
+    const result = await generateTitles(policies)
     return json(result)
-  } else if (task === 'generateTitles') {
-    const result = await generateTitles(evaluationCriteria)
-    return json(result)
-  } else if (task === 'reembed') {
-    const card = await db.canonicalValuesCard.findUnique({ where: { id: Number(formData.get("cardId")) } })
+  } else if (task === "reembed") {
+    const card = await db.canonicalValuesCard.findUnique({
+      where: { id: Number(formData.get("cardId")) },
+    })
     await embeddingService.embedDeduplicatedCard(card as any)
     return json({ ok: true })
   } else {
@@ -111,7 +105,7 @@ ${definitionOfASourceOfMeaning}
 const regenPrompt = `
 I'll send a list of things that a person might attend to when following a value of theirs.
 
-Please summarize these things by making a sentence. The sentence should look like "${valueStyle.instructionsLeadIn} Xs, Ys, Zs, that together Q".
+Please summarize these things by making a sentence. The sentence should look like "I attend to Xs, Ys, Zs, that together Q".
 
 Xs, Ys, and Zs should be plural forms of the noun phrases that start each item in the list I send. Shorten them if possible, omitting most qualifiers, but qualifying completely abstract words like "moments".
 

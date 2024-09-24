@@ -107,17 +107,17 @@ const clusterFunction = {
 function toDataModelArrayWithId(cards: ValuesCard[] | DeduplicatedCard[]) {
   return cards.map((card) => ({
     id: card.id,
-    attentionPolicies: card.evaluationCriteria,
+    attentionPolicies: card.policies,
   }))
 }
 
 function toDataModelArrayWithIdJSON(
-  cards: { id: number; evaluationCriteria: string[] }[]
+  cards: { id: number; policies: string[] }[]
 ): string {
   return JSON.stringify(
     cards.map((card) => ({
       id: card.id,
-      attentionPolicies: card.evaluationCriteria,
+      attentionPolicies: card.policies,
     }))
   )
 }
@@ -181,9 +181,9 @@ export default class DeduplicationService {
       data: {
         generation,
         title: data.title,
-        instructionsShort: data.instructionsShort,
-        instructionsDetailed: data.instructionsDetailed!,
-        evaluationCriteria: data.evaluationCriteria,
+        description: data.description,
+        deliberationId: data.deliberationId,
+        policies: data.policies,
       },
     })
     // Embed the canonical values card.
@@ -228,7 +228,7 @@ export default class DeduplicationService {
     limit: number = 20,
     minimumDistance: number = 0.13
   ): Promise<Array<DeduplicatedCard>> {
-    const query = `SELECT DISTINCT cvc.id, cvc.title, cvc."instructionsShort", cvc."instructionsDetailed", cvc."evaluationCriteria", cvc.embedding <=> '${JSON.stringify(
+    const query = `SELECT DISTINCT cvc.id, cvc.title, cvc."description", cvc."policies", cvc.embedding <=> '${JSON.stringify(
       vector
     )}'::vector as "_distance"
     FROM "DeduplicatedCard" cvc
@@ -248,7 +248,7 @@ export default class DeduplicationService {
    * Otherwise, return null.
    */
   async fetchSimilarDeduplicatedCard(
-    candidate: { evaluationCriteria: string[] },
+    candidate: { policies: string[] },
     limit: number = 5
   ): Promise<DeduplicatedCard | null> {
     console.log(
@@ -428,9 +428,9 @@ export const deduplicate = inngest.createFunction(
               data: {
                 generation,
                 title: card.title,
-                instructionsShort: card.instructionsShort,
-                instructionsDetailed: card.instructionsDetailed!,
-                evaluationCriteria: card.evaluationCriteria,
+                description: card.description,
+                policies: card.policies,
+                deliberationId: card.deliberationId,
                 deduplications: {
                   create: {
                     generation,

@@ -1,8 +1,8 @@
 import { type Message } from "ai"
-import { Separator } from "./ui/separator"
+import { Separator } from "~/components/ui/separator"
 import { ChatMessage } from "./chat-message"
 import ChatMessageLoading from "./chat-message-loading"
-import ValuesCard, { ValuesCardData } from "./values-card"
+import ValuesCard, { ValuesCardData } from "~/components/values-card"
 
 export interface ChatList {
   threadId: string
@@ -10,17 +10,16 @@ export interface ChatList {
   isLoading: boolean
 }
 
-export function ChatList({
-  threadId,
-  messages,
-  isLoading,
-}: ChatList) {
+export function ChatList({ threadId, messages, isLoading }: ChatList) {
   if (!messages.length) {
     return null
   }
 
   const getValuesCard = (message: Message): ValuesCardData | null => {
-    if (message.role !== "data" || (message.data as any)?.type !== "values_card") {
+    if (
+      message.role !== "data" ||
+      (message.data as any)?.type !== "values_card"
+    ) {
       return null
     }
 
@@ -28,9 +27,8 @@ export function ChatList({
     return {
       title: data.title,
       story: data.story,
-      instructionsShort: data.description,
-      instructionsDetailed: data.description,
-      evaluationCriteria: data.policies,
+      description: data.description,
+      policies: data.policies,
     }
   }
 
@@ -50,11 +48,13 @@ export function ChatList({
             <div className="mb-4">
               <ValuesCard detailsInline card={getValuesCard(message)!} />
             </div>
-          ) : isUserOrAssistantMessage(message) && (
-            <>
-              <ChatMessage message={message} />
-              {!isLastMessage(i) && <Separator className="my-4 md:my-8" />}
-            </>
+          ) : (
+            isUserOrAssistantMessage(message) && (
+              <>
+                <ChatMessage message={message} />
+                {!isLastMessage(i) && <Separator className="my-4 md:my-8" />}
+              </>
+            )
           )}
         </div>
       ))}

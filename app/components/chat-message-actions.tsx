@@ -1,10 +1,10 @@
 import { type Message } from "ai"
 
-import { Button } from "./ui/button"
+import { Button } from "~/components/ui/button"
 import { IconArrowDown, IconCheck, IconCopy, IconStop } from "./ui/icons"
 import { CrossCircledIcon } from "@radix-ui/react-icons"
 import { useCopyToClipboard } from "../hooks/use-copy-to-clipboard"
-import { cn } from "../utils"
+import { cn } from "~/lib/utils"
 
 interface ChatMessageActionsProps extends React.ComponentProps<"div"> {
   message: Message

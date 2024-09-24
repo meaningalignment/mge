@@ -2,9 +2,6 @@ import { PrismaClient, Prisma } from "@prisma/client"
 import { cowpunkify } from "cowpunk-auth"
 import { Inngest } from "inngest"
 import { OpenAI } from "openai"
-// import { ArticulatorConfig } from "./values-tools/articulator-config"
-// import dftDefaultConfig from "./values-tools/articulator-configs/dft-default"
-// import dftGeneralConfig from "./values-tools/articulator-configs/dft-general"
 import { redirect } from "@remix-run/node"
 
 export const db = new PrismaClient()
@@ -36,25 +33,5 @@ export const inngest = new Inngest({
 })
 
 export const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
 })
-
-export const isChatGpt = process.env.VALUE_STYLE !== "personal"
-
-export const dialogueEvaluatorConfig = {
-  where: {
-    evaluation: {
-      equals: Prisma.DbNull,
-    },
-    user: {
-      isAdmin: {
-        not: {
-          equals: true,
-        },
-      },
-    },
-    copiedFromId: {
-      equals: null,
-    },
-  },
-}

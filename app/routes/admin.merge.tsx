@@ -49,18 +49,6 @@ export async function action({ request }: ActionFunctionArgs) {
         data: { canonicalCardId: canonical.id },
       }),
 
-      // Update all impressions of the duplicate to point to the canonical.
-      db.impression.updateMany({
-        where: { valuesCardId: duplicate.id },
-        data: { valuesCardId: canonical.id },
-      }),
-
-      // Update all votes of the duplicate to point to the canonical.
-      db.vote.updateMany({
-        where: { valuesCardId: duplicate.id },
-        data: { valuesCardId: canonical.id },
-      }),
-
       // Update all edges pointing to the duplicate to point to the canonical.
       db.edge.updateMany({
         where: { toId: duplicate.id },
@@ -71,12 +59,6 @@ export async function action({ request }: ActionFunctionArgs) {
       db.edge.updateMany({
         where: { fromId: duplicate.id },
         data: { fromId: canonical.id },
-      }),
-
-      // Update all chats with a provisional duplicate to point to the canonical.
-      db.chat.updateMany({
-        where: { provisionalCanonicalCardId: duplicate.id },
-        data: { provisionalCanonicalCardId: canonical.id },
       }),
 
       // Update all edge hypotheses from the duplicate to from the canonical.
@@ -102,8 +84,6 @@ export async function action({ request }: ActionFunctionArgs) {
         edgesFrom: { none: {} },
         edgeHypothesisTo: { none: {} },
         edgeHypothesisFrom: { none: {} },
-        Impression: { none: {} },
-        Vote: { none: {} },
       },
     })
   }

@@ -10,10 +10,10 @@ export const config = { maxDuration: 300 }
 export async function action({ request }: ActionFunctionArgs) {
   const authorId = await ensureLoggedIn(request)
 
-  const { threadId, message } = await request.json()
+  const { threadId, deliberationId, message } = await request.json()
   return await assistantResponseWithTools({
     assistant_id: "asst_aPIlnXJb5RmDyVuSWd2FLil5",
-    context: { authorId, threadId },
+    context: { authorId, threadId, deliberationId },
     threadId,
     message,
     tools: { submit_values_card: submitValuesCard },
@@ -21,7 +21,11 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 async function submitValuesCard(
-  { authorId, threadId }: { authorId: number; threadId: string },
+  {
+    authorId,
+    threadId,
+    deliberationId,
+  }: { authorId: number; threadId: string; deliberationId: number },
   {
     title,
     description,
@@ -37,7 +41,8 @@ async function submitValuesCard(
     create: {
       id: threadId,
       userId: authorId,
-      transcript: [] // TODO: Add transcript
+      deliberationId, // TODO: Add deliberationId
+      transcript: [], // TODO: Add transcript
     },
     update: {},
     where: { id: threadId },
@@ -46,16 +51,15 @@ async function submitValuesCard(
     create: {
       title,
       chatId: chat.id,
-      instructionsShort: description,
-      instructionsDetailed: description, // For legacy reasons.
-      evaluationCriteria: policies,
+      deliberationId: chat.deliberationId,
+      description,
+      policies,
     },
     update: {
       title,
       chatId: chat.id,
-      instructionsShort: description,
-      instructionsDetailed: description, // For legacy reasons.
-      evaluationCriteria: policies,
+      description,
+      policies,
     },
     where: { chatId: chat.id },
   })
@@ -130,7 +134,6 @@ async function assistantResponseWithTools<C>({
         runResult?.status === "requires_action" &&
         runResult.required_action?.type === "submit_tool_outputs"
       ) {
-        
         cancelFunctionSpinner(threadId)
         const tool_outputs = await Promise.all(
           runResult.required_action.submit_tool_outputs.tool_calls.map(

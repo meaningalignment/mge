@@ -28,7 +28,7 @@ export default function LoginScreen() {
   const redirect = searchParams.get("redirect") as string
 
   useEffect(() => {
-    if (actionData && actionData?.status !== 200) {
+    if (actionData?.error) {
       setShowError(true)
       setIsLoading(false)
       setEmail("")
@@ -92,8 +92,9 @@ export default function LoginScreen() {
           .
         </p>
         <div
-          className={`mt-6 w-full text-center transition-opacity duration-300 ease-in-out ${showError ? "opacity-100" : "opacity-0"
-            }`}
+          className={`mt-6 w-full text-center transition-opacity duration-300 ease-in-out ${
+            showError ? "opacity-100" : "opacity-0"
+          }`}
         >
           <div className="text-red-500">{actionData?.error ?? "error"}</div>
         </div>

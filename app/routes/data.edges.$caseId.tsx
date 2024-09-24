@@ -9,16 +9,20 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const graph = summarizeGraph({
     edgeWhere: {
       context: {
-        ContextsOnCases: { some: { caseId } }
-      }
-    }
+        ContextsOnCases: { some: { caseId } },
+      },
+    },
   })
   return defer({ graph })
 }
 
 export default function DefaultGraphPage() {
-  const { graph } = useLoaderData<typeof loader>();
-  return <Suspense fallback={<p>Please wait...</p>}>
-    <Await resolve={graph}>{({ values, edges }) => <MoralGraph nodes={values} edges={edges} />}</Await>
-  </Suspense>
+  const { graph } = useLoaderData<typeof loader>()
+  return (
+    <Suspense fallback={<p>Please wait...</p>}>
+      <Await resolve={graph}>
+        {({ values, edges }) => <MoralGraph nodes={values} edges={edges} />}
+      </Await>
+    </Suspense>
+  )
 }

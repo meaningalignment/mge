@@ -1,13 +1,13 @@
 import { User } from "@prisma/client"
 import { useCurrentUser } from "../root"
-import { Button } from "./ui/button"
+import { Button } from "~/components/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu"
+} from "~/components/ui/dropdown-menu"
 import { Form } from "@remix-run/react"
 import { useRef } from "react"
 

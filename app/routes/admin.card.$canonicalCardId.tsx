@@ -1,4 +1,9 @@
-import { ActionFunctionArgs, json, LoaderFunctionArgs, SerializeFrom } from "@remix-run/node"
+import {
+  ActionFunctionArgs,
+  json,
+  LoaderFunctionArgs,
+  SerializeFrom,
+} from "@remix-run/node"
 import { Link, useLoaderData } from "@remix-run/react"
 import { CanonicalValuesCard } from "@prisma/client"
 import ValuesCard from "~/components/values-card"
@@ -19,7 +24,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     },
   })
   if (!card) throw new Error("Card not found")
-  const similar = await embeddingService.getSimilarCards(card)
+  const similar: any[] = [] //await embeddingService.getSimilarCards(card)
   return json({ card, similar })
 }
 
@@ -43,8 +48,8 @@ function Chats() {
       <h1 className="text-3xl font-bold my-8 text-center">Chats</h1>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mx-auto gap-4">
         {card.valuesCards.map((c) => (
-          <Link to={`/admin/chats/${c.chat.id}`} className="mb-6">
-            {c.chat.id}
+          <Link to={`/admin/chats/${c.chat!.id}`} className="mb-6">
+            {c.chat!.id}
           </Link>
         ))}
       </div>

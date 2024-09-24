@@ -141,19 +141,19 @@ export async function summarizeGraph(
 
   for (const edge of edges) {
     const existing = pairs.get(edge.fromId, edge.toId)
-    existing.contexts.push(edge.contextId)
+    existing.contexts.push(edge.choiceTypeId)
     existing.counts.impressions++
-    if (edge.relationship === "upgrade") existing.counts.markedWiser++
-    if (edge.relationship === "no_upgrade") existing.counts.markedNotWiser++
-    if (edge.relationship === "not_sure") existing.counts.markedUnsure++
+    if (edge.type === "upgrade") existing.counts.markedWiser++
+    if (edge.type === "no_upgrade") existing.counts.markedNotWiser++
+    if (edge.type === "not_sure") existing.counts.markedUnsure++
   }
 
   // Do the opposite.
   for (const edge of edges) {
     const existing = pairs.get(edge.toId, edge.fromId)
-    existing.contexts.push(edge.contextId)
+    existing.contexts.push(edge.choiceTypeId)
     existing.counts.impressions++
-    if (edge.relationship === "upgrade") existing.counts.markedLessWise++
+    if (edge.type === "upgrade") existing.counts.markedLessWise++
   }
 
   // Cook them down.

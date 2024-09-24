@@ -9,7 +9,7 @@ import { Separator } from "~/components/ui/separator"
 import { Textarea } from "~/components/ui/textarea"
 import ValuesCard from "~/components/values-card"
 import { db } from "~/config.server"
-import { cn } from "~/utils"
+import { cn } from "~/lib/utils"
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const userId = parseInt(params.userId!)
@@ -22,9 +22,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
   })) as Edge & { from: CanonicalValuesCard; to: CanonicalValuesCard }
 
   const [yesCount, noCount, notSureCount] = await Promise.all([
-    db.edge.count({ where: { fromId, toId, relationship: "upgrade" } }),
-    db.edge.count({ where: { fromId, toId, relationship: "no_upgrade" } }),
-    db.edge.count({ where: { fromId, toId, relationship: "not_sure" } }),
+    db.edge.count({ where: { fromId, toId, type: "upgrade" } }),
+    db.edge.count({ where: { fromId, toId, type: "no_upgrade" } }),
+    db.edge.count({ where: { fromId, toId, type: "not_sure" } }),
   ])
 
   return json({ edge, stats: { yesCount, noCount, notSureCount } })
@@ -37,7 +37,7 @@ export default function AdminLink() {
     <div className="grid place-items-center space-y-4 py-12 px-8">
       <div className="w-full max-w-2xl">
         <h1 className="text-md font-bold mb-2 pl-12 md:pl-0">
-          {edge.contextId}
+          {edge.choiceTypeId}
         </h1>
         <StaticChatMessage
           text={'"' + edge.story + '"'}
@@ -64,9 +64,9 @@ export default function AdminLink() {
         </h1>
         <RadioGroup
           disabled={true}
-          key={edge.relationship}
+          key={edge.type}
           className="w-full"
-          value={edge.relationship}
+          value={edge.type}
         >
           <div className="flex flex-col space-y-2  w-full space-between mt-4">
             <div className="flex items-center space-x-2">

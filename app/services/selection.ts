@@ -168,7 +168,7 @@ export default class SelectionService {
     const userValueString = JSON.stringify({
       id: userValue.id,
       title: userValue.title,
-      instructions: userValue.instructionsShort,
+      instructions: userValue.description,
     })
 
     const valuesString = JSON.stringify(
@@ -176,7 +176,7 @@ export default class SelectionService {
         return {
           id: c.id,
           title: c.title,
-          instructions: c.instructionsShort,
+          instructions: c.description,
         }
       })
     )
