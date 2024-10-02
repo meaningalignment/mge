@@ -1,7 +1,7 @@
 import { z } from "zod"
 import { genObj } from "./ai"
 
-export async function generateChoiceType(question: string) {
+export async function generateChoiceTypes(question: string) {
   return await genObj({
     prompt: `You will be given a question. Your task is to reason about what factors might be present that are not made implicit, that would change the way one would deal with the question if they were made explicit.
     
@@ -29,5 +29,5 @@ export async function generateChoiceType(question: string) {
           `5-10 factors that are not explicit, that would be relevant to consider in answering the question.`
         ),
     }),
-  })
+  }).then((res) => res.factors.map((f) => f.factor))
 }

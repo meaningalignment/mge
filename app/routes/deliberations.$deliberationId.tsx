@@ -1,103 +1,172 @@
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node"
-import { useLoaderData, Form, redirect, useNavigate } from "@remix-run/react"
+import { LoaderFunctionArgs, ActionFunctionArgs, json } from "@remix-run/node"
+import {
+  useLoaderData,
+  useSubmit,
+  useFetcher,
+  Form,
+  useActionData,
+} from "@remix-run/react"
+import { useEffect, useState } from "react"
 import { db } from "~/config.server"
+import { Button } from "~/components/ui/button"
+import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card"
+import { redirect } from "@remix-run/node"
+import { generateChoiceTypes } from "~/values-tools/choice-type"
+import LoadingButton from "~/components/loading-button"
+// Import the necessary Shadcn UI components
+
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const deliberationId = Number(params.deliberationId)!
   const deliberation = await db.deliberation.findFirstOrThrow({
     where: { id: deliberationId },
     include: {
       questions: {
-        include: { ChoiceTypesForQuestions: true },
+        include: {
+          ChoiceTypesForQuestions: {
+            include: {
+              choiceType: true,
+            },
+          },
+        },
       },
     },
   })
-  return { deliberation }
+  return {
+    deliberation,
+    initialChoiceTypes: deliberation.questions.flatMap((q) =>
+      q.ChoiceTypesForQuestions.map((ct) => ct.choiceType.id)
+    ),
+  }
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
-  const deliberationId = Number(params.deliberationId)
   const formData = await request.formData()
-  const intent = formData.get("intent")
+  const action = formData.get("action")
 
-  if (intent === "delete") {
+  if (action === "generateChoiceTypes") {
+    const question = formData.get("question") as string
+    const questionId = formData.get("questionId") as string
+    const deliberationId = Number(params.deliberationId)!
+    const choiceTypes = await generateChoiceTypes(question)
+    const promises = choiceTypes.map((choiceType) =>
+      db.choiceType.create({
+        data: {
+          id: choiceType,
+          deliberation: {
+            connect: {
+              id: deliberationId,
+            },
+          },
+          ChoiceTypesForQuestions: {
+            create: {
+              question: {
+                connect: {
+                  id: questionId,
+                },
+              },
+            },
+          },
+        },
+      })
+    )
+    await db.choiceType.deleteMany({
+      where: { ChoiceTypesForQuestions: { some: { questionId: questionId } } },
+    })
+    await db.$transaction(promises)
+    return json({ choiceTypes })
+  } else if (action === "deleteDeliberation") {
+    const deliberationId = Number(params.deliberationId)!
     await db.deliberation.delete({
       where: { id: deliberationId },
     })
     return redirect("/deliberations")
   }
-
-  // Handle update
-  const title = formData.get("title")
-  const welcomeText = formData.get("welcomeText")
-
-  await db.deliberation.update({
-    data: {
-      title: String(title),
-      welcomeText: String(welcomeText),
-    },
-    where: { id: deliberationId },
-  })
-
-  return redirect(`/deliberations/${deliberationId}`)
 }
 
 export default function DeliberationDashboard() {
-  const { deliberation } = useLoaderData<typeof loader>()
-  const navigate = useNavigate()
+  const { deliberation, initialChoiceTypes } = useLoaderData<typeof loader>()
+  const submit = useSubmit()
+  const actionData = useActionData<typeof action>()
+  const [choiceTypes, setChoiceTypes] = useState<string[]>(initialChoiceTypes)
+
+  const handleRemoveChoiceType = (index: number) => {
+    setChoiceTypes((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  useEffect(() => {
+    if ((actionData as any)?.choiceTypes) {
+      setChoiceTypes((actionData as any).choiceTypes)
+    }
+  }, [actionData])
+
+  const handleDeleteDeliberation = () => {
+    if (confirm("Are you sure you want to delete this deliberation?")) {
+      submit({ action: "deleteDeliberation" }, { method: "post" })
+    }
+  }
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold">{deliberation.title}</h1>
-      <Form method="post" className="mt-4">
-        <div>
-          <label className="block">
-            Title:
-            <input
-              type="text"
-              name="title"
-              defaultValue={deliberation.title}
-              className="border p-2 w-full"
-            />
-          </label>
-        </div>
-        <div className="mt-2">
-          <label className="block">
-            Welcome Text:
-            <textarea
-              name="welcomeText"
-              defaultValue={deliberation.welcomeText ?? ""}
-              className="border p-2 w-full"
-            />
-          </label>
-        </div>
-
-        <div className="mt-4 flex space-x-2">
-          <button type="submit" className="bg-blue-500 text-white px-4 py-2">
-            Save
-          </button>
-          <Form method="post">
-            <button
-              type="submit"
-              name="intent"
-              value="delete"
-              className="bg-red-500 text-white px-4 py-2"
-              onClick={() => {
-                if (
-                  !confirm("Are you sure you want to delete this deliberation?")
-                ) {
-                  navigate(-1)
-                }
-              }}
-            >
-              Delete
-            </button>
-          </Form>
-        </div>
-      </Form>
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold">Results</h2>
-        {/* Render results related to the deliberation */}
-        <pre>{JSON.stringify(deliberation, null, 2)}</pre>
+    <div className="container mx-auto py-6 max-w-4xl">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">{deliberation.title}</h1>
+        <Button variant="destructive" onClick={handleDeleteDeliberation}>
+          Delete
+        </Button>
+      </div>
+      <div className="space-y-6">
+        <h2 className="text-xl font-semibold mb-4">Questions</h2>
+        {deliberation.questions.map((question) => (
+          <Card key={question.id}>
+            <CardHeader>
+              <CardTitle>{question.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between mb-4">
+                <h4 className="text-sm font-semibold">Choice Types</h4>
+                <Form method="post">
+                  <input
+                    type="hidden"
+                    name="action"
+                    value="generateChoiceTypes"
+                  />
+                  <input
+                    type="hidden"
+                    name="question"
+                    value={question.question}
+                  />
+                  <input type="hidden" name="questionId" value={question.id} />
+                  <input
+                    type="hidden"
+                    name="deliberationId"
+                    value={deliberation.id}
+                  />
+                  <LoadingButton type="submit" variant="outline">
+                    {choiceTypes.length > 0
+                      ? "Regenerate Choice Types"
+                      : "Generate Choice Types"}
+                  </LoadingButton>
+                </Form>
+              </div>
+              <ul className="space-y-2">
+                {choiceTypes.map((choiceType, index) => (
+                  <li
+                    key={index}
+                    className="flex items-center justify-between bg-gray-50 p-2 rounded-md"
+                  >
+                    <span className="text-sm">{choiceType}</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveChoiceType(index)}
+                    >
+                      Remove
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   )

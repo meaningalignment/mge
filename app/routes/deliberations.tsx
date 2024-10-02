@@ -1,8 +1,10 @@
 import { Outlet, Link, useLoaderData, redirect } from "@remix-run/react"
 import type { LoaderFunctionArgs } from "@remix-run/node"
-import React from "react"
+import React, { useState } from "react"
 import { auth, db } from "~/config.server"
 import { Button } from "~/components/ui/button"
+import { ScrollArea } from "~/components/ui/scroll-area"
+import { Separator } from "~/components/ui/separator"
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await auth.getCurrentUser(request)
@@ -35,42 +37,42 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Deliberations() {
   const { deliberations, participatingIn } = useLoaderData<typeof loader>()
+  const [selectedDeliberation, setSelectedDeliberation] = useState<
+    string | null
+  >(null)
 
   return (
-    <div className="flex">
-      <aside className="w-64 h-screen bg-gray-100 p-4 flex flex-col">
-        <h2 className="text-xl font-bold mb-4">Your Deliberations</h2>
-        <ul className="flex-1">
-          {deliberations.map((delib: any) => (
-            <li key={delib.id}>
-              <Link
-                to={String(delib.id)}
-                className="text-blue-500 hover:underline"
-              >
-                {delib.title}
-              </Link>
-            </li>
-          ))}
-          {/* New Deliberation Button in Sidebar */}
-          <Button variant="link">
-            <Link to="/deliberations/new">New Deliberation</Link>
-          </Button>
-        </ul>
-        <h2 className="text-xl font-bold mt-8 mb-4">Participating In</h2>
-        <ul className="flex-1">
-          {participatingIn.map((delib: any) => (
-            <li key={delib.id}>
-              <Link
-                to={String(delib.id)}
-                className="text-blue-500 hover:underline"
-              >
-                {delib.title}
-              </Link>
-            </li>
-          ))}
-        </ul>
+    <div className="flex h-screen">
+      <aside className="w-64 border-r">
+        <ScrollArea className="h-full">
+          <div className="p-4 space-y-4">
+            <div>
+              <h2 className="text-lg font-semibold mb-2">Your Deliberations</h2>
+              <ul className="space-y-1">
+                {deliberations.map((delib: any) => (
+                  <li key={delib.id}>
+                    <Link
+                      to={String(delib.id)}
+                      className={`block text-sm p-2 rounded ${
+                        selectedDeliberation === delib.id
+                          ? "bg-blue-100 text-blue-700"
+                          : "hover:bg-gray-100"
+                      }`}
+                      onClick={() => setSelectedDeliberation(delib.id)}
+                    >
+                      {delib.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <Button variant="outline" className="w-full mt-8">
+                <Link to="/deliberations/new">New Deliberation</Link>
+              </Button>
+            </div>
+          </div>
+        </ScrollArea>
       </aside>
-      <main className="flex-1 p-4">
+      <main className="flex-1 p-4 overflow-auto">
         <Outlet />
       </main>
     </div>
