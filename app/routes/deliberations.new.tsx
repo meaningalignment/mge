@@ -1,111 +1,104 @@
 import { ActionFunction, redirect } from "@remix-run/node"
 import { Form, useNavigate } from "@remix-run/react"
-import React, { useState } from "react"
-import { db } from "~/config.server"
+import { useState } from "react"
+import { auth, db } from "~/config.server"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 import { Textarea } from "~/components/ui/textarea"
+import { Label } from "~/components/ui/label"
+import { v4 as uuid } from "uuid"
+import LoadingButton from "~/components/loading-button"
 
 export const action: ActionFunction = async ({ request }) => {
-  // const formData = await request.formData()
-  // const title = formData.get("title")
-  // const welcomeText = formData.get("welcomeText")
-  // const questions = formData.getAll("questions[]")
-  // const choices = formData.getAll("choices[]")
+  const formData = await request.formData()
+  const user = await auth.getCurrentUser(request)
+  if (!user) return redirect("/auth/login")
+  const question = formData.get("question") as string
+  const title = formData.get("title") as string
+  const welcomeText = formData.get("welcomeText") as string
 
-  // if (typeof title !== "string" || title.trim() === "") {
-  //   // Handle validation error
-  //   return { error: "Title is required." }
-  // }
+  const deliberation = await db.deliberation.create({
+    data: {
+      title,
+      welcomeText,
+      user: {
+        connect: {
+          id: user.id,
+        },
+      },
+    },
+  })
+  await db.question.create({
+    data: {
+      id: uuid(),
+      question,
+      title: question,
+      deliberationId: deliberation.id,
+    },
+  })
 
-  // const createdDeliberation = await db.deliberation.create({
-  //   data: {
-  //     title: title.trim(),
-  //     welcomeText: typeof welcomeText === "string" ? welcomeText.trim() : "",
-  //   },
-  // })
-
-  // for (let i = 0; i < questions.length; i++) {
-  //   const question = questions[i]
-  //   if (typeof question === "string" && question.trim() !== "") {
-  //     const createdQuestion = await db.question.create({
-  //       data: {
-  //         text: question.trim(),
-  //         deliberationId: createdDeliberation.id,
-  //       },
-  //     })
-
-  //     const questionChoices = choices[i].split(",")
-  //     for (const choice of questionChoices) {
-  //       if (choice.trim() !== "") {
-  //         await db.choice.create({
-  //           data: {
-  //             text: choice.trim(),
-  //             questionId: createdQuestion.id,
-  //           },
-  //         })
-  //       }
-  //     }
-  //   }
-  // }
-
-  return redirect("/deliberations")
+  return redirect(`/deliberations/${deliberation.id}`)
 }
 
 export default function NewDeliberation() {
   const navigate = useNavigate()
+  const [question, setQuestion] = useState("")
+  const [title, setTitle] = useState("")
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold">Create New Deliberation</h1>
-      <Form method="post" className="mt-4">
+    <div className="w-full max-w-2xl mx-auto">
+      <h1 className="text-2xl font-bold mb-8">Create New Deliberation</h1>
+      <Form method="post" className="space-y-8">
         <div>
-          <label className="block">
-            Title:
-            <Input
-              type="text"
-              name="title"
-              placeholder="Enter deliberation title"
-              required
-              className="border p-2 w-full"
-            />
-          </label>
+          <Label htmlFor="title">Title</Label>
+          <Input
+            className="mt-2"
+            id="title"
+            name="title"
+            placeholder="Enter the deliberation title"
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+          <p className="text-sm text-muted-foreground mt-2">
+            This will be the title of your deliberation.
+          </p>
         </div>
-        <div className="mt-2">
-          <label className="block">
-            Welcome Text:
-            <Textarea
-              name="welcomeText"
-              placeholder="Enter welcome text (optional)"
-              className="border p-2 w-full"
-            />
-          </label>
+        <div>
+          <Label htmlFor="welcomeText">Welcome Text</Label>
+          <Textarea
+            className="mt-2"
+            id="welcomeText"
+            name="welcomeText"
+            placeholder="Enter the welcome text (optional)"
+          />
+          <p className="text-sm text-muted-foreground mt-2">
+            When participants join your deliberation, they will be greeted with
+            this text.
+          </p>
         </div>
-
-        <div className="mt-2">
-          <label className="block">
-            Question:
-            <Input
-              type="text"
-              name="question"
-              placeholder="Enter your question"
-              required
-              className="border p-2 w-full"
-            />
-          </label>
+        <div>
+          <Label htmlFor="question">Question</Label>
+          <Input
+            className="mt-2"
+            id="question"
+            name="question"
+            placeholder="Enter your question"
+            required
+            type="text"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+          />
+          <p className="text-sm text-muted-foreground mt-2">
+            This is the question that participants will deliberate about.
+          </p>
         </div>
-
-        <div className="mt-4 flex space-x-2">
-          <button type="submit" className="bg-green-500 text-white px-4 py-2">
-            Save now!
-          </button>
-          <button
-            type="button"
-            className="bg-gray-500 text-white px-4 py-2"
-            onClick={() => navigate(-1)}
-          >
+        <div className="flex justify-between mt-6">
+          <Button variant="outline" onClick={() => navigate(-1)}>
             Cancel
-          </button>
+          </Button>
+          <LoadingButton type="submit" disabled={!question || !title}>
+            Save
+          </LoadingButton>
         </div>
       </Form>
     </div>

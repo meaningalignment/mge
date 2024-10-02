@@ -9,7 +9,6 @@ import {
 } from "@remix-run/react"
 import { auth, db } from "./config.server"
 import { User, ValuesCard } from "@prisma/client"
-import { Analytics } from "@vercel/analytics/react"
 
 import "./globals.css"
 
@@ -54,7 +53,6 @@ export default function App() {
         <Outlet />
         <ScrollRestoration />
         <Scripts />
-        <Analytics />
       </body>
     </html>
   )
