@@ -11,11 +11,7 @@ import { auth, db } from "./config.server"
 import { User, ValuesCard } from "@prisma/client"
 import { Analytics } from "@vercel/analytics/react"
 
-import css from "~/globals.css"
-
-export function links() {
-  return [{ rel: "stylesheet", href: css }]
-}
+import "./globals.css"
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const userId = await auth.getUserId(request)
