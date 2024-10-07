@@ -153,27 +153,28 @@ model EdgeHypothesis {
 }
 
 model ChoiceType {
-  id                 String               @id
+  id                      String                    @id
   ChoiceTypesForQuestions ChoiceTypesForQuestions[]
-  Edge               Edge[]
-  EdgeHypothesis     EdgeHypothesis[]
-  deliberationId     Int
-  deliberation       Deliberation         @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+  Edge                    Edge[]
+  EdgeHypothesis          EdgeHypothesis[]
+  deliberationId          Int
+  deliberation            Deliberation              @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 }
 
 model Question {
-  id                 String               @id
-  title              String
-  question           String
-  seedMessage        String               @default("OLD")
+  id                      String                    @id
+  question                String
+  title                   String?
+  seedMessage             String?
   ChoiceTypesForQuestions ChoiceTypesForQuestions[]
-  deliberationId     Int
-  deliberation       Deliberation         @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+  deliberationId          Int
+  deliberation            Deliberation              @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 }
 
 model ChoiceTypesForQuestions {
   choiceType   ChoiceType @relation(fields: [choiceTypeId], references: [id], onDelete: Cascade)
   question     Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  application  String?
   choiceTypeId String
   questionId   String
   createdAt    DateTime   @default(now())

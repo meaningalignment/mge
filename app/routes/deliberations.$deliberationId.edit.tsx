@@ -1,54 +1,90 @@
-import { ActionFunction, redirect } from "@remix-run/node"
-import { Form, useNavigate } from "@remix-run/react"
+import { ActionFunction, LoaderFunction, redirect } from "@remix-run/node"
+import { Form, useLoaderData, useNavigate } from "@remix-run/react"
 import { useState } from "react"
 import { auth, db } from "~/config.server"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 import { Textarea } from "~/components/ui/textarea"
 import { Label } from "~/components/ui/label"
-import { v4 as uuid } from "uuid"
 import LoadingButton from "~/components/loading-button"
 
-export const action: ActionFunction = async ({ request }) => {
+export const loader: LoaderFunction = async ({ params, request }) => {
+  const user = await auth.getCurrentUser(request)
+  if (!user) return redirect("/auth/login")
+
+  const deliberation = await db.deliberation.findUnique({
+    where: { id: parseInt(params.deliberationId!) },
+    include: { questions: true },
+  })
+
+  if (!deliberation) {
+    throw new Response("Not Found", { status: 404 })
+  }
+
+  if (deliberation.createdBy !== user.id) {
+    throw new Response("Unauthorized", { status: 403 })
+  }
+
+  return { deliberation }
+}
+
+export const action: ActionFunction = async ({ request, params }) => {
   const formData = await request.formData()
   const user = await auth.getCurrentUser(request)
   if (!user) return redirect("/auth/login")
-  const question = formData.get("question") as string
+
+  const newQuestion = formData.get("question") as string
   const title = formData.get("title") as string
   const welcomeText = formData.get("welcomeText") as string
+  const questionId = formData.get("questionId") as string
+  const originalQuestion = formData.get("originalQuestion") as string
 
-  const deliberation = await db.deliberation.create({
+  // Update deliberation
+  await db.deliberation.update({
+    where: { id: parseInt(params.deliberationId!) },
     data: {
       title,
       welcomeText,
-      user: {
-        connect: {
-          id: user.id,
-        },
-      },
-    },
-  })
-  await db.question.create({
-    data: {
-      id: uuid(),
-      question,
-      title: question,
-      deliberationId: deliberation.id,
     },
   })
 
-  return redirect(`/deliberations/${deliberation.id}`)
+  // Only update question and choiceTypesForQuestion if the question has changed
+  if (newQuestion !== originalQuestion) {
+    await Promise.all([
+      db.question.update({
+        where: {
+          deliberationId: parseInt(params.deliberationId!),
+          id: questionId,
+        },
+        data: {
+          question: newQuestion,
+          title: newQuestion,
+        },
+      }),
+      db.choiceTypesForQuestions.deleteMany({
+        where: { questionId },
+      }),
+    ])
+  }
+
+  return redirect(`/deliberations/${params.deliberationId}`)
 }
 
-export default function NewDeliberation() {
+export default function EditDeliberation() {
+  const { deliberation } = useLoaderData<typeof loader>()
   const navigate = useNavigate()
-  const [question, setQuestion] = useState("")
-  const [title, setTitle] = useState("")
+  const [question, setQuestion] = useState(deliberation.questions[0].question)
+  const [title, setTitle] = useState(deliberation.title)
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-8">Create New Deliberation</h1>
+      <h1 className="text-2xl font-bold mb-8">Edit Deliberation</h1>
       <Form method="post" className="space-y-8">
+        <input
+          type="hidden"
+          name="questionId"
+          value={deliberation.questions[0].id}
+        />
         <div>
           <Label htmlFor="title">Title</Label>
           <Input
@@ -56,11 +92,12 @@ export default function NewDeliberation() {
             id="title"
             name="title"
             placeholder="Enter the deliberation title"
+            value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
           />
           <p className="text-sm text-muted-foreground mt-2">
-            This will be the title of your deliberation.
+            This is the title of your deliberation.
           </p>
         </div>
         <div>
@@ -70,6 +107,7 @@ export default function NewDeliberation() {
             id="welcomeText"
             name="welcomeText"
             placeholder="Enter the welcome text (optional)"
+            defaultValue={deliberation.welcomeText || ""}
           />
           <p className="text-sm text-muted-foreground mt-2">
             When participants join your deliberation, they will be greeted with
@@ -97,7 +135,7 @@ export default function NewDeliberation() {
             Cancel
           </Button>
           <LoadingButton type="submit" disabled={!question || !title}>
-            Save
+            Save Changes
           </LoadingButton>
         </div>
       </Form>
