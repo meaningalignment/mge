@@ -23,11 +23,16 @@ export async function generateChoiceTypes(question: string) {
               .describe(
                 `The factor from the situational context, in as few words as possible. For example, "The girl is in distress".`
               ),
+            questionWithFactor: z
+              .string()
+              .describe(
+                `A modified version of the original question, where the factor is made explicit. For example: "I am a christian girl in severe distress and am considering an abortion, what should I do?"`
+              ),
           })
         )
         .describe(
           `5-10 factors that are not explicit, that would be relevant to consider in answering the question.`
         ),
     }),
-  }).then((res) => res.factors.map((f) => f.factor))
+  }).then((res) => res.factors)
 }
