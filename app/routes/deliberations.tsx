@@ -1,10 +1,9 @@
 import { Outlet, Link, useLoaderData, redirect } from "@remix-run/react"
 import type { LoaderFunctionArgs } from "@remix-run/node"
-import React, { useState } from "react"
+import { useState } from "react"
 import { auth, db } from "~/config.server"
 import { Button } from "~/components/ui/button"
 import { ScrollArea } from "~/components/ui/scroll-area"
-import { Separator } from "~/components/ui/separator"
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await auth.getCurrentUser(request)
@@ -43,7 +42,7 @@ export default function Deliberations() {
 
   return (
     <div className="flex h-screen">
-      <aside className="w-64 border-r">
+      <aside className="w-64 border-r border-slate-200 bg-slate-50">
         <ScrollArea className="h-full">
           <div className="p-4 space-y-4">
             <div>
