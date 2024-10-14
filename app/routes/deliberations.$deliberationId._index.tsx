@@ -19,11 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip"
-import {
-  QuestionMarkCircledIcon,
-  PlusIcon,
-  Cross2Icon,
-} from "@radix-ui/react-icons"
+import { QuestionMarkCircledIcon, PlusIcon } from "@radix-ui/react-icons"
 import { Input } from "~/components/ui/input"
 import { Label } from "~/components/ui/label"
 import { generateContexts } from "values-tools"
@@ -46,7 +42,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
         select: {
           edges: true,
           valuesCards: true,
-          deduplicatedCards: true,
+          canonicalValuesCards: true,
         },
       },
     },
@@ -81,14 +77,15 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const promises = contexts.map(
       (context: { factor: string; questionWithFactor: string }) =>
         db.context.upsert({
-          where: { id: context.factor },
+          where: { id_deliberationId: { id: context.factor, deliberationId } },
           update: {
             ContextsForQuestions: {
               upsert: {
                 where: {
-                  contextId_questionId: {
+                  contextId_questionId_deliberationId: {
                     contextId: context.factor,
                     questionId: questionId,
+                    deliberationId: deliberationId,
                   },
                 },
                 create: {
@@ -139,9 +136,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     await db.contextsForQuestions.delete({
       where: {
-        contextId_questionId: {
+        contextId_questionId_deliberationId: {
           contextId: contextId,
           questionId: questionId,
+          deliberationId: Number(params.deliberationId)!,
         },
       },
     })
@@ -295,7 +293,7 @@ export default function DeliberationDashboard() {
                   </p>
                 </div>
                 <p className="text-lg font-medium">
-                  {deliberation._count.deduplicatedCards}
+                  {deliberation._count.canonicalValuesCards}
                 </p>
               </div>
               <div className="flex justify-between items-center">

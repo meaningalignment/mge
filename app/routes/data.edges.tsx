@@ -41,13 +41,17 @@ export default function DefaultGraphPage() {
     setIsLoading(true)
 
     const headers = { "Content-Type": "application/json" }
-    const params: { caseId?: string; runId?: string; batches?: string } = {}
+    const params: {
+      caseId?: string
+      hypothesisRunId?: string
+      batches?: string
+    } = {}
 
     if (prolificUsersExist) {
       if (searchParams.has("batches"))
         params.batches = searchParams.get("batches")!
       if (settings?.caseId) params.caseId = settings?.caseId
-      if (settings?.run) params.runId = settings?.run
+      if (settings?.run) params.hypothesisRunId = settings?.run
     }
 
     const graph = await fetch(

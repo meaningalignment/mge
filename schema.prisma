@@ -21,7 +21,6 @@ model User {
   isAdmin                   Boolean                     @default(false)
   chats                     Chat[]
   edges                     Edge[]
-  DeduplicationVerification DeduplicationVerification[]
   Deliberation              Deliberation[]
 }
 
@@ -37,11 +36,9 @@ model Deliberation {
   edges                      Edge[]
   questions                  Question[]
   contexts                Context[]
-  deduplicatedCards          DeduplicatedCard[]
   chats                      Chat[]
   canonicalValuesCards       CanonicalValuesCard[]
   edgeHypotheses             EdgeHypothesis[]
-  deduplicationVerifications DeduplicationVerification[]
 }
 
 model EmailCodes {
@@ -66,10 +63,9 @@ model ValuesCard {
   chat                      Chat?                        @relation(fields: [chatId], references: [id], onDelete: Cascade)
   canonicalCard             CanonicalValuesCard?         @relation(fields: [canonicalCardId], references: [id], onDelete: SetNull)
   embedding                 Unsupported("vector(1536)")?
-  DeduplicationVerification DeduplicationVerification[]
-  deduplications            Deduplication[]
   deliberationId            Int
   deliberation              Deliberation                 @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+  ContextsForValueCards     ContextsForValueCards[]
 }
 
 model CanonicalValuesCard {
@@ -118,9 +114,8 @@ model Edge {
   userId         Int
   fromId         Int
   toId           Int
-  story          String              @default("OLD")
-  contextId   String
-  runId          String              @default("OLD")
+  story          String
+  contextId      String
   type           EdgeType            @default(upgrade)
   comment        String?
   createdAt      DateTime            @default(now())
@@ -128,7 +123,7 @@ model Edge {
   user           User                @relation(fields: [userId], references: [id])
   from           CanonicalValuesCard @relation("FromValueRelation", fields: [fromId], references: [id], onDelete: Cascade)
   to             CanonicalValuesCard @relation("ToValueRelation", fields: [toId], references: [id], onDelete: Cascade)
-  context     Context          @relation(fields: [contextId], references: [id])
+  context        Context             @relation(fields: [contextId, deliberationId], references: [id, deliberationId])
   deliberationId Int
   deliberation   Deliberation        @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 
@@ -138,14 +133,14 @@ model Edge {
 model EdgeHypothesis {
   fromId         Int
   toId           Int
+  hypothesisRunId String
   story          String?
-  contextId   String
+  contextId      String
   createdAt      DateTime             @default(now())
   updatedAt      DateTime             @updatedAt
-  runId          String               @default("OLD")
   from           CanonicalValuesCard? @relation("FromHypothesizedValueRelation", fields: [fromId], references: [id], onDelete: Cascade)
   to             CanonicalValuesCard? @relation("ToHypothesizedValueRelation", fields: [toId], references: [id], onDelete: Cascade)
-  context     Context           @relation(fields: [contextId], references: [id])
+  context        Context               @relation(fields: [contextId, deliberationId], references: [id, deliberationId])
   deliberationId Int
   deliberation   Deliberation         @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 
@@ -153,12 +148,15 @@ model EdgeHypothesis {
 }
 
 model Context {
-  id             String           @default(cuid())
+  id             String
   deliberationId Int
   deliberation   Deliberation     @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
   ContextsForQuestions ContextsForQuestions[]
   Edge           Edge[]
   EdgeHypothesis EdgeHypothesis[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  ContextsForValueCards ContextsForValueCards[]
 
   @@id([id, deliberationId])
 }
@@ -174,48 +172,26 @@ model Question {
 }
 
 model ContextsForQuestions {
-  context   Context @relation(fields: [contextId], references: [id], onDelete: Cascade)
-  question     Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  application  String?
-  contextId String
-  questionId   String
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  context        Context    @relation(fields: [contextId, deliberationId], references: [id, deliberationId], onDelete: Cascade)
+  question       Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  application    String?
+  contextId      String
+  questionId     String
+  deliberationId Int        // Add this line to define the deliberationId field
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 
-  @@id([contextId, questionId])
+  @@id([contextId, questionId, deliberationId])
 }
 
-model Deduplication {
-  valuesCardId       Int
-  deduplicatedCardId Int
-  generation         Int
-  createdAt          DateTime         @default(now())
-  updatedAt          DateTime         @updatedAt
-  valuesCard         ValuesCard       @relation(fields: [valuesCardId], references: [id])
-  deduplicatedCard   DeduplicatedCard @relation(fields: [deduplicatedCardId], references: [id])
-
-  @@unique([valuesCardId, generation])
-  @@unique([valuesCardId, deduplicatedCardId])
-}
-
-enum DeduplicationVerificationOption {
-  same
-  different
-  unsure
-}
-
-model DeduplicationVerification {
-  userId             Int
-  valuesCardId       Int
-  deduplicatedCardId Int
-  option             DeduplicationVerificationOption
-  createdAt          DateTime                        @default(now())
-  updatedAt          DateTime                        @updatedAt
-  user               User                            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  valuesCard         ValuesCard                      @relation(fields: [valuesCardId], references: [id], onDelete: Cascade)
-  deduplicatedCard   DeduplicatedCard                @relation(fields: [deduplicatedCardId], references: [id], onDelete: Cascade)
-  Deliberation       Deliberation?                   @relation(fields: [deliberationId], references: [id])
-  deliberationId     Int?
-
-  @@id([userId, valuesCardId, deduplicatedCardId])
+model ContextsForValueCards {
+  contextId      String
+  valuesCardId   Int
+  application    String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  context        Context  @relation(fields: [contextId, deliberationId], references: [id, deliberationId], onDelete: Cascade)
+  valuesCard     ValuesCard @relation(fields: [valuesCardId], references: [id], onDelete: Cascade)
+  deliberationId Int   
+  @@id([contextId, valuesCardId, deliberationId])
 }

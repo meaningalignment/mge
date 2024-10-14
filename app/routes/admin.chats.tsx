@@ -1,9 +1,9 @@
-import { LoaderFunctionArgs, json } from "@remix-run/node"
+import { json } from "@remix-run/node"
 import { NavLink, Outlet, useLoaderData } from "@remix-run/react"
 import { db } from "~/config.server"
 import { cn } from "~/lib/utils"
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader() {
   const chats = await db.chat.findMany({
     orderBy: { createdAt: "desc" },
     select: {
@@ -11,9 +11,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
       createdAt: true,
       copiedFromId: true,
       evaluation: true,
-      articulatorPromptHash: true,
-      articulatorPromptVersion: true,
-      gitCommitHash: true,
       user: {
         select: {
           id: true,
@@ -75,10 +72,6 @@ export default function AdminChats() {
                   <div>
                     <span className="text-sm text-red-500">
                       {(chat.evaluation as any).worst_score}
-                    </span>{" "}
-                    -{" "}
-                    <span className="text-xs text-green">
-                      {chat.articulatorPromptHash.slice(0, 8)}
                     </span>
                   </div>
                 )}

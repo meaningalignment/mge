@@ -8,19 +8,16 @@ import {
 import { embedDeduplicatedCard } from "./embedding"
 import { embedValue } from "values-tools"
 
-async function createCanonicalCard(data: {
-  title: string
-  description: string
-  policies: string[]
-  deliberationId: number
-}) {
+async function createCanonicalCard(
+  valuesCard: ValuesCard
+): Promise<CanonicalValuesCard> {
   // Create a canonical values card.
   const canonical = await db.canonicalValuesCard.create({
     data: {
-      title: data.title,
-      description: data.description,
-      policies: data.policies,
-      deliberationId: data.deliberationId,
+      title: valuesCard.title,
+      description: valuesCard.description,
+      policies: valuesCard.policies,
+      deliberationId: valuesCard.deliberationId,
     },
   })
   // Embed the canonical values card.
@@ -48,7 +45,7 @@ async function similaritySearch(
 }
 
 async function fetchSimilarCanonicalCard(
-  candidate: { title: string; description: string; policies: string[] },
+  candidate: ValuesCard,
   limit: number = 5
 ): Promise<CanonicalValuesCard | null> {
   console.log(
@@ -72,7 +69,10 @@ async function fetchSimilarCanonicalCard(
   }
 
   // Use a prompt to see if any of the canonical cards are the same value
-  return getExistingDuplicateValue(candidate, canonical)
+  return getExistingDuplicateValue<ValuesCard, CanonicalValuesCard>(
+    candidate,
+    canonical
+  )
 }
 
 async function fetchNonCanonicalizedValues(limit: number = 50) {
@@ -142,8 +142,8 @@ export const deduplicate = inngest.createFunction(
 
       const representative = (await step.run(
         "Get best values card from cluster",
-        async () => getRepresentativeValue(cluster)
-      )) as any as { title: string; description: string; policies: string[] }
+        async () => getRepresentativeValue<ValuesCard>(cluster)
+      )) as any as ValuesCard
 
       const existingCanonicalDuplicate = (await step.run(
         "Fetch canonical duplicate",
@@ -157,7 +157,7 @@ export const deduplicate = inngest.createFunction(
       } else {
         const newCanonicalDuplicate = (await step.run(
           "Canonicalize representative",
-          async () => createCanonicalCard(representative as any)
+          async () => createCanonicalCard(representative)
         )) as any as CanonicalValuesCard
 
         await step.run(

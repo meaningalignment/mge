@@ -1,10 +1,10 @@
-import { DeduplicatedCard, ValuesCard } from "@prisma/client"
+import { CanonicalValuesCard, ValuesCard } from "@prisma/client"
 import { db, inngest } from "~/config.server"
 import { calculateAverageEmbedding } from "~/lib/utils"
 import { embedValue } from "values-tools"
 
 export async function embedDeduplicatedCard(
-  card: DeduplicatedCard
+  card: CanonicalValuesCard
 ): Promise<void> {
   // Embed card.
   const embedding: number[] = await embedValue(card)
@@ -31,10 +31,10 @@ export async function getNonCanonicalCardsWithoutEmbedding(): Promise<
   return (await db.$queryRaw`SELECT id, title, "description", "policies" FROM "ValuesCard" WHERE "ValuesCard".embedding IS NULL`) as ValuesCard[]
 }
 
-export async function getDeduplicatedCardsWithoutEmbedding(): Promise<
-  Array<DeduplicatedCard>
+export async function getCanonicalCardsWithoutEmbedding(): Promise<
+  Array<CanonicalValuesCard>
 > {
-  return (await db.$queryRaw`SELECT id, title, "description", "policies", embedding::text FROM "DeduplicatedCard" WHERE "DeduplicatedCard".embedding IS NULL`) as DeduplicatedCard[]
+  return (await db.$queryRaw`SELECT id, title, "description", "policies", embedding::text FROM "CanonicalValuesCard" WHERE "CanonicalValuesCard".embedding IS NULL`) as CanonicalValuesCard[]
 }
 
 export async function getUserEmbedding(userId: number): Promise<number[]> {
@@ -64,8 +64,8 @@ export const embed = inngest.createFunction(
   async ({ step, logger }) => {
     const deduplicatedCards = (await step.run(
       "Fetching deduplicated cards",
-      async () => getDeduplicatedCardsWithoutEmbedding()
-    )) as any as DeduplicatedCard[]
+      async () => getCanonicalCardsWithoutEmbedding()
+    )) as any as CanonicalValuesCard[]
 
     const nonCanonicalCards = (await step.run(
       "Fetching canonical cards",

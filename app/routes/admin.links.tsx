@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs, json } from "@remix-run/node"
+import { json } from "@remix-run/node"
 import { NavLink, Outlet, useLoaderData } from "@remix-run/react"
 import { db } from "~/config.server"
 import { cn } from "~/lib/utils"
@@ -12,7 +12,7 @@ export async function loader() {
       fromId: true,
       toId: true,
       comment: true,
-      relationship: true,
+      type: true,
       user: {
         select: {
           id: true,

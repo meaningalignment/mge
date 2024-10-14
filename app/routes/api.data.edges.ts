@@ -1,32 +1,28 @@
+import { Prisma } from "@prisma/client"
 import { LoaderFunctionArgs } from "@remix-run/node"
-import {
-  Options,
-  summarizeGraph,
-} from "~/values-tools-legacy/generate-moral-graph"
+import { summarizeGraph } from "values-tools"
+import { db } from "~/config.server"
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url)
   const contextId = url.searchParams.get("contextId")
-  const runId = url.searchParams.get("runId")
-  const includePageRank = url.searchParams.get("includePageRank")
+  const hypothesisRunId = url.searchParams.get("hypothesisRunId")
+  const includePageRank = url.searchParams.get("includePageRank") !== null
 
-  const options: Options = {}
+  let edgeWhere: Prisma.EdgeWhereInput = {}
 
-  if (runId) {
-    options.edgeWhere = options.edgeWhere || {}
-    options.edgeWhere.user = {}
+  if (hypothesisRunId) {
+    edgeWhere = edgeWhere || {}
+    edgeWhere.user = {}
   }
 
   if (contextId) {
-    options.edgeWhere = options.edgeWhere || {}
-    options.edgeWhere.context = {
-      ContextsOnCases: { some: { contextId } },
-    }
+    edgeWhere = edgeWhere || {}
+    edgeWhere.context = { ContextsForQuestions: { some: { contextId } } }
   }
 
-  if (includePageRank) {
-    options.includePageRank = true
-  }
+  const values = await db.canonicalValuesCard.findMany()
+  const edges = await db.edge.findMany({ where: edgeWhere })
 
-  return summarizeGraph(options)
+  return summarizeGraph(values, edges, { includePageRank })
 }

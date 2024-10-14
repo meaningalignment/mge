@@ -1,6 +1,6 @@
 import { CanonicalValuesCard, EdgeHypothesis } from "@prisma/client"
 import { db, inngest } from "~/config.server"
-import { generateUpgrades } from "values-tools"
+import { generateUpgrades, Upgrade } from "values-tools"
 import { getUserEmbedding } from "./embedding"
 
 type EdgeHypothesisData = {
@@ -8,7 +8,7 @@ type EdgeHypothesisData = {
   from: CanonicalValuesCard
   contextId: string
   story: string
-  runId: string
+  hypothesisRunId: string
 }
 
 async function getDistanceFromUserValuesMap(
@@ -86,19 +86,19 @@ async function getDraw(
       to: h.to,
       from: h.from,
       story: h.story,
-      runId: h.runId,
       contextId: h.contextId,
     } as EdgeHypothesisData
   })
 }
 
-async function upsertTransitions(
-  transitions: Transition[],
-  runId: string,
-  condition: string
+async function upsertHypothesizedUpgrades(
+  upgrades: Upgrade[],
+  hypothesisRunId: string,
+  condition: string,
+  deliberationId: number
 ): Promise<void> {
   await Promise.all(
-    transitions.map((t) =>
+    upgrades.map((t) =>
       db.edgeHypothesis.upsert({
         where: {
           fromId_toId: {
@@ -109,9 +109,17 @@ async function upsertTransitions(
         create: {
           from: { connect: { id: t.a_id } },
           to: { connect: { id: t.b_id } },
-          context: { connect: { id: condition } },
+          context: {
+            connect: {
+              id_deliberationId: {
+                id: condition,
+                deliberationId,
+              },
+            },
+          },
+          deliberation: { connect: { id: deliberationId } },
           story: t.story,
-          runId,
+          hypothesisRunId,
         },
         update: {},
       })
@@ -119,13 +127,15 @@ async function upsertTransitions(
   )
 }
 
-async function cleanupTransitions(runId: string): Promise<{
+async function cleanupTransitions(hypothesisRunId: string): Promise<{
   old: number
   added: number
 }> {
-  const newTransitions = await db.edgeHypothesis.count({ where: { runId } })
+  const newTransitions = await db.edgeHypothesis.count({
+    where: { hypothesisRunId },
+  })
   const oldTransitions = await db.edgeHypothesis.count({
-    where: { runId: { not: runId } },
+    where: { hypothesisRunId: { not: hypothesisRunId } },
   })
 
   if (newTransitions < 1) {
@@ -138,31 +148,13 @@ async function cleanupTransitions(runId: string): Promise<{
 
   await db.edgeHypothesis.deleteMany({
     where: {
-      runId: {
-        not: runId,
+      hypothesisRunId: {
+        not: hypothesisRunId,
       },
     },
   })
 
   return { old: oldTransitions, added: newTransitions }
-}
-
-interface Value {
-  description: string
-  policies: string[]
-}
-
-interface Transition {
-  a_id: number
-  b_id: number
-  a_was_really_about: string
-  clarification: string
-  mapping: {
-    a: string
-    rationale: string
-  }[]
-  story: string
-  likelihood_score: string
 }
 
 //
@@ -186,6 +178,8 @@ export const hypothesize = inngest.createFunction(
   { event: "hypothesize" },
   async ({ step, logger, runId }) => {
     logger.info("Creating hypothetical links for all cases.")
+
+    const deliberationId = 1 // TODO! This is hardcoded for now.
 
     //
     // Don't run the expensive prompt if the latest card is older than last time
@@ -212,32 +206,48 @@ export const hypothesize = inngest.createFunction(
     logger.info(`Running hypothetical links generation`)
 
     // Get contexts.
-    const contexts = await step.run("Fetching contexts", async () =>
-      db.context.findMany()
+    const contexts = await step.run("Fetching contexts with values", async () =>
+      db.context.findMany({
+        include: {
+          ContextsForValueCards: {
+            include: {
+              context: {
+                select: {
+                  id: true,
+                },
+              },
+              valuesCard: true,
+            },
+          },
+        },
+      })
     )
 
     //
-    // Create and upsert transitions for each cluster.
+    // Create and upsert transitions for each context.
     //
-    for (const context of contexts) {
-      const values = (await step.run(`Fetch values`, async () =>
-        db.canonicalValuesCard.findMany({
-          where: { context: { id: context.id } },
-        })
-      )) as any as CanonicalValuesCard[]
+    for (const cluster of contexts) {
+      const values = cluster.ContextsForValueCards.map((c) => c.valuesCard)
+      const context = cluster.ContextsForValueCards[0].context // All contexts are the same.
 
-      const { transitions } = (await step.run(
-        `Generate transitions for cluster ${cluster.condition}`,
+      const upgrades = await step.run(
+        `Generate transitions for context ${context.id}`,
         async () => generateUpgrades(values)
-      )) as any as { transitions: Transition[] }
+      )
 
       console.log(
-        `Created ${transitions.length} transitions for cluster ${cluster.condition}.`
+        `Created ${upgrades.length} transitions for context ${context.id}.`
       )
 
       await step.run(
-        `Add transitions for cluster ${cluster.condition} to database`,
-        async () => upsertTransitions(transitions, runId, cluster.condition)
+        `Add transitions for context ${context.id} to database`,
+        async () =>
+          upsertHypothesizedUpgrades(
+            upgrades,
+            runId,
+            context.id,
+            deliberationId
+          )
       )
     }
 

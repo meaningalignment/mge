@@ -9,8 +9,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const options: Options = {}
 
-  const runId = url.searchParams.get("runId")
-  if (runId) {
+  const hypothesisRunId = url.searchParams.get("hypothesisRunId")
+  if (hypothesisRunId) {
     options.edgeWhere = options.edgeWhere || {}
     options.edgeWhere.user = {}
   }
