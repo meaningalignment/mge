@@ -35,9 +35,9 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     include: {
       questions: {
         include: {
-          ChoiceTypesForQuestions: {
+          ContextsForQuestions: {
             include: {
-              choiceType: true,
+              context: true,
             },
           },
         },
@@ -53,9 +53,9 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
   })
   return {
     deliberation,
-    initialChoiceTypes: deliberation.questions.flatMap((q) =>
-      q.ChoiceTypesForQuestions.map((ct) => ({
-        id: ct.choiceType.id,
+    initialContexts: deliberation.questions.flatMap((q) =>
+      q.ContextsForQuestions.map((ct) => ({
+        id: ct.context.id,
         application: ct.application,
       }))
     ),
@@ -66,28 +66,28 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const action = formData.get("action")
 
-  if (action === "generateChoiceTypes") {
+  if (action === "generateContexts") {
     const question = formData.get("question") as string
     const questionId = formData.get("questionId") as string
     const deliberationId = Number(params.deliberationId)!
-    const choiceTypes = await generateContexts(question)
+    const contexts = await generateContexts(question)
 
-    await db.choiceType.deleteMany({
+    await db.context.deleteMany({
       where: {
-        ChoiceTypesForQuestions: { some: { questionId: questionId } },
+        ContextsForQuestions: { some: { questionId: questionId } },
       },
     })
 
-    const promises = choiceTypes.map(
-      (choiceType: { factor: string; questionWithFactor: string }) =>
-        db.choiceType.upsert({
-          where: { id: choiceType.factor },
+    const promises = contexts.map(
+      (context: { factor: string; questionWithFactor: string }) =>
+        db.context.upsert({
+          where: { id: context.factor },
           update: {
-            ChoiceTypesForQuestions: {
+            ContextsForQuestions: {
               upsert: {
                 where: {
-                  choiceTypeId_questionId: {
-                    choiceTypeId: choiceType.factor,
+                  contextId_questionId: {
+                    contextId: context.factor,
                     questionId: questionId,
                   },
                 },
@@ -97,67 +97,67 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
                       id: questionId,
                     },
                   },
-                  application: choiceType.questionWithFactor,
+                  application: context.questionWithFactor,
                 },
                 update: {
-                  application: choiceType.questionWithFactor,
+                  application: context.questionWithFactor,
                 },
               },
             },
           },
           create: {
-            id: choiceType.factor,
+            id: context.factor,
             deliberation: {
               connect: {
                 id: deliberationId,
               },
             },
-            ChoiceTypesForQuestions: {
+            ContextsForQuestions: {
               create: {
                 question: {
                   connect: {
                     id: questionId,
                   },
                 },
-                application: choiceType.questionWithFactor,
+                application: context.questionWithFactor,
               },
             },
           },
         })
     )
     await db.$transaction(promises)
-    return json({ choiceTypes })
+    return json({ contexts })
   } else if (action === "deleteDeliberation") {
     const deliberationId = Number(params.deliberationId)!
     await db.deliberation.delete({
       where: { id: deliberationId },
     })
     return redirect("/deliberations")
-  } else if (action === "removeChoiceType") {
-    const choiceTypeId = formData.get("choiceTypeId") as string
+  } else if (action === "removeContext") {
+    const contextId = formData.get("contextId") as string
     const questionId = formData.get("questionId") as string
 
-    await db.choiceTypesForQuestions.delete({
+    await db.contextsForQuestions.delete({
       where: {
-        choiceTypeId_questionId: {
-          choiceTypeId: choiceTypeId,
+        contextId_questionId: {
+          contextId: contextId,
           questionId: questionId,
         },
       },
     })
 
     return json({ success: true })
-  } else if (action === "addChoiceType") {
+  } else if (action === "addContext") {
     const name = formData.get("name") as string
     const application = formData.get("application") as string
     const questionId = formData.get("questionId") as string
     const deliberationId = Number(params.deliberationId)!
 
-    await db.choiceType.create({
+    await db.context.create({
       data: {
         id: name,
         deliberation: { connect: { id: deliberationId } },
-        ChoiceTypesForQuestions: {
+        ContextsForQuestions: {
           create: {
             question: { connect: { id: questionId } },
             application: application,
@@ -212,48 +212,46 @@ function ValueContextInfo() {
 }
 
 export default function DeliberationDashboard() {
-  const { deliberation, initialChoiceTypes } = useLoaderData<typeof loader>()
+  const { deliberation, initialContexts } = useLoaderData<typeof loader>()
   const submit = useSubmit()
   const actionData = useActionData<typeof action>()
-  const [choiceTypes, setChoiceTypes] =
-    useState<Array<{ id: string; application: string | null }>>(
-      initialChoiceTypes
-    )
+  const [contexts, setContexts] =
+    useState<Array<{ id: string; application: string | null }>>(initialContexts)
   const fetcher = useFetcher()
   const [showAddForm, setShowAddForm] = useState(false)
-  const [newChoiceTypeName, setNewChoiceTypeName] = useState("")
-  const [newChoiceTypeApplication, setNewChoiceTypeApplication] = useState("")
+  const [newContextName, setNewContextName] = useState("")
+  const [newContextApplication, setNewContextApplication] = useState("")
 
-  const handleRemoveChoiceType = (choiceTypeId: string, questionId: string) => {
+  const handleRemoveContext = (contextId: string, questionId: string) => {
     fetcher.submit(
-      { action: "removeChoiceType", choiceTypeId, questionId },
+      { action: "removeContext", contextId, questionId },
       { method: "post" }
     )
-    setChoiceTypes((prev) => prev.filter((ct) => ct.id !== choiceTypeId))
+    setContexts((prev) => prev.filter((ct) => ct.id !== contextId))
   }
 
-  const handleAddChoiceType = (questionId: string) => {
+  const handleAddContext = (questionId: string) => {
     fetcher.submit(
       {
-        action: "addChoiceType",
-        name: newChoiceTypeName,
-        application: newChoiceTypeApplication,
+        action: "addContext",
+        name: newContextName,
+        application: newContextApplication,
         questionId,
       },
       { method: "post" }
     )
-    setChoiceTypes((prev) => [
+    setContexts((prev) => [
       ...prev,
-      { id: newChoiceTypeName, application: newChoiceTypeApplication },
+      { id: newContextName, application: newContextApplication },
     ])
     setShowAddForm(false)
-    setNewChoiceTypeName("")
-    setNewChoiceTypeApplication("")
+    setNewContextName("")
+    setNewContextApplication("")
   }
 
   useEffect(() => {
-    if ((actionData as any)?.choiceTypes) {
-      setChoiceTypes((actionData as any).choiceTypes)
+    if ((actionData as any)?.contexts) {
+      setContexts((actionData as any).contexts)
     }
   }, [actionData])
 
@@ -334,11 +332,7 @@ export default function DeliberationDashboard() {
                   <ValueContextInfo />
                 </div>
                 <Form method="post">
-                  <input
-                    type="hidden"
-                    name="action"
-                    value="generateChoiceTypes"
-                  />
+                  <input type="hidden" name="action" value="generateContexts" />
                   <input
                     type="hidden"
                     name="question"
@@ -351,35 +345,33 @@ export default function DeliberationDashboard() {
                     value={deliberation.id}
                   />
                   <LoadingButton type="submit" variant="outline">
-                    {choiceTypes.length > 0
-                      ? "Regenerate"
-                      : "Generate Contexts"}
+                    {contexts.length > 0 ? "Regenerate" : "Generate Contexts"}
                   </LoadingButton>
                 </Form>
               </div>
               <ul className="space-y-2">
-                {choiceTypes.map((choiceType, index) => (
+                {contexts.map((context, index) => (
                   <li
                     key={index}
                     className="flex flex-col bg-gray-50 p-2 rounded-md"
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-semibold">
-                        {choiceType.id}
+                        {context.id}
                       </span>
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() =>
-                          handleRemoveChoiceType(choiceType.id, question.id)
+                          handleRemoveContext(context.id, question.id)
                         }
                       >
                         Remove
                       </Button>
                     </div>
-                    {choiceType.application && (
+                    {context.application && (
                       <span className="text-xs text-gray-600 mt-1">
-                        {choiceType.application}
+                        {context.application}
                       </span>
                     )}
                   </li>
@@ -392,8 +384,8 @@ export default function DeliberationDashboard() {
                     <Input
                       className="mt-2"
                       id="name"
-                      value={newChoiceTypeName}
-                      onChange={(e) => setNewChoiceTypeName(e.target.value)}
+                      value={newContextName}
+                      onChange={(e) => setNewContextName(e.target.value)}
                       placeholder="Enter the choice type name"
                     />
                     <p className="text-sm text-muted-foreground mt-2">
@@ -405,10 +397,8 @@ export default function DeliberationDashboard() {
                     <Input
                       className="mt-2"
                       id="application"
-                      value={newChoiceTypeApplication}
-                      onChange={(e) =>
-                        setNewChoiceTypeApplication(e.target.value)
-                      }
+                      value={newContextApplication}
+                      onChange={(e) => setNewContextApplication(e.target.value)}
                       placeholder="Enter the modified question"
                     />
                     <p className="text-sm text-muted-foreground mt-2">
@@ -423,7 +413,7 @@ export default function DeliberationDashboard() {
                     >
                       Cancel
                     </Button>
-                    <Button onClick={() => handleAddChoiceType(question.id)}>
+                    <Button onClick={() => handleAddContext(question.id)}>
                       Add
                     </Button>
                   </div>

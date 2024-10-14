@@ -6,7 +6,7 @@ import {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url)
-  const choiceTypeId = url.searchParams.get("choiceTypeId")
+  const contextId = url.searchParams.get("contextId")
   const runId = url.searchParams.get("runId")
   const includePageRank = url.searchParams.get("includePageRank")
 
@@ -17,10 +17,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
     options.edgeWhere.user = {}
   }
 
-  if (choiceTypeId) {
+  if (contextId) {
     options.edgeWhere = options.edgeWhere || {}
-    options.edgeWhere.choiceType = {
-      ChoiceTypesOnCases: { some: { choiceTypeId } },
+    options.edgeWhere.context = {
+      ContextsOnCases: { some: { contextId } },
     }
   }
 

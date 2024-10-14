@@ -36,7 +36,7 @@ model Deliberation {
   valuesCards                ValuesCard[]
   edges                      Edge[]
   questions                  Question[]
-  choiceTypes                ChoiceType[]
+  contexts                Context[]
   deduplicatedCards          DeduplicatedCard[]
   chats                      Chat[]
   canonicalValuesCards       CanonicalValuesCard[]
@@ -119,7 +119,7 @@ model Edge {
   fromId         Int
   toId           Int
   story          String              @default("OLD")
-  choiceTypeId   String
+  contextId   String
   runId          String              @default("OLD")
   type           EdgeType            @default(upgrade)
   comment        String?
@@ -128,7 +128,7 @@ model Edge {
   user           User                @relation(fields: [userId], references: [id])
   from           CanonicalValuesCard @relation("FromValueRelation", fields: [fromId], references: [id], onDelete: Cascade)
   to             CanonicalValuesCard @relation("ToValueRelation", fields: [toId], references: [id], onDelete: Cascade)
-  choiceType     ChoiceType          @relation(fields: [choiceTypeId], references: [id])
+  context     Context          @relation(fields: [contextId], references: [id])
   deliberationId Int
   deliberation   Deliberation        @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 
@@ -139,26 +139,28 @@ model EdgeHypothesis {
   fromId         Int
   toId           Int
   story          String?
-  choiceTypeId   String
+  contextId   String
   createdAt      DateTime             @default(now())
   updatedAt      DateTime             @updatedAt
   runId          String               @default("OLD")
   from           CanonicalValuesCard? @relation("FromHypothesizedValueRelation", fields: [fromId], references: [id], onDelete: Cascade)
   to             CanonicalValuesCard? @relation("ToHypothesizedValueRelation", fields: [toId], references: [id], onDelete: Cascade)
-  choiceType     ChoiceType           @relation(fields: [choiceTypeId], references: [id])
+  context     Context           @relation(fields: [contextId], references: [id])
   deliberationId Int
   deliberation   Deliberation         @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 
   @@id([fromId, toId])
 }
 
-model ChoiceType {
-  id                      String                    @id
-  ChoiceTypesForQuestions ChoiceTypesForQuestions[]
-  Edge                    Edge[]
-  EdgeHypothesis          EdgeHypothesis[]
-  deliberationId          Int
-  deliberation            Deliberation              @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+model Context {
+  id             String           @default(cuid())
+  deliberationId Int
+  deliberation   Deliberation     @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+  ContextsForQuestions ContextsForQuestions[]
+  Edge           Edge[]
+  EdgeHypothesis EdgeHypothesis[]
+
+  @@id([id, deliberationId])
 }
 
 model Question {
@@ -166,36 +168,21 @@ model Question {
   question                String
   title                   String?
   seedMessage             String?
-  ChoiceTypesForQuestions ChoiceTypesForQuestions[]
+  ContextsForQuestions ContextsForQuestions[]
   deliberationId          Int
   deliberation            Deliberation              @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 }
 
-model ChoiceTypesForQuestions {
-  choiceType   ChoiceType @relation(fields: [choiceTypeId], references: [id], onDelete: Cascade)
+model ContextsForQuestions {
+  context   Context @relation(fields: [contextId], references: [id], onDelete: Cascade)
   question     Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
   application  String?
-  choiceTypeId String
+  contextId String
   questionId   String
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 
-  @@id([choiceTypeId, questionId])
-}
-
-model DeduplicatedCard {
-  id                        Int                          @id @default(autoincrement())
-  generation                Int
-  title                     String
-  description               String
-  policies                  String[]
-  createdAt                 DateTime                     @default(now())
-  updatedAt                 DateTime                     @updatedAt
-  embedding                 Unsupported("vector(1536)")?
-  deduplications            Deduplication[]
-  DeduplicationVerification DeduplicationVerification[]
-  deliberationId            Int
-  deliberation              Deliberation                 @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+  @@id([contextId, questionId])
 }
 
 model Deduplication {

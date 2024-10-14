@@ -48,7 +48,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     },
   })
 
-  // Only update question and choiceTypesForQuestion if the question has changed
+  // Only update question and contextsForQuestion if the question has changed
   if (newQuestion !== originalQuestion) {
     await Promise.all([
       db.question.update({
@@ -61,7 +61,7 @@ export const action: ActionFunction = async ({ request, params }) => {
           title: newQuestion,
         },
       }),
-      db.choiceTypesForQuestions.deleteMany({
+      db.contextsForQuestions.deleteMany({
         where: { questionId },
       }),
     ])

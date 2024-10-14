@@ -18,8 +18,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const questionId = url.searchParams.get("questionId")
   if (questionId) {
     options.edgeWhere = options.edgeWhere || {}
-    options.edgeWhere.choiceType = {
-      ChoiceTypesOnCases: { some: { questionId } },
+    options.edgeWhere.context = {
+      ContextsOnCases: { some: { questionId } },
     }
   }
 

@@ -25,16 +25,6 @@ export async function embedNonCanonicalCard(card: ValuesCard): Promise<void> {
   )}::vector WHERE id = ${card.id};`
 }
 
-export async function embedCandidate(card: {
-  policies: string[]
-}): Promise<number[]> {
-  const syntheticCard = {
-    policies: card.policies ?? [],
-  } as ValuesCard
-
-  return embedValue(card)
-}
-
 export async function getNonCanonicalCardsWithoutEmbedding(): Promise<
   Array<ValuesCard>
 > {

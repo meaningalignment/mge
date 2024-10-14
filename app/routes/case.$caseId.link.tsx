@@ -49,7 +49,7 @@ export async function action({ request }: LoaderFunctionArgs) {
       toId: edge.to.id,
       fromId: edge.from.id,
       story: edge.story,
-      contextId: edge.choiceTypeId,
+      contextId: edge.contextId,
       runId: edge.runId,
       relationship,
       comment,
@@ -57,7 +57,7 @@ export async function action({ request }: LoaderFunctionArgs) {
     update: {
       story: edge.story,
       runId: edge.runId,
-      contextId: edge.choiceTypeId,
+      contextId: edge.contextId,
       relationship,
       comment,
     },
@@ -146,7 +146,7 @@ export default function LinkScreen() {
         }`}</h1>
         <div className="w-full max-w-2xl">
           <h1 className="text-md font-bold mb-2 pl-12 md:pl-0">
-            {draw[index].choiceTypeId}
+            {draw[index].contextId}
           </h1>
           <StaticChatMessage
             onFinished={() => {
@@ -179,7 +179,7 @@ export default function LinkScreen() {
         >
           When{" "}
           <span className="font-bold">
-            {draw[index].choiceTypeId.split(" ").slice(1).join(" ")}
+            {draw[index].contextId.split(" ").slice(1).join(" ")}
           </span>
           , this person used to focus on{" "}
           <span className="font-bold">{draw[index].from.title}</span>.<br />

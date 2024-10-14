@@ -1,11 +1,12 @@
 import { CanonicalValuesCard, ValuesCard } from "@prisma/client"
-import { embeddingService as embeddings } from "./embedding"
 import { db, inngest } from "~/config.server"
 import {
   deduplicateValues,
   getExistingDuplicateValue,
   getRepresentativeValue,
 } from "values-tools"
+import { embedDeduplicatedCard } from "./embedding"
+import { embedValue } from "values-tools"
 
 async function createCanonicalCard(data: {
   title: string
@@ -23,7 +24,7 @@ async function createCanonicalCard(data: {
     },
   })
   // Embed the canonical values card.
-  await embeddings.embedDeduplicatedCard(canonical as any)
+  await embedDeduplicatedCard(canonical as any)
   return canonical
 }
 
@@ -55,9 +56,7 @@ async function fetchSimilarCanonicalCard(
   )
 
   // Embed the candidate.
-  const card_embeddings = await embeddings.embedCandidate({
-    policies: candidate.policies || [],
-  })
+  const card_embeddings = await embedValue(candidate)
 
   console.log("Got card embeddings, fetching canonical card.")
 

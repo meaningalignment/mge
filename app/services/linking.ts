@@ -87,7 +87,7 @@ async function getDraw(
       from: h.from,
       story: h.story,
       runId: h.runId,
-      contextId: h.choiceTypeId,
+      contextId: h.contextId,
     } as EdgeHypothesisData
   })
 }
@@ -213,7 +213,7 @@ export const hypothesize = inngest.createFunction(
 
     // Get contexts.
     const contexts = await step.run("Fetching contexts", async () =>
-      db.choiceType.findMany()
+      db.context.findMany()
     )
 
     //
@@ -222,7 +222,7 @@ export const hypothesize = inngest.createFunction(
     for (const context of contexts) {
       const values = (await step.run(`Fetch values`, async () =>
         db.canonicalValuesCard.findMany({
-          where: { choiceType: { id: context.id } },
+          where: { context: { id: context.id } },
         })
       )) as any as CanonicalValuesCard[]
 
