@@ -1,5 +1,8 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node"
-import { Options, summarizeGraph } from "~/values-tools/generate-moral-graph"
+import {
+  Options,
+  summarizeGraph,
+} from "~/values-tools-legacy/generate-moral-graph"
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url)

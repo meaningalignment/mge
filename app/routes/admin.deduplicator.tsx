@@ -4,7 +4,7 @@ import { useLoaderData } from "@remix-run/react"
 import ValuesCard from "~/components/values-card"
 import { db } from "~/config.server"
 
-import { ClusterableObject, cluster } from "~/values-tools/deduplicator2"
+import { ClusterableObject, cluster } from "~/values-tools-legacy/deduplicator2"
 
 export async function loader() {
   const cards = await db.$queryRawUnsafe<Array<ClusterableObject>>(

@@ -12,7 +12,6 @@ import { db } from "~/config.server"
 import { Button } from "~/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card"
 import { redirect } from "@remix-run/node"
-import { generateChoiceTypes } from "~/values-tools/choice-type"
 import LoadingButton from "~/components/loading-button"
 import {
   Tooltip,
@@ -27,7 +26,7 @@ import {
 } from "@radix-ui/react-icons"
 import { Input } from "~/components/ui/input"
 import { Label } from "~/components/ui/label"
-// Import the necessary Shadcn UI components
+import { generateContexts } from "values-tools"
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const deliberationId = Number(params.deliberationId)!
@@ -71,7 +70,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     const question = formData.get("question") as string
     const questionId = formData.get("questionId") as string
     const deliberationId = Number(params.deliberationId)!
-    const choiceTypes = await generateChoiceTypes(question)
+    const choiceTypes = await generateContexts(question)
 
     await db.choiceType.deleteMany({
       where: {

@@ -12,7 +12,7 @@ import { db } from "~/config.server"
 import { cn, getDeduplicate } from "~/lib/utils"
 import { Button } from "~/components/ui/button"
 import { useState } from "react"
-import { generation } from "~/values-tools/deduplicator2"
+import { generation } from "~/values-tools-legacy/deduplicator2"
 
 type Response = "same" | "different"
 type Pair = {

@@ -3,7 +3,7 @@ import { kv } from "@vercel/kv"
 import { AssistantResponse, DataMessage } from "ai"
 import { AssistantStream } from "openai/lib/AssistantStream.mjs"
 import { openai, ensureLoggedIn, db } from "~/config.server"
-import { embeddingService } from "~/values-tools/embedding"
+import { embeddingService } from "~/values-tools-legacy/embedding"
 
 export const config = { maxDuration: 300 }
 

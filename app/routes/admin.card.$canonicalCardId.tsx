@@ -8,7 +8,10 @@ import { Link, useLoaderData } from "@remix-run/react"
 import { CanonicalValuesCard } from "@prisma/client"
 import ValuesCard from "~/components/values-card"
 import { db } from "~/config.server"
-import { runTaskFromForm, updateCardFromForm } from "~/values-tools/critique"
+import {
+  runTaskFromForm,
+  updateCardFromForm,
+} from "~/values-tools-legacy/critique"
 // import { embeddingService } from "~/values-tools/embedding"
 import { ValuesCardEditor } from "~/components/values-card-editor"
 

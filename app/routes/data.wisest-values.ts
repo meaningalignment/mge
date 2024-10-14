@@ -1,6 +1,6 @@
 import { json } from "@remix-run/node"
-import { summarizeGraph } from "~/values-tools/generate-moral-graph"
-import { MoralGraphSummary } from "~/values-tools/moral-graph-summary"
+import { summarizeGraph } from "~/values-tools-legacy/generate-moral-graph"
+import { MoralGraphSummary } from "~/values-tools-legacy/moral-graph-summary"
 
 type WiseValue = MoralGraphSummary["values"][0] & {
   wisdom: number
