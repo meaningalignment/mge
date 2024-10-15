@@ -170,40 +170,42 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 function ValueContextInfo() {
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button variant="ghost" size="sm" className="ml-2">
-          <QuestionMarkCircledIcon className="h-4 w-4" />
-          <span className="sr-only">Value</span>
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent className="w-80 p-4">
-        <div className="space-y-2">
-          <h3 className="font-semibold text-sm">Value Contexts</h3>
-          <p className="text-sm">
-            Often when we disagree about values, we're actually disagreeing
-            about the specific situations to which those values apply.
-          </p>
-          <p className="text-sm">
-            For example, two people might disagree about immigration policies in
-            general, but agree on how to handle the case of an immigrant who's
-            lived in the country for 20 years.
-          </p>
-          <h4 className="font-semibold text-sm mt-4">How It Works</h4>
-          <ul className="list-disc list-inside text-sm space-y-1">
-            <li>
-              Value contexts are generated automatically in the background.
-            </li>
-            <li>You can edit these to better suit your discussion needs.</li>
-            <li>
-              The final graph shows the wisest value for each value context for
-              your question.
-            </li>
-            <li>This helps bridge disagreements and find common ground.</li>
-          </ul>
-        </div>
-      </TooltipContent>
-    </Tooltip>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button variant="ghost" size="sm" className="ml-2">
+            <QuestionMarkCircledIcon className="h-4 w-4" />
+            <span className="sr-only">Value</span>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent className="w-80 p-4">
+          <div className="space-y-2">
+            <h3 className="font-semibold text-sm">Value Contexts</h3>
+            <p className="text-sm">
+              Often when we disagree about values, we're actually disagreeing
+              about the specific situations to which those values apply.
+            </p>
+            <p className="text-sm">
+              For example, two people might disagree about immigration policies
+              in general, but agree on how to handle the case of an immigrant
+              who's lived in the country for 20 years.
+            </p>
+            <h4 className="font-semibold text-sm mt-4">How It Works</h4>
+            <ul className="list-disc list-inside text-sm space-y-1">
+              <li>
+                Value contexts are generated automatically in the background.
+              </li>
+              <li>You can edit these to better suit your discussion needs.</li>
+              <li>
+                The final graph shows the wisest value for each value context
+                for your question.
+              </li>
+              <li>This helps bridge disagreements and find common ground.</li>
+            </ul>
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   )
 }
 
