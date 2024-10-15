@@ -1,36 +1,36 @@
-import { v4 as uuid } from "uuid"
-import { LoaderFunctionArgs, json, redirect } from "@remix-run/node"
-import { auth, db } from "~/config.server"
-import { Chat } from "@prisma/client"
+// import { v4 as uuid } from "uuid"
+// import { LoaderFunctionArgs, json, redirect } from "@remix-run/node"
+// import { auth, db } from "~/config.server"
+// import { Chat } from "@prisma/client"
 
-export async function loader({ request, params }: LoaderFunctionArgs) {
-  const user = await auth.getCurrentUser(request)
+// export async function loader({ request, params }: LoaderFunctionArgs) {
+//   const user = await auth.getCurrentUser(request)
 
-  if (user?.isAdmin !== true) {
-    return json({ message: "Not authorized" }, { status: 401 })
-  }
+//   if (user?.isAdmin !== true) {
+//     return json({ message: "Not authorized" }, { status: 401 })
+//   }
 
-  // Fetch the chat.
-  const chatId = params.chatId
-  const chat = (await db.chat.findFirst({
-    where: { id: chatId },
-  })) as Chat | null
+//   // Fetch the chat.
+//   const chatId = params.chatId
+//   const chat = (await db.chat.findFirst({
+//     where: { id: chatId },
+//   })) as Chat | null
 
-  if (!chat) {
-    return json({ message: "Chat not found" }, { status: 404 })
-  }
+//   if (!chat) {
+//     return json({ message: "Chat not found" }, { status: 404 })
+//   }
 
-  // Duplicate the chat.
-  const newChat = await db.chat.completions.create({
-    data: {
-      ...(chat as any),
-      id: uuid(),
-      userId: user!.id,
-      copiedFromId: chat.id,
-      createdAt: new Date(),
-    },
-  })
+//   // Duplicate the chat.
+//   const newChat = await db.chat.completions.create({
+//     data: {
+//       ...(chat as any),
+//       id: uuid(),
+//       userId: user!.id,
+//       copiedFromId: chat.id,
+//       createdAt: new Date(),
+//     },
+//   })
 
-  // Redirect to duplicate.
-  return redirect(`/case/${newChat.caseId}/chat/${newChat.id}`)
-}
+//   // Redirect to duplicate.
+//   return redirect(`/case/${newChat.questionId}/chat/${newChat.id}`)
+// }

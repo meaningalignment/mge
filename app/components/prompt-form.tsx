@@ -16,9 +16,9 @@ export interface PromptProps
 }
 
 const FinishedView = () => {
-  const { caseId } = useParams()
-  
-  const continueUrl = `/case/${caseId}/select`
+  const { questionId } = useParams()
+
+  const continueUrl = `/case/${questionId}/select`
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -27,7 +27,11 @@ const FinishedView = () => {
       </p>
       <div className="flex justify-center pt-2">
         <LoadingButton iconRight={<IconArrowRight className="ml-2" />}>
-          <Link to={continueUrl} prefetch="render" className="flex flex-row items-center justify-center">
+          <Link
+            to={continueUrl}
+            prefetch="render"
+            className="flex flex-row items-center justify-center"
+          >
             Continue
           </Link>
         </LoadingButton>

@@ -3,7 +3,7 @@ import { kv } from "@vercel/kv"
 import { AssistantResponse, DataMessage } from "ai"
 import { AssistantStream } from "openai/lib/AssistantStream.mjs"
 import { openai, ensureLoggedIn, db } from "~/config.server"
-import { embeddingService } from "~/values-tools-legacy/embedding"
+import { embedNonCanonicalCard } from "~/services/embedding"
 
 export const config = { maxDuration: 300 }
 
@@ -63,7 +63,7 @@ async function submitValuesCard(
     },
     where: { chatId: chat.id },
   })
-  await embeddingService.embedNonCanonicalCard(card)
+  await embedNonCanonicalCard(card)
   const data = {
     type: "values_card",
     title,

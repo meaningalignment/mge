@@ -6,14 +6,6 @@ import MoralGraphSettings, {
   defaultGraphSettings,
 } from "~/components/moral-graph-settings"
 import { useLoaderData, useSearchParams } from "@remix-run/react"
-import { json } from "@remix-run/node"
-import { db } from "~/config.server"
-
-export async function loader() {
-  const prolificUsersExist =
-    (await db.user.findFirst({ where: { prolificId: { not: null } } })) !== null
-  return json({ prolificUsersExist })
-}
 
 function LoadingScreen() {
   return (
@@ -24,7 +16,6 @@ function LoadingScreen() {
 }
 
 export default function DefaultGraphPage() {
-  const { prolificUsersExist } = useLoaderData<typeof loader>()
   const [settings, setSettings] = useState<GraphSettings>(defaultGraphSettings)
   const [graph, setGraph] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -42,17 +33,10 @@ export default function DefaultGraphPage() {
 
     const headers = { "Content-Type": "application/json" }
     const params: {
-      caseId?: string
+      questionId?: string
       hypothesisRunId?: string
       batches?: string
     } = {}
-
-    if (prolificUsersExist) {
-      if (searchParams.has("batches"))
-        params.batches = searchParams.get("batches")!
-      if (settings?.caseId) params.caseId = settings?.caseId
-      if (settings?.run) params.hypothesisRunId = settings?.run
-    }
 
     const graph = await fetch(
       "/api/data/edges?" + new URLSearchParams(params).toString(),
@@ -99,15 +83,12 @@ export default function DefaultGraphPage() {
         )}
       </div>
 
-      {/* Settings - only when we have prolific users */}
-      {prolificUsersExist && (
-        <div className="hidden md:block flex-shrink-0 max-w-sm">
-          <MoralGraphSettings
-            initialSettings={settings}
-            onUpdateSettings={onUpdateSettings}
-          />
-        </div>
-      )}
+      <div className="hidden md:block flex-shrink-0 max-w-sm">
+        <MoralGraphSettings
+          initialSettings={settings}
+          onUpdateSettings={onUpdateSettings}
+        />
+      </div>
     </div>
   )
 }

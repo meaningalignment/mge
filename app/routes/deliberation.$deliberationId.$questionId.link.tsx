@@ -5,7 +5,6 @@ import { LoaderFunctionArgs, json } from "@remix-run/node"
 import { auth, db } from "~/config.server"
 import ValuesCard from "~/components/values-card"
 import { useEffect, useState } from "react"
-import LinkingService from "~/services/linking"
 import { IconArrowRight } from "~/components/ui/icons"
 import { Separator } from "../components/ui/separator"
 import { Loader2 } from "lucide-react"
@@ -15,14 +14,13 @@ import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group"
 import { Label } from "~/components/ui/label"
 import { Textarea } from "~/components/ui/textarea"
 import va from "@vercel/analytics"
+import { getDraw } from "~/services/linking"
 
 type Relationship = "upgrade" | "no_upgrade" | "not_sure"
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const userId = await auth.getUserId(request)
-  const service = new LinkingService(db)
-
-  const draw = await service.getDraw(userId, 3)
+  const draw = await getDraw(userId, 3)
 
   return json({ draw })
 }
@@ -45,20 +43,27 @@ export async function action({ request }: LoaderFunctionArgs) {
       },
     },
     create: {
-      userId,
-      toId: edge.to.id,
-      fromId: edge.from.id,
+      user: { connect: { id: userId } },
+      to: { connect: { id: edge.to.id } },
+      from: { connect: { id: edge.from.id } },
       story: edge.story,
+      context: {
+        connect: {
+          id_deliberationId: {
+            id: edge.contextId,
+            deliberationId: edge.deliberationId,
+          },
+        },
+      },
+      deliberation: { connect: { id: edge.deliberationId } },
       contextId: edge.contextId,
-      hypothesisRunId: edge.hypothesisRunId,
-      relationship,
+      type: relationship,
       comment,
     },
     update: {
       story: edge.story,
-      hypothesisRunId: edge.hypothesisRunId,
       contextId: edge.contextId,
-      relationship,
+      type: relationship,
       comment,
     },
   })
@@ -69,7 +74,7 @@ export async function action({ request }: LoaderFunctionArgs) {
 export default function LinkScreen() {
   const navigate = useNavigate()
 
-  const { caseId } = useParams()
+  const { questionId } = useParams()
 
   const [index, setIndex] = useState<number>(0)
   const [showCards, setShowCards] = useState(false)
@@ -97,7 +102,7 @@ export default function LinkScreen() {
       comment,
     }
 
-    const response = await fetch(`/case/${caseId}/link`, {
+    const response = await fetch(`/case/${questionId}/link`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

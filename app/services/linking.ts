@@ -40,7 +40,7 @@ async function getDistanceFromUserValuesMap(
   return map
 }
 
-async function getDraw(
+export async function getDraw(
   userId: number,
   size: number = 3
 ): Promise<EdgeHypothesisData[]> {

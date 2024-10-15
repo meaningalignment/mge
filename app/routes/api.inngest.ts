@@ -1,24 +1,16 @@
 import { serve } from "inngest/remix"
-import { deduplicate as deduplicate_old } from "~/services/deduplication"
-import { embed } from "~/values-tools-legacy/embedding"
+import { deduplicate } from "~/services/deduplication"
+import { embed } from "~/services/embedding"
 import { inngest } from "~/config.server"
 import { hypothesize, hypothesize_cron } from "~/services/linking"
 // import { evaluateDialogues } from "~/values-tools/rater"
-import { deduplicate as deduplicate_new } from "~/values-tools-legacy/deduplicator2"
 
 const handler = serve(inngest, [
-  // seed,
-  deduplicate_old,
   embed,
-
   hypothesize,
   hypothesize_cron,
   // evaluateDialogues,
-
-  // this is run at the start of a new dedupe generation
-  // seedGeneration,
-
-  deduplicate_new,
+  deduplicate,
 ])
 
 export const config = {

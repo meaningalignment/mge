@@ -6,8 +6,9 @@ import { useNavigation } from "@remix-run/react"
 export default function LoadingButton({
   children,
   disabled,
+  iconRight,
   ...props
-}: ButtonProps) {
+}: ButtonProps & { iconRight?: React.ReactNode }) {
   const navigation = useNavigation()
   const [isLoading, setIsLoading] = useState(false)
 
@@ -24,6 +25,7 @@ export default function LoadingButton({
     <Button disabled={isLoading || disabled} {...props}>
       {children}
       {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+      {iconRight && iconRight}
     </Button>
   )
 }

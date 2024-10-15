@@ -1,13 +1,11 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node"
-import {
-  Options,
-  summarizeGraph,
-} from "~/values-tools-legacy/generate-moral-graph"
+import { summarizeGraph } from "values-tools"
+import { db } from "~/config.server"
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url)
 
-  const options: Options = {}
+  const options: any = {}
 
   const hypothesisRunId = url.searchParams.get("hypothesisRunId")
   if (hypothesisRunId) {
@@ -26,7 +24,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   options.includeAllEdges = url.searchParams.get("includeAllEdges") === "true"
   options.includePageRank = url.searchParams.get("includePageRank") === "true"
 
-  const graph = await summarizeGraph(options)
+  const edges = await db.edge.findMany({
+    where: options.edgeWhere,
+  })
+  const values = await db.valuesCard.findMany()
+  const graph = await summarizeGraph(values, edges, options)
 
   return json(graph)
 }

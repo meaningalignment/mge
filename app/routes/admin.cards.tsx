@@ -1,4 +1,3 @@
-import Header from "~/components/header"
 import { Link, useLoaderData } from "@remix-run/react"
 import { ActionFunctionArgs, json } from "@remix-run/node"
 import { auth, db } from "~/config.server"

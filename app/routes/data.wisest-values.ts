@@ -1,6 +1,7 @@
 import { json } from "@remix-run/node"
-import { summarizeGraph } from "~/values-tools-legacy/generate-moral-graph"
-import { MoralGraphSummary } from "~/values-tools-legacy/moral-graph-summary"
+import { summarizeGraph } from "values-tools"
+import { MoralGraph as MoralGraphSummary } from "values-tools"
+import { db } from "~/config.server"
 
 type WiseValue = MoralGraphSummary["values"][0] & {
   wisdom: number
@@ -8,11 +9,9 @@ type WiseValue = MoralGraphSummary["values"][0] & {
 }
 
 export async function loader() {
-  const { edges, values } = await summarizeGraph({
-    includeAllEdges: true,
-    includePageRank: true,
-    includeContexts: true,
-  })
+  const allValues = await db.valuesCard.findMany()
+  const allEdges = await db.edge.findMany()
+  const { edges, values } = await summarizeGraph(allValues, allEdges)
 
   edges.forEach((link) => {
     const t = values.find((node) => node.id === link.wiserValueId) as

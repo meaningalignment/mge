@@ -3,7 +3,6 @@ import Header from "~/components/header"
 import { useLoaderData } from "@remix-run/react"
 import { auth, db } from "~/config.server"
 import Carousel from "~/components/carousel"
-import { useCurrentUser } from "~/root"
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const userId = await auth.getUserId(request)
@@ -11,7 +10,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const [
     userValuesCount,
     totalValuesCount,
-    totalVotes,
     totalRelationships,
     carouselValues,
   ] = await Promise.all([
@@ -23,12 +21,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
       },
     }),
     db.canonicalValuesCard.count(),
-    db.vote.count(),
     db.edge.count(),
     db.canonicalValuesCard.findMany({
       take: 12,
       include: {
-        Vote: true,
         valuesCards: {
           select: {
             chat: {
@@ -38,16 +34,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
             },
           },
         },
-        _count: {
-          select: {
-            Vote: true,
-          },
-        },
-      },
-      orderBy: {
-        Vote: {
-          _count: "desc",
-        },
       },
     }),
   ])
@@ -55,19 +41,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
   return json({
     userValuesCount,
     totalValuesCount,
-    totalVotes,
     totalRelationships,
     carouselValues,
   })
 }
 
 export default function FinishedScreen() {
-  const user = useCurrentUser()
-
   const {
     userValuesCount,
     totalValuesCount,
-    totalVotes,
     totalRelationships,
     carouselValues,
   } = useLoaderData<typeof loader>()
@@ -89,16 +71,8 @@ export default function FinishedScreen() {
             like you have articulated <strong>{totalValuesCount} values</strong>
             . A total of{" "}
             <strong>{totalRelationships} value-to-value relationships</strong>{" "}
-            have been submitted, and <strong>{totalVotes} values</strong> have
-            earned endorsements from other participants.
+            have been submitted.
           </p>
-          {user?.prolificId && (
-            <div className="my-8 p-8 border-2 border-border rounded-xl">
-              <h1 className="text-2xl my-8">
-                Your prolific completion code is <strong>CG2S2REM</strong>
-              </h1>
-            </div>
-          )}
         </div>
 
         <div className="overflow-x-hidden w-screen h-full flex justify-center mt-16">

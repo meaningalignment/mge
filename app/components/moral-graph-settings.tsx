@@ -13,14 +13,14 @@ import { capitalize } from "~/lib/utils"
 
 export type GraphSettings = {
   run: "prolific_50" | "prolific_325" | "prolific_125" | null
-  caseId: "abortion" | "weapons" | "parenting" | null
+  questionId: "abortion" | "weapons" | "parenting" | null
   visualizeEdgeCertainty: boolean
   visualizeWisdomScore: boolean
 }
 
 export const defaultGraphSettings: GraphSettings = {
   run: "prolific_325",
-  caseId: null,
+  questionId: null,
   visualizeEdgeCertainty: true,
   visualizeWisdomScore: true,
 }
@@ -85,17 +85,22 @@ export default function MoralGraphSettings({
         <Label htmlFor="run">Case</Label>
         <Select
           onValueChange={(value: any) => {
-            setSettings({ ...settings, caseId: value !== "all" ? value : null })
+            setSettings({
+              ...settings,
+              questionId: value !== "all" ? value : null,
+            })
           }}
         >
           <SelectTrigger id="run">
             <SelectValue
               placeholder={
-                settings.caseId ? capitalize(settings.caseId) : "All Cases"
+                settings.questionId
+                  ? capitalize(settings.questionId)
+                  : "All Cases"
               }
             />
           </SelectTrigger>
-          <SelectContent defaultValue={settings.caseId ?? "all"}>
+          <SelectContent defaultValue={settings.questionId ?? "all"}>
             <SelectItem value="all">All Cases</SelectItem>
             <SelectItem value="abortion">Abortion</SelectItem>
             <SelectItem value="weapons">Weapons</SelectItem>
@@ -103,13 +108,13 @@ export default function MoralGraphSettings({
           </SelectContent>
         </Select>
       </div>
-      {settings.caseId ? (
+      {settings.questionId ? (
         <p className="text-xs text-gray-400 mb-4">
           Show values articulated when users were asked how they think ChatGPT
           should respond to:
           <br />
           <br />
-          <strong>"{caseQuestions[settings.caseId]}"</strong>
+          <strong>"{caseQuestions[settings.questionId]}"</strong>
         </p>
       ) : (
         <p className="text-xs text-gray-400 mb-4">Show values for all cases.</p>

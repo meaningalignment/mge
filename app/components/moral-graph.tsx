@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react"
 import ValuesCard from "./values-card"
 import * as d3 from "d3"
-import { MoralGraphSummary } from "~/values-tools-legacy/moral-graph-summary"
+import { MoralGraph as MoralGraphSummary } from "values-tools"
 import { GraphSettings } from "./moral-graph-settings"
 import { CanonicalValuesCard } from "@prisma/client"
 
@@ -303,6 +303,7 @@ function Graph({
         setPosition({ x: event.clientX, y: event.clientY })
       })
       .on("mouseout", () => {
+        // @ts-ignore
         hoverTimeout = setTimeout(() => {
           setHoveredLink(null)
         }, 200) // 200 milliseconds delay
@@ -326,6 +327,8 @@ function Graph({
         setPosition({ x: event.clientX, y: event.clientY })
       })
       .on("mouseout", () => {
+        // @ts-ignore
+
         hoverTimeout = setTimeout(() => {
           setHoveredLink(null)
         }, 200) // 200 milliseconds delay
@@ -348,6 +351,7 @@ function Graph({
         setPosition({ x: event.clientX, y: event.clientY })
       })
       .on("mouseout", () => {
+        // @ts-ignore
         hoverTimeout = setTimeout(() => {
           setHoveredNode(null)
         }, 200) // 200 milliseconds delay

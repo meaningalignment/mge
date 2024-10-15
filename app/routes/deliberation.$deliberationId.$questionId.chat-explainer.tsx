@@ -6,7 +6,7 @@ import { cn } from "~/lib/utils"
 import ContinueButton from "~/components/continue-button"
 
 export default function ChatExplainerScreen() {
-  const { caseId } = useParams()
+  const { questionId } = useParams()
   const [showNext, setShowNext] = useState(false)
 
   return (
@@ -28,7 +28,7 @@ export default function ChatExplainerScreen() {
           )}
         >
           <div className="flex flex-row mx-auto justify-center items-center space-x-2 pt-8">
-            <a href={`/case/${caseId}/chat`}>
+            <a href={`/case/${questionId}/chat`}>
               <ContinueButton event="Started Chat" />
             </a>
           </div>

@@ -3,12 +3,12 @@ import { NavLink, Outlet, useLoaderData } from "@remix-run/react"
 import { db } from "~/config.server"
 
 export const loader = async () => {
-  const cases = await db.case.findMany()
+  const cases = await db.question.findMany()
   return json({ cases })
 }
 
 export default function AdminVotes() {
-  const { cases } = useLoaderData<typeof loader>() 
+  const { cases } = useLoaderData<typeof loader>()
 
   return (
     <div className="grid grid-cols-5">

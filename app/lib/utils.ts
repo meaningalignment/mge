@@ -1,7 +1,5 @@
 import {
   CanonicalValuesCard,
-  DeduplicatedCard,
-  Deduplication,
   ValuesCard,
 } from "@prisma/client"
 import { clsx, type ClassValue } from "clsx"
@@ -143,13 +141,4 @@ export function getPartyAffiliation(counts: {
   }
 
   return null
-}
-
-export function getDeduplicate(
-  valuesCard: ValuesCard & {
-    deduplications: (Deduplication & { deduplicatedCard: DeduplicatedCard })[]
-  }
-): DeduplicatedCard {
-  return valuesCard.deduplications.filter((d) => d.generation === 3)[0]
-    .deduplicatedCard
 }
