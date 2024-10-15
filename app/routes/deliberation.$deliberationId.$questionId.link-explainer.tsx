@@ -6,7 +6,7 @@ import { cn } from "~/lib/utils"
 import ContinueButton from "~/components/continue-button"
 
 export default function LinkExplainerScreen() {
-  const { questionId } = useParams()
+  const { deliberationId, questionId } = useParams()
   const [showNext, setShowNext] = useState(false)
 
   return (
@@ -30,7 +30,7 @@ export default function LinkExplainerScreen() {
           )}
         >
           <div className="flex flex-row mx-auto justify-center items-center space-x-2 pt-8">
-            <a href={`/case/${questionId}/link`}>
+            <a href={`/deliberation/${deliberationId}/${questionId}/link`}>
               <ContinueButton text="Let's Go" event="Started Linking" />
             </a>
           </div>

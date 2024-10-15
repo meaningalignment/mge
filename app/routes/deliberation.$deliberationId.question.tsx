@@ -5,11 +5,12 @@ import StaticChatMessage from "~/components/static-chat-message"
 import { cn } from "~/lib/utils"
 import { useLoaderData } from "@remix-run/react"
 import ContinueButton from "~/components/continue-button"
-import { json, redirect } from "@remix-run/node"
+import { json, LoaderFunctionArgs, redirect } from "@remix-run/node"
 import { db } from "~/config.server"
 import { Question } from "@prisma/client"
 
-export async function loader() {
+export async function loader({ params }: LoaderFunctionArgs) {
+  const { deliberationId } = params
   const questions = await db.question.findMany()
 
   if (questions.length === 0) {
@@ -18,7 +19,9 @@ export async function loader() {
 
   // Skip question select if there's only one question.
   if (questions.length === 1) {
-    return redirect(`/question/${questions[0].id}/chat-explainer`)
+    return redirect(
+      `/deliberation/${deliberationId}/${questions[0].id}/chat-explainer`
+    )
   }
 
   return json({ questions: questions })

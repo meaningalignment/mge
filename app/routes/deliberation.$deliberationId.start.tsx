@@ -1,6 +1,6 @@
-import { json } from "@remix-run/node"
+import { json, LoaderFunctionArgs } from "@remix-run/node"
 import { Button } from "~/components/ui/button"
-import { Link, useLoaderData } from "@remix-run/react"
+import { Link, useLoaderData, useParams } from "@remix-run/react"
 import Header from "~/components/header"
 import Carousel from "~/components/carousel"
 import { db } from "~/config.server"
@@ -8,12 +8,13 @@ import { useState } from "react"
 import { Loader2 } from "lucide-react"
 import va from "@vercel/analytics"
 
-export async function loader() {
-  const title =
-    process.env.START_SCREEN_TITLE ?? "Welcome to Democratic Fine-Tuning!"
-  const description =
-    process.env.START_SCREEN_DESCRIPTION ??
-    "You will be asked how ChatGPT should act in a morally tricky situation by articuating a value and considering those of others. Your input will contribute to a moral graph used to fine-tune future models. This process will take around 15 minutes."
+export async function loader({ params }: LoaderFunctionArgs) {
+  const { deliberationId } = params
+  const deliberation = await db.deliberation.findFirst({
+    where: { id: Number(deliberationId) },
+  })
+  const title = deliberation?.title
+  const description = deliberation?.welcomeText
 
   const carouselValues = await db.canonicalValuesCard.findMany({
     take: 12,
@@ -45,6 +46,7 @@ export async function loader() {
 }
 
 export default function StartPage() {
+  const { deliberationId } = useParams()
   const [isLoading, setIsLoading] = useState(false)
   const { carouselValues, title, description } = useLoaderData<typeof loader>()
 
@@ -55,7 +57,10 @@ export default function StartPage() {
         <div className="flex flex-col items-center mx-auto max-w-2xl text-center px-8">
           <h1 className="text-3xl font-bold mb-8">{title}</h1>
           <p className="text-sm text-neutral-500 mb-8">{description}</p>
-          <Link to="/case/select">
+          <Link
+            prefetch="render"
+            to={`/deliberation/${deliberationId}/question`}
+          >
             <Button
               disabled={isLoading}
               onClick={() => {

@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "Debug Remix Dev Server",
-      "runtimeExecutable": "bun",
+      "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**"],

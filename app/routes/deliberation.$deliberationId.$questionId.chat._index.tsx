@@ -3,7 +3,7 @@ import { ensureLoggedIn, openai } from "~/config.server"
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   await ensureLoggedIn(request)
-  const questionId = params.questionId!
+  const { deliberationId, questionId } = params
   const threadId = (await openai.beta.threads.create({})).id
-  return redirect(`/case/${questionId}/chat/${threadId}`)
+  return redirect(`/deliberation/${deliberationId}/${questionId}/chat/${threadId}`)
 }

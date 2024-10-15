@@ -1,12 +1,12 @@
 import Header from "~/components/header"
-import { Link, useParams } from "@remix-run/react"
+import { useParams } from "@remix-run/react"
 import { useState } from "react"
 import StaticChatMessage from "~/components/static-chat-message"
 import { cn } from "~/lib/utils"
 import ContinueButton from "~/components/continue-button"
 
 export default function ChatExplainerScreen() {
-  const { questionId } = useParams()
+  const { deliberationId, questionId } = useParams()
   const [showNext, setShowNext] = useState(false)
 
   return (
@@ -28,7 +28,7 @@ export default function ChatExplainerScreen() {
           )}
         >
           <div className="flex flex-row mx-auto justify-center items-center space-x-2 pt-8">
-            <a href={`/case/${questionId}/chat`}>
+            <a href={`/deliberation/${deliberationId}/${questionId}/chat`}>
               <ContinueButton event="Started Chat" />
             </a>
           </div>
