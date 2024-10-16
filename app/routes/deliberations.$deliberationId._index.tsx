@@ -22,7 +22,7 @@ import {
 import { QuestionMarkCircledIcon, PlusIcon } from "@radix-ui/react-icons"
 import { Input } from "~/components/ui/input"
 import { Label } from "~/components/ui/label"
-import { generateContexts } from "values-tools"
+import { ChevronDownIcon } from "@radix-ui/react-icons"
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const deliberationId = Number(params.deliberationId)!
@@ -47,84 +47,14 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
       },
     },
   })
-  return {
-    deliberation,
-    initialContexts: deliberation.questions.flatMap((q) =>
-      q.ContextsForQuestions.map((ct) => ({
-        id: ct.context.id,
-        application: ct.application,
-      }))
-    ),
-  }
+  return { deliberation }
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const action = formData.get("action")
 
-  if (action === "generateContexts") {
-    const question = formData.get("question") as string
-    const questionId = formData.get("questionId") as string
-    const deliberationId = Number(params.deliberationId)!
-    const contexts = await generateContexts(question)
-
-    await db.context.deleteMany({
-      where: {
-        ContextsForQuestions: { some: { questionId: questionId } },
-      },
-    })
-
-    const promises = contexts.map(
-      (context: { factor: string; questionWithFactor: string }) =>
-        db.context.upsert({
-          where: { id_deliberationId: { id: context.factor, deliberationId } },
-          update: {
-            ContextsForQuestions: {
-              upsert: {
-                where: {
-                  contextId_questionId_deliberationId: {
-                    contextId: context.factor,
-                    questionId: questionId,
-                    deliberationId: deliberationId,
-                  },
-                },
-                create: {
-                  question: {
-                    connect: {
-                      id: questionId,
-                    },
-                  },
-                  application: context.questionWithFactor,
-                },
-                update: {
-                  application: context.questionWithFactor,
-                },
-              },
-            },
-          },
-          create: {
-            id: context.factor,
-            deliberation: {
-              connect: {
-                id: deliberationId,
-              },
-            },
-            ContextsForQuestions: {
-              create: {
-                question: {
-                  connect: {
-                    id: questionId,
-                  },
-                },
-                application: context.questionWithFactor,
-              },
-            },
-          },
-        })
-    )
-    await db.$transaction(promises)
-    return json({ contexts })
-  } else if (action === "deleteDeliberation") {
+  if (action === "deleteDeliberation") {
     const deliberationId = Number(params.deliberationId)!
     await db.deliberation.delete({
       where: { id: deliberationId },
@@ -173,7 +103,8 @@ function ValueContextInfo() {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="ghost" size="sm" className="ml-2">
+          <Button variant="ghost" size="sm">
+            <h4 className="text-sm font-semibold mr-2">Value Contexts</h4>
             <QuestionMarkCircledIcon className="h-4 w-4" />
             <span className="sr-only">Value</span>
           </Button>
@@ -210,53 +141,18 @@ function ValueContextInfo() {
 }
 
 export default function DeliberationDashboard() {
-  const { deliberation, initialContexts } = useLoaderData<typeof loader>()
+  const { deliberation } = useLoaderData<typeof loader>()
   const submit = useSubmit()
-  const actionData = useActionData<typeof action>()
-  const [contexts, setContexts] =
-    useState<Array<{ id: string; application: string | null }>>(initialContexts)
-  const fetcher = useFetcher()
-  const [showAddForm, setShowAddForm] = useState(false)
-  const [newContextName, setNewContextName] = useState("")
-  const [newContextApplication, setNewContextApplication] = useState("")
-
-  const handleRemoveContext = (contextId: string, questionId: string) => {
-    fetcher.submit(
-      { action: "removeContext", contextId, questionId },
-      { method: "post" }
-    )
-    setContexts((prev) => prev.filter((ct) => ct.id !== contextId))
-  }
-
-  const handleAddContext = (questionId: string) => {
-    fetcher.submit(
-      {
-        action: "addContext",
-        name: newContextName,
-        application: newContextApplication,
-        questionId,
-      },
-      { method: "post" }
-    )
-    setContexts((prev) => [
-      ...prev,
-      { id: newContextName, application: newContextApplication },
-    ])
-    setShowAddForm(false)
-    setNewContextName("")
-    setNewContextApplication("")
-  }
-
-  useEffect(() => {
-    if ((actionData as any)?.contexts) {
-      setContexts((actionData as any).contexts)
-    }
-  }, [actionData])
+  const [openQuestionId, setOpenQuestionId] = useState<string | null>(null)
 
   const handleDeleteDeliberation = () => {
     if (confirm("Are you sure you want to delete this deliberation?")) {
       submit({ action: "deleteDeliberation" }, { method: "post" })
     }
+  }
+
+  const toggleQuestionDropdown = (questionId: string) => {
+    setOpenQuestionId(openQuestionId === questionId ? null : questionId)
   }
 
   return (
@@ -268,13 +164,11 @@ export default function DeliberationDashboard() {
         </Link>
       </div>
       <div className="space-y-6">
+        <h2 className="text-2xl font-semibold mb-4">Summary</h2>
         <Card>
-          <CardHeader>
-            <CardTitle>Summary</CardTitle>
-          </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center mt-4">
                 <div>
                   <h4 className="text-sm font-semibold">Participants</h4>
                   <p className="text-sm text-muted-foreground mt-2">
@@ -321,112 +215,49 @@ export default function DeliberationDashboard() {
             </div>
           </CardContent>
         </Card>
+
+        <h2 className="text-2xl font-semibold mt-8 mb-4">Questions</h2>
         {deliberation.questions.map((question) => (
           <Card key={question.id}>
             <CardHeader>
-              <CardTitle>{question.title}</CardTitle>
+              <CardTitle className="text-md font-normal">
+                {question.title}
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between mb-4">
+              <div
+                className="flex items-center justify-between mb-2 cursor-pointer hover:bg-gray-100 rounded-md p-2 transition-colors duration-200"
+                onClick={() => toggleQuestionDropdown(question.id)}
+              >
                 <div className="flex flex-row items-center">
-                  <h4 className="text-sm font-semibold">Value Contexts</h4>
                   <ValueContextInfo />
                 </div>
-                <Form method="post">
-                  <input type="hidden" name="action" value="generateContexts" />
-                  <input
-                    type="hidden"
-                    name="question"
-                    value={question.question}
-                  />
-                  <input type="hidden" name="questionId" value={question.id} />
-                  <input
-                    type="hidden"
-                    name="deliberationId"
-                    value={deliberation.id}
-                  />
-                  <LoadingButton type="submit" variant="outline">
-                    {contexts.length > 0 ? "Regenerate" : "Generate Contexts"}
-                  </LoadingButton>
-                </Form>
+                <ChevronDownIcon
+                  className={`h-4 w-4 transition-transform ${
+                    openQuestionId === question.id ? "transform rotate-180" : ""
+                  }`}
+                />
               </div>
-              <ul className="space-y-2">
-                {contexts.map((context, index) => (
-                  <li
-                    key={index}
-                    className="flex flex-col bg-gray-50 p-2 rounded-md"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold">
-                        {context.id}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() =>
-                          handleRemoveContext(context.id, question.id)
-                        }
-                      >
-                        Remove
-                      </Button>
-                    </div>
-                    {context.application && (
-                      <span className="text-xs text-gray-600 mt-1">
-                        {context.application}
-                      </span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-              {showAddForm ? (
-                <div className="mt-8 space-y-8">
-                  <div>
-                    <Label htmlFor="name">Name</Label>
-                    <Input
-                      className="mt-2"
-                      id="name"
-                      value={newContextName}
-                      onChange={(e) => setNewContextName(e.target.value)}
-                      placeholder="Enter the choice type name"
-                    />
-                    <p className="text-sm text-muted-foreground mt-2">
-                      This will be the name of your new choice type.
-                    </p>
-                  </div>
-                  <div>
-                    <Label htmlFor="application">Modified Question</Label>
-                    <Input
-                      className="mt-2"
-                      id="application"
-                      value={newContextApplication}
-                      onChange={(e) => setNewContextApplication(e.target.value)}
-                      placeholder="Enter the modified question"
-                    />
-                    <p className="text-sm text-muted-foreground mt-2">
-                      This is how the question will be modified for this choice
-                      type.
-                    </p>
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => setShowAddForm(false)}
+              {openQuestionId === question.id && (
+                <ul className="space-y-2">
+                  {question.ContextsForQuestions.map((context, index) => (
+                    <li
+                      key={index}
+                      className="flex flex-col bg-gray-50 p-2 rounded-md"
                     >
-                      Cancel
-                    </Button>
-                    <Button onClick={() => handleAddContext(question.id)}>
-                      Add
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <Button
-                  className="mt-8"
-                  variant="outline"
-                  onClick={() => setShowAddForm(true)}
-                >
-                  <PlusIcon className="mr-2 h-4 w-4" /> Add
-                </Button>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-semibold">
+                          {context.context.id}
+                        </span>
+                      </div>
+                      {context.application && (
+                        <span className="text-xs text-gray-600 mt-1">
+                          {context.application}
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
               )}
             </CardContent>
           </Card>

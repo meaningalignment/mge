@@ -24,13 +24,20 @@ model User {
   Deliberation              Deliberation[]
 }
 
+enum DeliberationSetupStatus {
+  in_progress
+  completed
+}
+
 model Deliberation {
   id                         Int                         @id @default(autoincrement())
   title                      String
   welcomeText                String?
+  topic                      String
   createdAt                  DateTime                    @default(now())
   updatedAt                  DateTime                    @updatedAt
   createdBy                  Int
+  setupStatus                 DeliberationSetupStatus      @default(in_progress)
   user                       User                        @relation(fields: [createdBy], references: [id])
   valuesCards                ValuesCard[]
   edges                      Edge[]

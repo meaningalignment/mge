@@ -1,7 +1,7 @@
 import { ActionFunction, redirect } from "@remix-run/node"
 import { Form, useNavigate } from "@remix-run/react"
 import { useState } from "react"
-import { auth, db } from "~/config.server"
+import { auth, db, inngest } from "~/config.server"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 import { Textarea } from "~/components/ui/textarea"
@@ -13,7 +13,7 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData()
   const user = await auth.getCurrentUser(request)
   if (!user) return redirect("/auth/login")
-  const question = formData.get("question") as string
+  const topic = formData.get("topic") as string
   const title = formData.get("title") as string
   const welcomeText = formData.get("welcomeText") as string
 
@@ -21,6 +21,7 @@ export const action: ActionFunction = async ({ request }) => {
     data: {
       title,
       welcomeText,
+      topic,
       user: {
         connect: {
           id: user.id,
@@ -28,12 +29,14 @@ export const action: ActionFunction = async ({ request }) => {
       },
     },
   })
-  await db.question.create({
+
+  await inngest.send({
+    name: "setup-deliberation",
     data: {
-      id: uuid(),
-      question,
-      title: question,
       deliberationId: deliberation.id,
+      topic,
+      numQuestions: 5,
+      numContexts: 5,
     },
   })
 
@@ -42,7 +45,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function NewDeliberation() {
   const navigate = useNavigate()
-  const [question, setQuestion] = useState("")
+  const [topic, setQuestion] = useState("")
   const [title, setTitle] = useState("")
 
   return (
@@ -77,26 +80,28 @@ export default function NewDeliberation() {
           </p>
         </div>
         <div>
-          <Label htmlFor="question">Question</Label>
+          <Label htmlFor="question">Topic</Label>
           <Input
             className="mt-2"
-            id="question"
-            name="question"
-            placeholder="Enter your question"
+            id="topic"
+            name="topic"
+            placeholder="Enter your topic"
             required
             type="text"
-            value={question}
+            value={topic}
             onChange={(e) => setQuestion(e.target.value)}
           />
           <p className="text-sm text-muted-foreground mt-2">
-            This is the question that participants will deliberate about.
+            This is the topic that participants will deliberate about. Specific
+            questions will be generated in the background based on this topic.
+            You can edit these questions later.
           </p>
         </div>
         <div className="flex justify-between mt-6">
           <Button variant="outline" onClick={() => navigate(-1)}>
             Cancel
           </Button>
-          <LoadingButton type="submit" disabled={!question || !title}>
+          <LoadingButton type="submit" disabled={!topic || !title}>
             Save
           </LoadingButton>
         </div>
