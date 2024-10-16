@@ -2,27 +2,23 @@ import { LoaderFunctionArgs, ActionFunctionArgs, json } from "@remix-run/node"
 import {
   useLoaderData,
   useSubmit,
-  Form,
-  useActionData,
   Link,
-  useFetcher,
+  useRevalidator,
 } from "@remix-run/react"
 import { useEffect, useState } from "react"
 import { db } from "~/config.server"
 import { Button } from "~/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card"
 import { redirect } from "@remix-run/node"
-import LoadingButton from "~/components/loading-button"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip"
-import { QuestionMarkCircledIcon, PlusIcon } from "@radix-ui/react-icons"
-import { Input } from "~/components/ui/input"
-import { Label } from "~/components/ui/label"
+import { QuestionMarkCircledIcon } from "@radix-ui/react-icons"
 import { ChevronDownIcon } from "@radix-ui/react-icons"
+import { Loader2 } from "lucide-react"
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const deliberationId = Number(params.deliberationId)!
@@ -126,7 +122,6 @@ function ValueContextInfo() {
               <li>
                 Value contexts are generated automatically in the background.
               </li>
-              <li>You can edit these to better suit your discussion needs.</li>
               <li>
                 The final graph shows the wisest value for each value context
                 for your question.
@@ -143,7 +138,20 @@ function ValueContextInfo() {
 export default function DeliberationDashboard() {
   const { deliberation } = useLoaderData<typeof loader>()
   const submit = useSubmit()
+  const revalidator = useRevalidator()
   const [openQuestionId, setOpenQuestionId] = useState<string | null>(null)
+
+  useEffect(() => {
+    let intervalId: ReturnType<typeof setInterval> | null = null
+    if (deliberation.setupStatus === "in_progress") {
+      intervalId = setInterval(() => {
+        revalidator.revalidate()
+      }, 5000)
+    }
+    return () => {
+      if (intervalId !== null) clearInterval(intervalId)
+    }
+  }, [deliberation.setupStatus, revalidator])
 
   const handleDeleteDeliberation = () => {
     if (confirm("Are you sure you want to delete this deliberation?")) {
@@ -216,11 +224,20 @@ export default function DeliberationDashboard() {
           </CardContent>
         </Card>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">Questions</h2>
+        <div className="flex items-center justify-between mt-8 mb-4">
+          <h2 className="text-2xl font-semibold">Questions</h2>
+          {deliberation.setupStatus === "in_progress" && (
+            <div className="flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1.5 rounded-md">
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Generating Questions
+            </div>
+          )}
+        </div>
+
         {deliberation.questions.map((question) => (
           <Card key={question.id}>
             <CardHeader>
-              <CardTitle className="text-md font-normal">
+              <CardTitle className="text-md font-normal flex items-center">
                 {question.title}
               </CardTitle>
             </CardHeader>
