@@ -1,5 +1,5 @@
 import { User } from "@prisma/client"
-import { useCurrentUser } from "../root"
+import { useCurrentDeliberation, useCurrentUser } from "../root"
 import { Button } from "~/components/ui/button"
 import {
   DropdownMenu,
@@ -8,8 +8,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu"
-import { Form } from "@remix-run/react"
+import { Form, useParams, useLoaderData } from "@remix-run/react"
 import { useRef } from "react"
+import { LoaderFunction, json } from "@remix-run/node"
+import { db } from "~/config.server"
 
 function UserMenu({ user }: { user: User }) {
   const formRef = useRef(null) as any
@@ -53,10 +55,15 @@ export default function Header({
   articulatorConfig?: string
 }) {
   const user = useCurrentUser()
+  const deliberation = useCurrentDeliberation()
 
   return (
-    <header className="sticky top-0 z-50 flex items-center justify-between w-full h-16 px-4 border-b shrink-0 bg-gradient-to-b from-background/10 via-background/50 to-background/80 backdrop-blur-xl">
-      <div className="flex-grow" />
+    <header className="sticky top-0 z-50 flex items-center justify-between w-full h-16 px-4 border-b border-border shrink-0 bg-gradient-to-b from-background/10 via-background/50 to-background/80 backdrop-blur-xl">
+      <div className="flex-grow">
+        {deliberation && (
+          <h1 className="text-lg font-semibold">{deliberation.title}</h1>
+        )}
+      </div>
       {articulatorConfig && articulatorConfig !== "default" && (
         <p className="text-xs text-gray-400">{articulatorConfig}</p>
       )}

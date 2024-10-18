@@ -4,7 +4,7 @@ import remarkMath from "remark-math"
 import { cn } from "~/lib/utils"
 import { CodeBlock } from "./codeblock"
 import { MemoizedReactMarkdown } from "./markdown"
-import { IconOpenAI, IconUser } from "./ui/icons"
+import { IconOpenAI, IconUser } from "../ui/icons"
 import { ChatMessageActions } from "./chat-message-actions"
 
 export interface ChatMessageProps {

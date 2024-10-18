@@ -12,16 +12,16 @@ generator client {
 }
 
 model User {
-  id                        Int                         @id @default(autoincrement())
-  email                     String                      @unique
-  name                      String?
-  createdAt                 DateTime                    @default(now())
-  updatedAt                 DateTime                    @updatedAt
-  role                      String[]                    @default(["USER"])
-  isAdmin                   Boolean                     @default(false)
-  chats                     Chat[]
-  edges                     Edge[]
-  Deliberation              Deliberation[]
+  id           Int            @id @default(autoincrement())
+  email        String         @unique
+  name         String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  role         String[]       @default(["USER"])
+  isAdmin      Boolean        @default(false)
+  chats        Chat[]
+  edges        Edge[]
+  Deliberation Deliberation[]
 }
 
 enum DeliberationSetupStatus {
@@ -30,22 +30,23 @@ enum DeliberationSetupStatus {
 }
 
 model Deliberation {
-  id                         Int                         @id @default(autoincrement())
-  title                      String
-  welcomeText                String?
-  topic                      String
-  createdAt                  DateTime                    @default(now())
-  updatedAt                  DateTime                    @updatedAt
-  createdBy                  Int
-  setupStatus                 DeliberationSetupStatus      @default(in_progress)
-  user                       User                        @relation(fields: [createdBy], references: [id])
-  valuesCards                ValuesCard[]
-  edges                      Edge[]
-  questions                  Question[]
-  contexts                Context[]
-  chats                      Chat[]
-  canonicalValuesCards       CanonicalValuesCard[]
-  edgeHypotheses             EdgeHypothesis[]
+  id                   Int                     @id @default(autoincrement())
+  title                String
+  welcomeText          String?
+  questionIntroText    String?
+  topic                String
+  createdAt            DateTime                @default(now())
+  updatedAt            DateTime                @updatedAt
+  createdBy            Int
+  setupStatus          DeliberationSetupStatus @default(in_progress)
+  user                 User                    @relation(fields: [createdBy], references: [id])
+  valuesCards          ValuesCard[]
+  edges                Edge[]
+  questions            Question[]
+  contexts             Context[]
+  chats                Chat[]
+  canonicalValuesCards CanonicalValuesCard[]
+  edgeHypotheses       EdgeHypothesis[]
 }
 
 model EmailCodes {
@@ -59,20 +60,20 @@ model EmailCodes {
 }
 
 model ValuesCard {
-  id                        Int                          @id @default(autoincrement())
-  title                     String
-  description               String
-  policies                  String[]
-  createdAt                 DateTime                     @default(now())
-  updatedAt                 DateTime                     @updatedAt
-  canonicalCardId           Int?
-  chatId                    String                       @unique
-  chat                      Chat?                        @relation(fields: [chatId], references: [id], onDelete: Cascade)
-  canonicalCard             CanonicalValuesCard?         @relation(fields: [canonicalCardId], references: [id], onDelete: SetNull)
-  embedding                 Unsupported("vector(1536)")?
-  deliberationId            Int
-  deliberation              Deliberation                 @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
-  ContextsForValueCards     ContextsForValueCards[]
+  id                    Int                          @id @default(autoincrement())
+  title                 String
+  description           String
+  policies              String[]
+  createdAt             DateTime                     @default(now())
+  updatedAt             DateTime                     @updatedAt
+  canonicalCardId       Int?
+  chatId                String                       @unique
+  chat                  Chat?                        @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  canonicalCard         CanonicalValuesCard?         @relation(fields: [canonicalCardId], references: [id], onDelete: SetNull)
+  embedding             Unsupported("vector(1536)")?
+  deliberationId        Int
+  deliberation          Deliberation                 @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+  ContextsForValueCards ContextsForValueCards[]
 }
 
 model CanonicalValuesCard {
@@ -102,13 +103,14 @@ model Chat {
   updatedAt      DateTime     @updatedAt
   evaluation     Json?
   copiedFromId   String? // In order to filter out copied chats from analytics and other queries.
-  questionId     String       @default("abortion")
+  questionId     Int
   ValuesCard     ValuesCard?
   user           User         @relation(fields: [userId], references: [id])
   copiedFrom     Chat?        @relation("ChatToCopiedFrom", fields: [copiedFromId], references: [id], onDelete: Cascade)
   copies         Chat[]       @relation("ChatToCopiedFrom")
   deliberationId Int
   deliberation   Deliberation @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+  Question       Question     @relation(fields: [questionId], references: [id])
 }
 
 enum EdgeType {
@@ -138,55 +140,56 @@ model Edge {
 }
 
 model EdgeHypothesis {
-  fromId         Int
-  toId           Int
+  fromId          Int
+  toId            Int
   hypothesisRunId String
-  story          String?
-  contextId      String
-  createdAt      DateTime             @default(now())
-  updatedAt      DateTime             @updatedAt
-  from           CanonicalValuesCard? @relation("FromHypothesizedValueRelation", fields: [fromId], references: [id], onDelete: Cascade)
-  to             CanonicalValuesCard? @relation("ToHypothesizedValueRelation", fields: [toId], references: [id], onDelete: Cascade)
-  context        Context               @relation(fields: [contextId, deliberationId], references: [id, deliberationId])
-  deliberationId Int
-  deliberation   Deliberation         @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+  story           String?
+  contextId       String
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  from            CanonicalValuesCard? @relation("FromHypothesizedValueRelation", fields: [fromId], references: [id], onDelete: Cascade)
+  to              CanonicalValuesCard? @relation("ToHypothesizedValueRelation", fields: [toId], references: [id], onDelete: Cascade)
+  context         Context              @relation(fields: [contextId, deliberationId], references: [id, deliberationId])
+  deliberationId  Int
+  deliberation    Deliberation         @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 
   @@id([fromId, toId])
 }
 
 model Context {
-  id             String
-  deliberationId Int
-  deliberation   Deliberation     @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
-  ContextsForQuestions ContextsForQuestions[]
-  Edge           Edge[]
-  EdgeHypothesis EdgeHypothesis[]
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
+  id                    String
+  deliberationId        Int
+  deliberation          Deliberation            @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+  ContextsForQuestions  ContextsForQuestions[]
+  Edge                  Edge[]
+  EdgeHypothesis        EdgeHypothesis[]
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
   ContextsForValueCards ContextsForValueCards[]
 
   @@id([id, deliberationId])
 }
 
 model Question {
-  id                      String                    @id
-  question                String
-  title                   String?
-  seedMessage             String?
+  id                   Int                    @id @default(autoincrement())
+  question             String
+  title                String?
+  seedMessage          String?
   ContextsForQuestions ContextsForQuestions[]
-  deliberationId          Int
-  deliberation            Deliberation              @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+  deliberationId       Int
+  deliberation         Deliberation           @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+  chats                Chat[]
 }
 
 model ContextsForQuestions {
-  context        Context    @relation(fields: [contextId, deliberationId], references: [id, deliberationId], onDelete: Cascade)
-  question       Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  context        Context  @relation(fields: [contextId, deliberationId], references: [id, deliberationId], onDelete: Cascade)
+  question       Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
   application    String?
   contextId      String
-  questionId     String
-  deliberationId Int        // Add this line to define the deliberationId field
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
+  questionId     Int
+  deliberationId Int
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   @@id([contextId, questionId, deliberationId])
 }
@@ -195,10 +198,11 @@ model ContextsForValueCards {
   contextId      String
   valuesCardId   Int
   application    String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  context        Context  @relation(fields: [contextId, deliberationId], references: [id, deliberationId], onDelete: Cascade)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  context        Context    @relation(fields: [contextId, deliberationId], references: [id, deliberationId], onDelete: Cascade)
   valuesCard     ValuesCard @relation(fields: [valuesCardId], references: [id], onDelete: Cascade)
-  deliberationId Int   
+  deliberationId Int
+
   @@id([contextId, valuesCardId, deliberationId])
 }

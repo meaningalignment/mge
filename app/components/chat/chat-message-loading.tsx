@@ -1,7 +1,7 @@
 import { cn } from "~/lib/utils"
 import { Loader2 } from "lucide-react"
 import { useEffect, useState } from "react"
-import { IconOpenAI } from "./ui/icons"
+import { IconOpenAI } from "~/components/ui/icons"
 
 type Props = {
   threadId: string

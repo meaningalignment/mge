@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node"
 import { useLoaderData, useParams } from "@remix-run/react"
 import { kv } from "@vercel/kv"
-import { Chat } from "../components/chat"
+import { Chat } from "../components/chat/chat"
 import Header from "../components/header"
 import { db, ensureLoggedIn, openai } from "~/config.server"
 
@@ -48,8 +48,10 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   )
 
   // Get the welcome message.
-  const chosenCase = await db.question.findFirst({ where: { id: questionId } })
-  const seedMessage = chosenCase!.seedMessage
+  const chosenQuestion = await db.question.findFirst({
+    where: { id: Number(questionId) },
+  })
+  const seedMessage = chosenQuestion!.question
 
   // Insert the welcome message in new chat.
   if (messages.length === 0) {

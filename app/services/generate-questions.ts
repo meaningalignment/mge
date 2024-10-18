@@ -16,10 +16,19 @@ export async function generateQuestions(
     data: { Topic: topic },
     schema: z.object({
       questions: z
-        .array(z.string())
-        .describe(
-          `An array of questions, where each question should be a brief personal story (2-3 sentences) depicting a specific scenario related to the topic, followed by a question about how to address the situation. The questions should be values-laden and focus on how to best support or address the situations described.`
-        ),
+        .array(
+          z.object({
+            question: z
+              .string()
+              .describe(
+                `A brief personal story (2-3 sentences) depicting a specific scenario related to the topic, followed by a question about how to address the situation. The questions should be values-laden and focus on how to best support or address the situations described.`
+              ),
+            title: z
+              .string()
+              .describe(`A short 2-5 word title that summarizes the question.`),
+          })
+        )
+        .describe(`An array of questions.`),
     }),
   }).then((res) => res.questions)
 }
@@ -62,7 +71,7 @@ export async function generateContexts(question: string, numContexts = 5) {
 
 async function addContextsInDb(
   deliberationId: number,
-  questionId: string,
+  questionId: number,
   contexts: string[]
 ) {
   return Promise.all(
@@ -100,9 +109,9 @@ async function addContextsInDb(
   )
 }
 
-export const setupDeliberation = inngest.createFunction(
+export const generateQuestionsAndContexts = inngest.createFunction(
   { name: "Generate Deliberation Questions and Contexts" },
-  { event: "setup-deliberation" },
+  { event: "gen-questions-contexts" },
   async ({ event, step, logger }) => {
     logger.info(`Running deliberation setup.`)
 
@@ -124,9 +133,8 @@ export const setupDeliberation = inngest.createFunction(
         async () =>
           db.question.create({
             data: {
-              id: question,
-              question,
-              title: question,
+              question: question.question,
+              title: question.title,
               deliberationId,
             },
           }) as any as Question
@@ -134,7 +142,7 @@ export const setupDeliberation = inngest.createFunction(
 
       const contexts = await step.run(
         `Generate contexts for question: ${question}`,
-        async () => generateContexts(question, numContexts)
+        async () => generateContexts(question.question, numContexts)
       )
 
       await step.run(`Inserting or updating contexts in DB`, async () =>
@@ -152,3 +160,9 @@ export const setupDeliberation = inngest.createFunction(
     return { message: "Finished" }
   }
 )
+
+// generate graph
+// 1. generate questions
+// 2. generate contexts for each question
+// 3. generate values for a question. Rank how relevant for each context
+// 4. generate hypotheses for contexts and values.

@@ -1,17 +1,25 @@
 import Header from "~/components/header"
 import { useState } from "react"
 import { Check } from "lucide-react"
-import StaticChatMessage from "~/components/static-chat-message"
+import StaticChatMessage from "~/components/chat/static-chat-message"
 import { cn } from "~/lib/utils"
-import { useLoaderData } from "@remix-run/react"
-import ContinueButton from "~/components/continue-button"
+import { Link, useLoaderData } from "@remix-run/react"
 import { json, LoaderFunctionArgs, redirect } from "@remix-run/node"
 import { db } from "~/config.server"
 import { Question } from "@prisma/client"
+import LoadingButton from "~/components/loading-button"
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const { deliberationId } = params
-  const questions = await db.question.findMany()
+
+  const [questions, deliberation] = await Promise.all([
+    db.question.findMany({
+      where: { deliberationId: Number(deliberationId!) },
+    }),
+    db.deliberation.findUnique({
+      where: { id: Number(deliberationId!) },
+    }),
+  ])
 
   if (questions.length === 0) {
     throw Error("No questions found.")
@@ -24,7 +32,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
     )
   }
 
-  return json({ questions: questions })
+  return json({
+    questions,
+    deliberationId,
+    text: deliberation?.questionIntroText,
+  })
 }
 
 function QuestionCard({ questionData }: { questionData: Question }) {
@@ -36,9 +48,7 @@ function QuestionCard({ questionData }: { questionData: Question }) {
       }
     >
       <p className="text-md font-bold">{questionData.title}</p>
-      <p className="text-md text-neutral-500">
-        {'"' + questionData.question + '"'}
-      </p>
+      <p className="text-md text-neutral-500">{questionData.question}</p>
       <div className="flex-grow" />
     </div>
   )
@@ -59,7 +69,7 @@ function SelectedQuestionCard({ questionData }: { questionData: Question }) {
 }
 
 export default function QuestionSelectScreen() {
-  const questions = useLoaderData<typeof loader>().questions
+  const { questions, text, deliberationId } = useLoaderData<typeof loader>()
   const [showQuestions, setShowQuestions] = useState(false)
   const [selected, setSelected] = useState<Question | null>(null)
 
@@ -72,7 +82,7 @@ export default function QuestionSelectScreen() {
             setShowQuestions(true)
           }}
           isFinished={showQuestions}
-          text={`Below are some questions that have been posed to ChatGPT by users. Weigh in on how ChatGPT should respond to the user.\n\nSelect a user question to continue.`}
+          text={text ?? "Choose a question to answer."}
         />
         <div className="grid lg:grid-cols-2 xl:grid-cols-3 mx-auto gap-4">
           {questions.map((c, i) => (
@@ -100,9 +110,19 @@ export default function QuestionSelectScreen() {
             showQuestions ? "opacity-100" : "opacity-0"
           }`}
         >
-          <a href={selected ? `/question/${selected.id}/chat-explainer` : "#"}>
-            <ContinueButton event="Selected Question" />
-          </a>
+          <LoadingButton>
+            <Link
+              to={
+                selected
+                  ? `/deliberation/${deliberationId}/${selected.id}/chat-explainer`
+                  : "#"
+              }
+              prefetch="intent"
+              className="flex flex-row items-center justify-center"
+            >
+              Continue
+            </Link>
+          </LoadingButton>
 
           <div className="flex flex-col justify-center items-center my-4 h-4">
             {!selected && (

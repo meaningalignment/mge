@@ -1,9 +1,9 @@
 import Header from "~/components/header"
-import { useParams } from "@remix-run/react"
+import { Link, useParams } from "@remix-run/react"
 import { useState } from "react"
-import StaticChatMessage from "~/components/static-chat-message"
+import StaticChatMessage from "~/components/chat/static-chat-message"
 import { cn } from "~/lib/utils"
-import ContinueButton from "~/components/continue-button"
+import LoadingButton from "~/components/loading-button"
 
 export default function ChatExplainerScreen() {
   const { deliberationId, questionId } = useParams()
@@ -18,7 +18,7 @@ export default function ChatExplainerScreen() {
             setShowNext(true)
           }}
           isFinished={showNext}
-          text={`This process has 3 steps.\n\nIn the first step, you will articulate a value for for the question at hand. This usually takes around 5-10 minutes.\n\nNote: Only the values you articulate will be shared, not the chat content.`}
+          text={`This process has 2 steps.\n\nIn the first step, you will articulate a value for for the question you chose. This usually takes around 5-10 minutes.\n\nNote: Only the values you articulate will be shared, not the chat content.`}
         />
         <div
           className={cn(
@@ -28,9 +28,15 @@ export default function ChatExplainerScreen() {
           )}
         >
           <div className="flex flex-row mx-auto justify-center items-center space-x-2 pt-8">
-            <a href={`/deliberation/${deliberationId}/${questionId}/chat`}>
-              <ContinueButton event="Started Chat" />
-            </a>
+            <LoadingButton>
+              <Link
+                to={`/deliberation/${deliberationId}/${questionId}/chat`}
+                prefetch="render"
+                className="flex flex-row items-center justify-center"
+              >
+                Continue
+              </Link>
+            </LoadingButton>
           </div>
         </div>
       </div>

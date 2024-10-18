@@ -9,3 +9,5 @@ node_modules.nosync
 /notes
 .DS_Store
 *.timestamp-*.mjs
+
+cache.sqlite

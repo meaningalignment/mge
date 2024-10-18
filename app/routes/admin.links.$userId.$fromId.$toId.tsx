@@ -1,7 +1,7 @@
 import { CanonicalValuesCard, Edge } from "@prisma/client"
 import { LoaderFunctionArgs, json } from "@remix-run/node"
 import { useLoaderData } from "@remix-run/react"
-import StaticChatMessage from "~/components/static-chat-message"
+import StaticChatMessage from "~/components/chat/static-chat-message"
 import { IconArrowRight } from "~/components/ui/icons"
 import { Label } from "~/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group"

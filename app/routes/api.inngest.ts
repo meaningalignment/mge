@@ -3,7 +3,7 @@ import { deduplicate } from "~/services/deduplication"
 import { embed } from "~/services/embedding"
 import { inngest } from "~/config.server"
 import { hypothesize, hypothesize_cron } from "~/services/linking"
-import { setupDeliberation } from "~/services/questions"
+import { generateQuestionsAndContexts } from "~/services/generate-questions"
 // import { evaluateDialogues } from "~/values-tools/rater"
 
 const handler = serve(inngest, [
@@ -12,7 +12,7 @@ const handler = serve(inngest, [
   hypothesize_cron,
   // evaluateDialogues,
   deduplicate,
-  setupDeliberation,
+  generateQuestionsAndContexts,
 ])
 
 export const config = {

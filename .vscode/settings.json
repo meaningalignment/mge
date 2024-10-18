@@ -1,4 +1,11 @@
 {
   "npm.packageManager": "bun",
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "editor.formatOnSave": true,
+  "[prisma]": {
+    "editor.formatOnSaveMode": "file",
+    "editor.defaultFormatter": "Prisma.prisma"
+  },
+  "prisma-smart-formatter.typescript.defaultFormatter": "esbenp.prettier-vscode",
+  "prisma-smart-formatter.prisma.defaultFormatter": "Prisma.prisma"
 }

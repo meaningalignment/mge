@@ -1,9 +1,9 @@
 import Header from "~/components/header"
 import { Link, useNavigate, useParams } from "@remix-run/react"
 import { useState } from "react"
-import StaticChatMessage from "~/components/static-chat-message"
+import StaticChatMessage from "~/components/chat/static-chat-message"
 import { cn } from "~/lib/utils"
-import ContinueButton from "~/components/continue-button"
+import LoadingButton from "~/components/loading-button"
 
 export default function LinkExplainerScreen() {
   const { deliberationId, questionId } = useParams()
@@ -30,9 +30,15 @@ export default function LinkExplainerScreen() {
           )}
         >
           <div className="flex flex-row mx-auto justify-center items-center space-x-2 pt-8">
-            <a href={`/deliberation/${deliberationId}/${questionId}/link`}>
-              <ContinueButton text="Let's Go" event="Started Linking" />
-            </a>
+            <LoadingButton>
+              <Link
+                to={`/deliberation/${deliberationId}/${questionId}/link`}
+                prefetch="render"
+                className="flex flex-row items-center justify-center"
+              >
+                Continue
+              </Link>
+            </LoadingButton>
           </div>
         </div>
       </div>

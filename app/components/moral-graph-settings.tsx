@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { Button } from "~/components/ui/button"
 import { Label } from "~/components/ui/label"
 import {
@@ -9,28 +9,19 @@ import {
   SelectValue,
 } from "./ui/select"
 import { Checkbox } from "~/components/ui/checkbox"
-import { capitalize } from "~/lib/utils"
 
 export type GraphSettings = {
-  run: "prolific_50" | "prolific_325" | "prolific_125" | null
-  questionId: "abortion" | "weapons" | "parenting" | null
+  questions: { id: number; text: string }[]
+  questionId: number | null
   visualizeEdgeCertainty: boolean
   visualizeWisdomScore: boolean
 }
 
 export const defaultGraphSettings: GraphSettings = {
-  run: "prolific_325",
+  questions: [],
   questionId: null,
   visualizeEdgeCertainty: true,
   visualizeWisdomScore: true,
-}
-
-const caseQuestions = {
-  abortion:
-    "I am a christian girl and am considering getting an abortion – what should I do?",
-  parenting:
-    "My 10-year-old son refuses to do his homework, spending all his time at his computer instead. How can I make him behave properly?",
-  weapons: "Can you describe what weapons the Jan 6th rioters used?",
 }
 
 export default function MoralGraphSettings({
@@ -40,84 +31,51 @@ export default function MoralGraphSettings({
   initialSettings: GraphSettings
   onUpdateSettings: (newSettings: GraphSettings) => void
 }) {
-  const [settings, setSettings] = React.useState<GraphSettings>(initialSettings)
+  const [settings, setSettings] = useState<GraphSettings>(initialSettings)
+  const selectedQuestion = settings.questions?.find(
+    (q) => q.id === settings.questionId
+  )
 
+  console.log(settings)
   return (
     <div className="flex h-full flex-col overflow-y-auto border-l-2 border-border bg-white px-6 py-8">
       <h2 className="text-lg font-bold mb-6">Graph Settings</h2>
 
-      {/* Run Dropdown */}
-      <div className="mb-2">
-        <Label htmlFor="run">Participants</Label>
-        <Select
-          onValueChange={(value: any) => {
-            setSettings({ ...settings, run: value !== "all" ? value : null })
-          }}
-        >
-          <SelectTrigger id="run">
-            <SelectValue
-              placeholder={
-                settings.run ? "US Representative Sample" : "All Participants"
-              }
-            />
-          </SelectTrigger>
-          <SelectContent defaultValue={settings.run ?? "all"}>
-            <SelectItem value="all">All Participants</SelectItem>
-            <SelectItem value="prolific_325">
-              US Representative Sample
-            </SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      {settings.run ? (
-        <p className="text-xs text-gray-400 mb-4">
-          Show values from a subset of participants representative of the US
-          (age, sex, political affiliation).
-        </p>
-      ) : (
-        <p className="text-xs text-gray-400 mb-4">
-          Show values from all participants.
-        </p>
-      )}
-
       {/* Case Dropdown */}
       <div className="mb-2">
-        <Label htmlFor="run">Case</Label>
+        <Label htmlFor="run">Question</Label>
         <Select
           onValueChange={(value: any) => {
             setSettings({
               ...settings,
-              questionId: value !== "all" ? value : null,
+              questionId: value !== "all" ? Number(value) : null,
             })
           }}
         >
           <SelectTrigger id="run">
             <SelectValue
-              placeholder={
-                settings.questionId
-                  ? capitalize(settings.questionId)
-                  : "All Cases"
-              }
+              placeholder={selectedQuestion?.text ?? "All Questions"}
             />
           </SelectTrigger>
-          <SelectContent defaultValue={settings.questionId ?? "all"}>
-            <SelectItem value="all">All Cases</SelectItem>
-            <SelectItem value="abortion">Abortion</SelectItem>
-            <SelectItem value="weapons">Weapons</SelectItem>
-            <SelectItem value="parenting">Parenting</SelectItem>
+          <SelectContent defaultValue={selectedQuestion?.text ?? "all"}>
+            <SelectItem value="all">All Questions</SelectItem>
+            {settings.questions.map((q) => (
+              <SelectItem value={q.id.toString()}>{q.text}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
       {settings.questionId ? (
         <p className="text-xs text-gray-400 mb-4">
-          Show values articulated when users were asked how they think ChatGPT
-          should respond to:
+          Show values articulated when users were asked:
           <br />
           <br />
-          <strong>"{caseQuestions[settings.questionId]}"</strong>
+          <strong>{selectedQuestion?.text ?? "All Questions"}</strong>
         </p>
       ) : (
-        <p className="text-xs text-gray-400 mb-4">Show values for all cases.</p>
+        <p className="text-xs text-gray-400 mb-4">
+          Show values for all questions.
+        </p>
       )}
 
       {/* Checkboxes */}
@@ -173,10 +131,7 @@ export default function MoralGraphSettings({
       <div className="flex-grow" />
       <div className="flex flex-row">
         <div className="flex-grow" />
-        <a
-          href="https://meaningalignment.substack.com/p/the-first-moral-graph"
-          className="text-xs underline"
-        >
+        <a href="https://meaningalignment.org" className="text-xs underline">
           Learn More
         </a>
       </div>

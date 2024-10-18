@@ -1,0 +1,160 @@
+{
+    "values": [
+        {
+            "id": 1,
+            "title": "Honoring Humanity in Complexity",
+            "description": "Sitting silently beside a veteran on a park bench, listening to his stories without judgment or agenda",
+            "policies": [
+                "MOMENTS that honor a person's autonomy and lived experience, even when their choices seem challenging",
+                "OPPORTUNITIES to nurture trust through consistent, non-judgmental presence over time",
+                "SIGNS of underlying needs or desires that may be expressed indirectly or non-verbally",
+                "CREATIVE APPROACHES that arise from truly hearing and valuing an individual's unique story",
+                "SMALL GESTURES of genuine care that acknowledge the person's humanity without demanding change",
+                "SHIFTS in a person's openness to connection when met with patience and understanding",
+                "CULTURAL or experiential wisdom that shapes how support is perceived and received"
+            ],
+            "contexts": [
+                "A person with mental health issues refuses available assistance",
+                "A professional is attempting to assist a vulnerable individual",
+                "The issue is happening in a major urban area"
+            ],
+            "context": "A person with mental health issues refuses available assistance",
+            "questionId": 1
+        },
+        {
+            "id": 2,
+            "title": "Compassionate Presence in Complex Care",
+            "description": "Sitting on a park bench beside a veteran, listening intently as he shares his story, noticing his eyes light up as he talks about his old hobby of woodworking",
+            "policies": [
+                "MOMENTS that honor an individual's autonomy while offering support",
+                "OPPORTUNITIES to build trust through patient, consistent interactions over time",
+                "SIGNS of an individual's unique strengths and resilience amidst adversity",
+                "FEELINGS of genuine empathy that inform compassionate action",
+                "CHANGES in a person's demeanor when they feel truly heard and understood",
+                "INSIGHTS gained from deep, non-judgmental listening and observation",
+                "SHIFTS in perspective that reveal the whole person beyond their immediate challenges"
+            ],
+            "contexts": [
+                "A person with mental health issues refuses available assistance",
+                "A professional is attempting to assist a vulnerable individual",
+                "The issue is happening in a major urban area"
+            ],
+            "context": "A professional is attempting to assist a vulnerable individual",
+            "questionId": 1
+        },
+        {
+            "id": 3,
+            "title": "Urban Compassion: Honoring Humanity in City Spaces",
+            "description": "Sitting on a park bench, I'm sharing a sandwich with someone who's been living on the streets, and they're telling me about their dreams for the future.",
+            "policies": [
+                "VOICES of those with lived experience of homelessness and mental health challenges, revealing insights often overlooked by policymakers",
+                "INNOVATIONS in urban design that create more inclusive public spaces, fostering a sense of belonging for all city dwellers",
+                "MOMENTS when a person experiencing homelessness feels truly seen and heard, potentially catalyzing their journey towards stability",
+                "SHIFTS in public perception about homelessness and mental health, indicating evolving societal understanding and compassion",
+                "FLEXIBILITY in support systems to accommodate diverse needs and preferences, honoring the uniqueness of each individual's situation",
+                "SPACES within the city that foster community and belonging for all residents, regardless of their housing status"
+            ],
+            "contexts": [
+                "A person with mental health issues refuses available assistance",
+                "A professional is attempting to assist a vulnerable individual",
+                "The issue is happening in a major urban area"
+            ],
+            "context": "The issue is happening in a major urban area",
+            "questionId": 1
+        },
+        {
+            "id": 4,
+            "title": "Cultivating Urban Harmony",
+            "description": "Standing in a community meeting, I'm watching a business owner and a homeless individual find common ground in their shared desire for a thriving, inclusive neighborhood",
+            "policies": [
+                "VOICES from diverse lived experiences, revealing hidden struggles and unexpected common ground",
+                "PATTERNS of public space use that illuminate deeper community needs and values",
+                "MOMENTS of unexpected empathy that bridge divides between different groups",
+                "INNOVATIVE SOLUTIONS emerging from grassroots community initiatives and unlikely collaborations",
+                "SHIFTS in perspective when stakeholders engage in genuine dialogue and mutual understanding",
+                "RIPPLE EFFECTS of various approaches on community cohesion, local economy, and social equity"
+            ],
+            "contexts": [
+                "Public spaces are being used in ways that interfere with local businesses",
+                "A governing body must make decisions that affect multiple stakeholders with competing interests",
+                "A vulnerable group in society lacks access to basic necessities"
+            ],
+            "context": "Public spaces are being used in ways that interfere with local businesses",
+            "questionId": 4
+        },
+        {
+            "id": 5,
+            "title": "Balancing Act: Navigating Competing Needs in Urban Governance",
+            "description": "Sitting in a town hall meeting, hearing a formerly homeless person and a small business owner find common ground in their shared desire for a thriving community",
+            "policies": [
+                "VOICES of those whose lives will be most profoundly affected by policy decisions, revealing hidden complexities and human stories",
+                "LONG-TERM RIPPLE EFFECTS of decisions on the fabric of community life and shared prosperity",
+                "INNOVATIVE APPROACHES that address underlying systemic issues, potentially transforming societal challenges",
+                "HOLISTIC MEASURES of community wellbeing that capture the full spectrum of human flourishing",
+                "HISTORICAL PATTERNS and cycles that illuminate the present moment and potential future trajectories",
+                "SUBTLE INTERCONNECTIONS within complex systems that may lead to surprising outcomes",
+                "ETHICAL PRINCIPLES that serve as a compass when navigating morally ambiguous terrain"
+            ],
+            "contexts": [
+                "Public spaces are being used in ways that interfere with local businesses",
+                "A governing body must make decisions that affect multiple stakeholders with competing interests",
+                "A vulnerable group in society lacks access to basic necessities"
+            ],
+            "context": "A governing body must make decisions that affect multiple stakeholders with competing interests",
+            "questionId": 4
+        },
+        {
+            "id": 6,
+            "title": "Compassionate Community Engagement",
+            "description": "Sitting on a park bench, sharing a sandwich with someone who tells me about their journey to the streets, their hopes, and their daily struggles",
+            "policies": [
+                "VOICES of those experiencing homelessness and economic hardship firsthand",
+                "OPPORTUNITIES to meet immediate needs while addressing underlying causes",
+                "PATTERNS of inequality that perpetuate cycles of poverty and homelessness",
+                "MOMENTS of genuine human connection across socioeconomic divides",
+                "INNOVATIVE approaches born from diverse community perspectives",
+                "SHIFTS in understanding when people engage with others' lived experiences",
+                "UNINTENDED EFFECTS of policies on various community members over time"
+            ],
+            "contexts": [
+                "Public spaces are being used in ways that interfere with local businesses",
+                "A governing body must make decisions that affect multiple stakeholders with competing interests",
+                "A vulnerable group in society lacks access to basic necessities"
+            ],
+            "context": "A vulnerable group in society lacks access to basic necessities",
+            "questionId": 4
+        }
+    ],
+    "upgrades": [
+        {
+            "fromId": 1,
+            "toId": 2,
+            "context": "A person with mental health issues refuses available assistance"
+        },
+        {
+            "fromId": 2,
+            "toId": 3,
+            "context": "A professional is attempting to assist a vulnerable individual"
+        },
+        {
+            "fromId": 4,
+            "toId": 5,
+            "context": "Public spaces are being used in ways that interfere with local businesses"
+        },
+        {
+            "fromId": 6,
+            "toId": 5,
+            "context": "A vulnerable group in society lacks access to basic necessities"
+        }
+    ],
+    "questions": [
+        {
+            "id": 1,
+            "text": "Sarah, a social worker in San Francisco, encounters a homeless veteran with PTSD who refuses to go to a shelter due to his mental health issues. How can the SF government better support individuals like him who have complex needs?"
+        },
+        {
+            "id": 4,
+            "text": "Mark, a small business owner in the Mission District, is struggling with homeless encampments blocking the entrance to his store, driving away customers. How should the SF government balance the needs of local businesses with those of the homeless population?"
+        }
+    ]
+}

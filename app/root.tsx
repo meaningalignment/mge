@@ -8,12 +8,13 @@ import {
   useRouteLoaderData,
 } from "@remix-run/react"
 import { auth, db } from "./config.server"
-import { User, ValuesCard } from "@prisma/client"
+import { Deliberation, User, ValuesCard } from "@prisma/client"
 
 import "./globals.css"
 import { TooltipProvider } from "@radix-ui/react-tooltip"
+import { d } from "node_modules/vite/dist/node/types.d-aGj9QkWt"
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const userId = await auth.getUserId(request)
 
   const user =
@@ -28,7 +29,15 @@ export async function loader({ request }: LoaderFunctionArgs) {
       where: { chat: { userId } },
     })) as ValuesCard[] | null)
 
-  return json({ user, values })
+  const deliberation =
+    params.deliberationId &&
+    ((await db.deliberation.findFirst({
+      where: {
+        id: Number(params.deliberationId),
+      },
+    })) as Deliberation | null)
+
+  return json({ user, values, deliberation })
 }
 
 export function useCurrentUser(): User | null {
@@ -39,6 +48,13 @@ export function useCurrentUser(): User | null {
 export function useCurrentUserValues(): ValuesCard[] | null {
   const { values } = useRouteLoaderData("root") as SerializeFrom<typeof loader>
   return values
+}
+
+export function useCurrentDeliberation(): Deliberation | null {
+  const { deliberation } = useRouteLoaderData("root") as SerializeFrom<
+    typeof loader
+  >
+  return deliberation as Deliberation | null
 }
 
 export default function App() {

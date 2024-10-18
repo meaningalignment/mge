@@ -64,7 +64,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       where: {
         contextId_questionId_deliberationId: {
           contextId: contextId,
-          questionId: questionId,
+          questionId: Number(questionId),
           deliberationId: Number(params.deliberationId)!,
         },
       },
@@ -83,7 +83,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         deliberation: { connect: { id: deliberationId } },
         ContextsForQuestions: {
           create: {
-            question: { connect: { id: questionId } },
+            question: { connect: { id: Number(questionId) } },
             application: application,
           },
         },
@@ -139,7 +139,7 @@ export default function DeliberationDashboard() {
   const { deliberation } = useLoaderData<typeof loader>()
   const submit = useSubmit()
   const revalidator = useRevalidator()
-  const [openQuestionId, setOpenQuestionId] = useState<string | null>(null)
+  const [openQuestionId, setOpenQuestionId] = useState<number | null>(null)
 
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | null = null
@@ -159,7 +159,7 @@ export default function DeliberationDashboard() {
     }
   }
 
-  const toggleQuestionDropdown = (questionId: string) => {
+  const toggleQuestionDropdown = (questionId: number) => {
     setOpenQuestionId(openQuestionId === questionId ? null : questionId)
   }
 
@@ -237,11 +237,12 @@ export default function DeliberationDashboard() {
         {deliberation.questions.map((question) => (
           <Card key={question.id}>
             <CardHeader>
-              <CardTitle className="text-md font-normal flex items-center">
+              <CardTitle className="text-md font-bold flex items-center">
                 {question.title}
               </CardTitle>
             </CardHeader>
             <CardContent>
+              <p className="text-sm text-gray-600 mb-4">{question.question}</p>
               <div
                 className="flex items-center justify-between mb-2 cursor-pointer hover:bg-gray-100 rounded-md p-2 transition-colors duration-200"
                 onClick={() => toggleQuestionDropdown(question.id)}

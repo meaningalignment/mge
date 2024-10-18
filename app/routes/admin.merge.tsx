@@ -7,7 +7,7 @@ import ValuesCard from "~/components/values-card"
 import { useState } from "react"
 import { CanonicalValuesCard } from "@prisma/client"
 import { Check, Loader2 } from "lucide-react"
-import { MemoizedReactMarkdown } from "~/components/markdown"
+import { MemoizedReactMarkdown } from "~/components/chat/markdown"
 import { useRevalidator } from "@remix-run/react"
 
 export async function loader({ request }: ActionFunctionArgs) {
