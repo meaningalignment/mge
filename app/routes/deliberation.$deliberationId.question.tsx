@@ -44,7 +44,7 @@ function QuestionCard({ questionData }: { questionData: Question }) {
     <div
       key={questionData.id}
       className={
-        "border-2 border-border rounded-xl px-6 py-6 max-w-xs min-h-xs h-full bg-white flex flex-col gap-4"
+        "border-2 rounded-xl px-6 py-6 max-w-xs min-h-xs h-full bg-white flex flex-col gap-4"
       }
     >
       <p className="text-md font-bold">{questionData.title}</p>

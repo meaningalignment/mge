@@ -38,7 +38,7 @@ export default function MoralGraphSettings({
 
   console.log(settings)
   return (
-    <div className="flex h-full flex-col overflow-y-auto border-l-2 border-border bg-white px-6 py-8">
+    <div className="flex h-full flex-col overflow-y-auto border-l-2 bg-white px-6 py-8">
       <h2 className="text-lg font-bold mb-6">Graph Settings</h2>
 
       {/* Case Dropdown */}

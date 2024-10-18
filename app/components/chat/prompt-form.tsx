@@ -73,7 +73,9 @@ export function PromptForm({
       ref={formRef}
     >
       {(isFinished && <FinishedView />) || (
-        <div className="relative flex max-h-60 w-full grow flex-col overflow-hidden bg-white pr-8 sm:rounded-md sm:border sm:pr-12 dark:bg-black">
+        <div
+          className={`relative flex max-h-60 w-full grow flex-col overflow-hidden bg-white pr-8 sm:rounded-md sm:border sm:pr-12`}
+        >
           <Textarea
             ref={inputRef}
             tabIndex={0}
@@ -83,9 +85,9 @@ export function PromptForm({
             onChange={(e) => setInput(e.target.value)}
             placeholder="Send a message."
             spellCheck={false}
-            className="min-h-[60px] w-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none sm:text-sm"
+            className="min-h-[60px] w-full resize-none bg-transparent px-4 py-[1.3rem] focus-within:outline-none sm:text-sm border-none"
           />
-          <div className="absolute right-0 top-4 sm:right-4">
+          <div className="absolute right-0 h-full flex flex-col items-center justify-center sm:right-4">
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button

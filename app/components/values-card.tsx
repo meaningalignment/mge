@@ -45,7 +45,7 @@ function DetailsList({ card }: { card: ValuesCardData }) {
 export default function ValuesCard({ card, header, editButton }: Props) {
   return (
     <div
-      className={`border-2 border-border rounded-xl px-8 pt-8 pb-6 max-w-sm h-full bg-white dark:bg-black dark:text-white flex flex-col`}
+      className={`border-2 rounded-xl px-8 pt-8 pb-6 max-w-sm h-full bg-white dark:bg-black dark:text-white flex flex-col`}
     >
       {header && header}
       {editButton ? (
