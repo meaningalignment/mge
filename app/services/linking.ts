@@ -91,7 +91,7 @@ export async function getDraw(
   })
 }
 
-async function upsertHypothesizedUpgrades(
+export async function upsertHypothesizedUpgrades(
   upgrades: Upgrade[],
   hypothesisRunId: string,
   condition: string,

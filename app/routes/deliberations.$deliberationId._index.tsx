@@ -211,7 +211,7 @@ export default function DeliberationDashboard() {
               </div>
             </div>
             <div className="mt-8 flex justify-between items-center space-x-4">
-              <Link to={`/data/edges`} prefetch="intent">
+              <Link to={`/data/graph`} prefetch="intent">
                 <Button variant="outline">Show Graph</Button>
               </Link>
               <Link

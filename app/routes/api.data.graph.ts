@@ -7,7 +7,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const params = url.searchParams
   const questionId = params.get("questionId")
   let { values, upgrades, questions } = graph
-  if (questionId) {
+  if (questionId && questionId !== "undefined") {
     values = values.filter((v) => v.questionId === Number(questionId))
   }
   const edges = upgrades.map((upgrade) => ({

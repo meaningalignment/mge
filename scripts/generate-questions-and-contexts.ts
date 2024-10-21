@@ -1,7 +1,4 @@
-import {
-  generateQuestions,
-  generateContexts,
-} from "../app/services/generate-questions"
+import { generateQuestions, generateContexts } from "../app/services/generation"
 
 async function generateQuestionsAndContexts(topic: string) {
   try {

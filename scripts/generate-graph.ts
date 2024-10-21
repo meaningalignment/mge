@@ -1,8 +1,5 @@
 import { Value } from "values-tools/src/types"
-import {
-  generateContexts,
-  generateQuestions,
-} from "../app/services/generate-questions"
+import { generateContexts, generateQuestions } from "../app/services/generation"
 import {
   configureValuesTools,
   generateUpgrades,
@@ -37,22 +34,22 @@ export async function generateGraph(
   // 1. generate questions
   console.log(`Generating ${numQuestions} questions...`)
   const questions = await generateQuestions(topic, numQuestions).then((qs) =>
-    qs.map((q) => ({ text: q, id: questionIdCounter++ }))
+    qs.map((q) => ({ ...q, id: questionIdCounter++ }))
   )
   console.log(`Generated questions:`, questions)
 
   for (const question of questions) {
-    console.log(`Processing question: ${question.text}`)
+    console.log(`Processing question: ${question.question}`)
     // 2. generate contexts for each question
     console.log(`Generating ${numContexts} contexts...`)
-    const contexts = await generateContexts(question.text, numContexts)
+    const contexts = await generateContexts(question.question, numContexts)
     console.log(`Generated contexts:`, contexts)
 
     // 3. Generate values for each context
     console.log(`Generating values for each context...`)
     const newValues = await Promise.all(
       contexts.map((context) =>
-        generateValueContext(question.text, context, {
+        generateValueContext(question.question, context, {
           includeStory: true,
           includeTitle: true,
         }).then((data) => ({

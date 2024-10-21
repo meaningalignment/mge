@@ -1,7 +1,8 @@
 import { z } from "zod"
-import { genObj } from "values-tools"
+import { generateUpgrades, generateValueContext, genObj } from "values-tools"
 import { db, inngest } from "~/config.server"
 import { Question } from "@prisma/client"
+import { Upgrade, Value } from "values-tools/src/types"
 
 export async function generateQuestions(
   topic: string,
@@ -166,3 +167,83 @@ export const generateQuestionsAndContexts = inngest.createFunction(
 // 2. generate contexts for each question
 // 3. generate values for a question. Rank how relevant for each context
 // 4. generate hypotheses for contexts and values.
+
+// export const generateSeedGraph = inngest.createFunction(
+//   { name: "Generate Deliberation Graph" },
+//   { event: "gen-deliberation-graph" },
+//   async ({ event, step, logger }) => {
+//     logger.info(`Starting graph generation for deliberation`)
+
+//     const deliberationId = event.data.deliberationId as number
+//     const numQuestions = event.data.numQuestions ?? 5
+//     const numContexts = event.data.numContexts ?? 5
+
+//     const questions = await step.run("Fetching questions", async () =>
+//       db.question.findMany({ where: { deliberationId } })
+//     )
+//     const contexts = await step.run("Fetching contexts", async () =>
+//       db.context.findMany({
+//         where: { deliberationId },
+//         include: {
+//           ContextsForQuestions: true,
+//         },
+//       })
+//     )
+
+//     for (const question of questions) {
+//       logger.info(`Processing question: ${question.question}`)
+
+//       const contextsForQuestion = contexts.filter((c) =>
+//         c.ContextsForQuestions.some((q) => q.questionId === question.id)
+//       )
+
+//       // 3. Generate values for each context
+//       const values = await step.run(
+//         `Generating values for each context`,
+//         async () =>
+//           Promise.all(
+//             contextsForQuestion.map((context) =>
+//               generateValueContext(question.question, context.id, {
+//                 includeStory: true,
+//                 includeTitle: true,
+//               }).then((data) => ({
+//                 title: (data as any).title,
+//                 description: (data as any).fictionalStory,
+//                 policies: data.revisedAttentionPolicies,
+//                 contexts,
+//                 context,
+//               }))
+//             )
+//           )
+//       )
+
+//       // 4. generate hypotheses for contexts
+//       const upgrades = await step.run(`Generating upgrades`, async () =>
+//         generateUpgrades(newValues)
+//       )
+
+//       // Save values and upgrades to the database
+//       await step.run(`Inserting values in DB`, async () =>
+//         db.canonicalValuesCard.createMany({
+//           data: values.map((v) => ({
+//             deliberationId,
+//             title: v.title,
+//             description: v.description,
+//             policies: v.policies,
+//             questionId: question.id,
+//             contextId: v.context,
+//           })),
+//         })
+//       )
+//     }
+
+//     logger.info(`Graph generation completed`)
+
+//     return {
+//       message: "Graph generated successfully",
+//       totalValues: values.length,
+//       totalUpgrades: upgrades.length,
+//       totalQuestions: questions.length,
+//     }
+//   }
+// )
