@@ -88,10 +88,9 @@ export default function LinkScreen() {
   const [showCards, setShowCards] = useState(false)
   const [relationship, setRelationship] = useState<Relationship | null>(null)
   const [comment, setComment] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
   const { draw } = useLoaderData<typeof loader>()
-  const isLoading =
-    navigation.state === "submitting" || navigation.state === "loading"
 
   // If there are no values in the draw, continue to next step.
   useEffect(() => {
@@ -101,6 +100,7 @@ export default function LinkScreen() {
   }, [draw])
 
   const onContinue = async () => {
+    setIsLoading(true)
     va.track(`Submitted Edge ${index + 1}`)
 
     const body = {
@@ -116,17 +116,18 @@ export default function LinkScreen() {
     // If we're at the end of the draw, navigate to the finish screen.
     if (index === draw.length - 1) {
       va.track("Finished")
-      return navigate("/finished")
+      return navigate(`/deliberation/${deliberationId}/finished`)
     }
 
     setRelationship(null)
     setComment(null)
+    setIsLoading(false)
 
     // Move to the next pair.
     setIndex((i) => i + 1)
 
     // Scroll to the top of the page.
-    window?.scrollTo({ top: 0, behavior: "smooth" })
+    window.scrollTo(0, 0)
   }
 
   if (!draw[index]) {
