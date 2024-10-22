@@ -174,7 +174,7 @@ model Context {
 model Question {
   id                   Int                    @id @default(autoincrement())
   question             String
-  title                String?
+  title                String
   seedMessage          String?
   ContextsForQuestions ContextsForQuestions[]
   deliberationId       Int

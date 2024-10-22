@@ -11,7 +11,7 @@ import {
 import { Checkbox } from "~/components/ui/checkbox"
 
 export type GraphSettings = {
-  questions: { id: number; text: string }[]
+  questions: { id: number; title: string; question: string }[]
   questionId: number | null
   visualizeEdgeCertainty: boolean
   visualizeWisdomScore: boolean
@@ -54,23 +54,27 @@ export default function MoralGraphSettings({
         >
           <SelectTrigger id="run">
             <SelectValue
-              placeholder={selectedQuestion?.text ?? "All Questions"}
+              placeholder={selectedQuestion?.title ?? "All Questions"}
             />
           </SelectTrigger>
-          <SelectContent defaultValue={selectedQuestion?.text ?? "all"}>
+          <SelectContent defaultValue={selectedQuestion?.title ?? "all"}>
             <SelectItem value="all">All Questions</SelectItem>
             {settings.questions.map((q) => (
-              <SelectItem value={q.id.toString()}>{q.text}</SelectItem>
+              <SelectItem key={q.id} value={q.id.toString()}>
+                {q.title}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
       {settings.questionId ? (
         <p className="text-xs text-gray-400 mb-4">
-          Show values articulated when users were asked:
+          Showing values articulated when users were asked:
           <br />
           <br />
-          <strong>{selectedQuestion?.text ?? "All Questions"}</strong>
+          <span className="text-sm text-black italic">
+            {selectedQuestion!.question}
+          </span>
         </p>
       ) : (
         <p className="text-xs text-gray-400 mb-4">
@@ -128,9 +132,8 @@ export default function MoralGraphSettings({
       >
         Update Graph
       </Button>
-      <div className="flex-grow" />
-      <div className="flex flex-row">
-        <div className="flex-grow" />
+      <div className="flex-grow h-full" />
+      <div className="flex flex-row-reverse">
         <a href="https://meaningalignment.org" className="text-xs underline">
           Learn More
         </a>

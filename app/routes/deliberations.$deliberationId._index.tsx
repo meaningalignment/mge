@@ -4,6 +4,7 @@ import {
   useSubmit,
   Link,
   useRevalidator,
+  useParams,
 } from "@remix-run/react"
 import { useEffect, useState } from "react"
 import { db, inngest } from "~/config.server"
@@ -158,6 +159,7 @@ export default function DeliberationDashboard() {
   const { deliberation } = useLoaderData<typeof loader>()
   const submit = useSubmit()
   const revalidator = useRevalidator()
+  const { deliberationId } = useParams()
   const [openQuestionId, setOpenQuestionId] = useState<number | null>(null)
 
   useEffect(() => {
@@ -255,7 +257,7 @@ export default function DeliberationDashboard() {
             )}
             <div className="mt-8 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4">
               <Link
-                to={`/data/graph`}
+                to={`/deliberation/${deliberationId}/graph`}
                 prefetch="intent"
                 className="w-full sm:w-auto"
               >
