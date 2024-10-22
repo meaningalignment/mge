@@ -45,7 +45,7 @@ export function ChatList({ threadId, messages, isLoading }: ChatList) {
       {messages.map((message, i) => (
         <div key={i}>
           {getValuesCard(message) ? (
-            <div className="mb-4">
+            <div className={"mb-4"}>
               <ValuesCard detailsInline card={getValuesCard(message)!} />
             </div>
           ) : (

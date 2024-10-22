@@ -10,7 +10,7 @@ function getDisplayName(name: string | null) {
 export const loader: LoaderFunction = async ({
   params,
 }: LoaderFunctionArgs): Promise<Response> => {
-  const chatId = params.threadId!
+  const chatId = params.chatId!
   const name = await kv.get<string>(`function:${chatId}`)
   return json({ function: getDisplayName(name) })
 }
