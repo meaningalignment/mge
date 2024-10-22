@@ -67,7 +67,8 @@ model ValuesCard {
   createdAt             DateTime                     @default(now())
   updatedAt             DateTime                     @updatedAt
   canonicalCardId       Int?
-  chatId                String                       @unique
+  seedGenerationRunId   String? // Present if the card was generated as a seed value.
+  chatId                String?                      @unique // Present if the card was articulated in a chat.
   chat                  Chat?                        @relation(fields: [chatId], references: [id], onDelete: Cascade)
   canonicalCard         CanonicalValuesCard?         @relation(fields: [canonicalCardId], references: [id], onDelete: SetNull)
   embedding             Unsupported("vector(1536)")?
@@ -83,7 +84,6 @@ model CanonicalValuesCard {
   policies           String[]
   createdAt          DateTime                     @default(now())
   updatedAt          DateTime                     @updatedAt
-  generationRunId    String?
   embedding          Unsupported("vector(1536)")?
   valuesCards        ValuesCard[]
   edgesFrom          Edge[]                       @relation("FromValueRelation")
@@ -143,7 +143,7 @@ model Edge {
 model EdgeHypothesis {
   fromId          Int
   toId            Int
-  hypothesisRunId String
+  hypothesisRunId String?
   story           String?
   contextId       String
   createdAt       DateTime             @default(now())

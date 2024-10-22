@@ -31,7 +31,7 @@ export const action: ActionFunction = async ({ request }) => {
   })
 
   await inngest.send({
-    name: "gen-questions-contexts",
+    name: "gen-seed-questions-contexts",
     data: {
       deliberationId: deliberation.id,
       topic,

@@ -5,7 +5,7 @@ import {
   getExistingDuplicateValue,
   getRepresentativeValue,
 } from "values-tools"
-import { embedDeduplicatedCard } from "./embedding"
+import { embedCanonicalCard } from "./embedding"
 import { embedValue } from "values-tools"
 
 async function createCanonicalCard(
@@ -21,7 +21,7 @@ async function createCanonicalCard(
     },
   })
   // Embed the canonical values card.
-  await embedDeduplicatedCard(canonical as any)
+  await embedCanonicalCard(canonical as any)
   return canonical
 }
 
@@ -30,7 +30,7 @@ async function similaritySearch(
   limit: number = 10,
   minimumDistance: number = 0.1
 ): Promise<Array<CanonicalValuesCard>> {
-  const query = `SELECT DISTINCT cvc.id, cvc.title, cvc."description", cvc."", cvc."policies", cvc.embedding <=> '${JSON.stringify(
+  const query = `SELECT DISTINCT cvc.id, cvc.title, cvc."description", cvc."policies", cvc.embedding <=> '${JSON.stringify(
     vector
   )}'::vector as "_distance"
     FROM "CanonicalValuesCard" cvc
@@ -75,13 +75,6 @@ async function fetchSimilarCanonicalCard(
   )
 }
 
-async function fetchNonCanonicalizedValues(limit: number = 50) {
-  return (await db.valuesCard.findMany({
-    where: { canonicalCardId: null },
-    take: limit,
-  })) as ValuesCard[]
-}
-
 async function linkClusterToCanonicalCard(
   cluster: ValuesCard[],
   canonicalCard: CanonicalValuesCard
@@ -94,40 +87,78 @@ async function linkClusterToCanonicalCard(
   })
 }
 
-//
-// Ingest function for deduplication.
-//
-// Type casting is a bit broken here, hence the `any` casts.
-// Thread with caution.
-//
+async function fetchNonCanonicalizedValues(
+  deliberationId: number,
+  limit: number = 50
+) {
+  return (await db.valuesCard.findMany({
+    where: {
+      canonicalCardId: null,
+      deliberationId: deliberationId,
+    },
+    take: limit,
+  })) as ValuesCard[]
+}
 
-export const deduplicate = inngest.createFunction(
-  { name: "Deduplicate", concurrency: 1 }, // Run sequentially to avoid RCs.
+// Cron function
+export const deduplicateCron = inngest.createFunction(
+  { name: "Deduplicate Cron", concurrency: 1 },
   { cron: "0 * * * *" },
   async ({ step, logger }) => {
-    logger.info(`Running deduplication.`)
+    logger.info("Running deduplication cron job.")
 
-    // Get all non-canonicalized submitted values cards.
+    // Get all deliberations
+    const deliberations = await step.run(
+      "Fetching all deliberations",
+      async () => {
+        return db.deliberation.findMany()
+      }
+    )
+
+    for (const deliberation of deliberations) {
+      // Trigger deduplication for each deliberation
+      await step.sendEvent({
+        name: "deduplicate",
+        data: { deliberationId: deliberation.id },
+      })
+    }
+
+    return {
+      message: "Triggered deduplication for all deliberations.",
+    }
+  }
+)
+
+// Deduplication function for a specific deliberation
+export const deduplicate = inngest.createFunction(
+  { name: "Deduplicate Deliberation" },
+  { event: "deduplicate" },
+  async ({ event, step, logger }) => {
+    const deliberationId = event.data.deliberationId as number
+    logger.info(`Running deduplication for deliberation ${deliberationId}.`)
+
+    // Get all non-canonicalized submitted values cards for this deliberation.
     const cards = (await step.run(
-      `Get non-canonicalized cards from database`,
-      async () => fetchNonCanonicalizedValues()
+      `Get non-canonicalized cards for deliberation ${deliberationId}`,
+      async () => fetchNonCanonicalizedValues(deliberationId)
     )) as any as ValuesCard[]
 
     if (cards.length === 0) {
-      logger.info(`No cards to deduplicate.`)
-
+      logger.info(`No cards to deduplicate for deliberation ${deliberationId}.`)
       return {
-        message: `No cards to deduplicate.`,
+        message: `No cards to deduplicate for deliberation ${deliberationId}.`,
       }
     }
 
     // Cluster the non-canonicalized cards with a prompt / dbscan.
     const clusters = (await step.run(`Cluster cards using prompt`, async () => {
       const useDbScan = cards.length > 20 // Only use dbscan when we're dealing with a lot of cards.
-      return deduplicateValues(cards, null, useDbScan)
+      return deduplicateValues<ValuesCard>(cards, null, useDbScan)
     })) as any as ValuesCard[][]
 
-    logger.info(`Found ${clusters.length} clusters.`)
+    logger.info(
+      `Found ${clusters.length} clusters for deliberation ${deliberationId}.`
+    )
 
     //
     // For each deduplicated non-canonical card, find canonical cards that are essentially
@@ -167,10 +198,17 @@ export const deduplicate = inngest.createFunction(
       }
     }
 
-    logger.info(`Done. Deduplicated ${cards.length} cards.`)
+    logger.info(
+      `Done. Deduplicated ${cards.length} cards for deliberation ${deliberationId}.`
+    )
+
+    await step.sendEvent({
+      name: "deduplicate-finished",
+      data: { deliberationId },
+    })
 
     return {
-      message: `Deduplicated ${cards.length} cards.`,
+      message: `Deduplicated ${cards.length} cards for deliberation ${deliberationId}.`,
     }
   }
 )

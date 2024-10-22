@@ -3,6 +3,7 @@ import { cowpunkify } from "cowpunk-auth"
 import { Inngest } from "inngest"
 import { OpenAI } from "openai"
 import { redirect } from "@remix-run/node"
+import { configureValuesTools, PromptCache } from "values-tools"
 
 export const db = new PrismaClient()
 

@@ -1,18 +1,21 @@
 import { serve } from "inngest/remix"
-import { deduplicate } from "~/services/deduplication"
+import { deduplicateCron, deduplicate } from "~/services/deduplication"
 import { embed } from "~/services/embedding"
 import { inngest } from "~/config.server"
-import { hypothesize, hypothesize_cron } from "~/services/linking"
-import { generateQuestionsAndContexts } from "~/services/generation"
-// import { evaluateDialogues } from "~/values-tools/rater"
+import { hypothesize, hypothesizeCron } from "~/services/linking"
+import {
+  generateSeedGraph as genGraph,
+  generateSeedQuestionsAndContexts as genQuestionsAndContexts,
+} from "~/services/generation"
 
 const handler = serve(inngest, [
   embed,
   hypothesize,
-  hypothesize_cron,
-  // evaluateDialogues,
+  hypothesizeCron,
   deduplicate,
-  generateQuestionsAndContexts,
+  deduplicateCron,
+  genQuestionsAndContexts,
+  genGraph,
 ])
 
 export const config = {

@@ -1,8 +1,7 @@
 import { z } from "zod"
-import { generateUpgrades, generateValueContext, genObj } from "values-tools"
+import { generateValueContext, genObj } from "values-tools"
 import { db, inngest } from "~/config.server"
 import { Question } from "@prisma/client"
-import { Upgrade, Value } from "values-tools/src/types"
 
 export async function generateQuestions(
   topic: string,
@@ -110,9 +109,9 @@ async function addContextsInDb(
   )
 }
 
-export const generateQuestionsAndContexts = inngest.createFunction(
-  { name: "Generate Deliberation Questions and Contexts" },
-  { event: "gen-questions-contexts" },
+export const generateSeedQuestionsAndContexts = inngest.createFunction(
+  { name: "Generate Seed Questions and Contexts" },
+  { event: "gen-seed-questions-contexts" },
   async ({ event, step, logger }) => {
     logger.info(`Running deliberation setup.`)
 
@@ -162,88 +161,102 @@ export const generateQuestionsAndContexts = inngest.createFunction(
   }
 )
 
-// generate graph
-// 1. generate questions
-// 2. generate contexts for each question
-// 3. generate values for a question. Rank how relevant for each context
-// 4. generate hypotheses for contexts and values.
+export const generateSeedGraph = inngest.createFunction(
+  { name: "Generate Seed Graph" },
+  { event: "gen-seed-graph" },
+  async ({ event, step, logger, runId }) => {
+    logger.info(`Starting graph generation for deliberation`)
 
-// export const generateSeedGraph = inngest.createFunction(
-//   { name: "Generate Deliberation Graph" },
-//   { event: "gen-deliberation-graph" },
-//   async ({ event, step, logger }) => {
-//     logger.info(`Starting graph generation for deliberation`)
+    const deliberationId = event.data.deliberationId as number
 
-//     const deliberationId = event.data.deliberationId as number
-//     const numQuestions = event.data.numQuestions ?? 5
-//     const numContexts = event.data.numContexts ?? 5
+    const questions = await step.run("Fetching questions", async () =>
+      db.question.findMany({ where: { deliberationId } })
+    )
+    const contexts = await step.run("Fetching contexts", async () =>
+      db.context.findMany({
+        where: { deliberationId },
+        include: {
+          ContextsForQuestions: true,
+        },
+      })
+    )
 
-//     const questions = await step.run("Fetching questions", async () =>
-//       db.question.findMany({ where: { deliberationId } })
-//     )
-//     const contexts = await step.run("Fetching contexts", async () =>
-//       db.context.findMany({
-//         where: { deliberationId },
-//         include: {
-//           ContextsForQuestions: true,
-//         },
-//       })
-//     )
+    for (const question of questions) {
+      logger.info(`Processing question: ${question.question}`)
 
-//     for (const question of questions) {
-//       logger.info(`Processing question: ${question.question}`)
+      const contextsForQuestion = contexts.filter((c) =>
+        c.ContextsForQuestions.some((q) => q.questionId === question.id)
+      )
 
-//       const contextsForQuestion = contexts.filter((c) =>
-//         c.ContextsForQuestions.some((q) => q.questionId === question.id)
-//       )
+      // Generate values for each context
+      const values = await step.run(`Generating values for context`, async () =>
+        Promise.all(
+          contextsForQuestion.map((context, index) =>
+            generateValueContext(question.question, context.id, {
+              includeStory: true,
+              includeTitle: true,
+            }).then((data) => ({
+              id: index,
+              title: (data as any).title,
+              description: (data as any).fictionalStory,
+              policies: data.revisedAttentionPolicies,
+            }))
+          )
+        )
+      )
 
-//       // 3. Generate values for each context
-//       const values = await step.run(
-//         `Generating values for each context`,
-//         async () =>
-//           Promise.all(
-//             contextsForQuestion.map((context) =>
-//               generateValueContext(question.question, context.id, {
-//                 includeStory: true,
-//                 includeTitle: true,
-//               }).then((data) => ({
-//                 title: (data as any).title,
-//                 description: (data as any).fictionalStory,
-//                 policies: data.revisedAttentionPolicies,
-//                 contexts,
-//                 context,
-//               }))
-//             )
-//           )
-//       )
+      // Save values to the database and create connections to contexts
+      await step.run(
+        `Inserting values in DB and connecting to contexts`,
+        async () => {
+          await Promise.all(
+            values.map((v) =>
+              db.valuesCard.create({
+                data: {
+                  seedGenerationRunId: runId,
+                  description: v.description,
+                  policies: v.policies,
+                  title: v.title,
+                  deliberationId,
+                  // Link values card to all contexts for question, even though it was created for a particular one. Otherwise, our final seed graph will not be linked correctly, as all values will be for specific contexts.
+                  ContextsForValueCards: {
+                    createMany: {
+                      data: contextsForQuestion.map((c) => ({
+                        contextId: c.id,
+                        deliberationId,
+                      })),
+                    },
+                  },
+                },
+              })
+            )
+          )
+        }
+      )
+    }
 
-//       // 4. generate hypotheses for contexts
-//       const upgrades = await step.run(`Generating upgrades`, async () =>
-//         generateUpgrades(newValues)
-//       )
+    // Run deduplication.
+    await step.sendEvent({
+      name: "deduplicate",
+      data: { deliberationId },
+    })
+    await step.waitForEvent("deduplicate-finished", {
+      timeout: "15m",
+      if: `async.data.deliberationId == ${deliberationId}`,
+    })
 
-//       // Save values and upgrades to the database
-//       await step.run(`Inserting values in DB`, async () =>
-//         db.canonicalValuesCard.createMany({
-//           data: values.map((v) => ({
-//             deliberationId,
-//             title: v.title,
-//             description: v.description,
-//             policies: v.policies,
-//             questionId: question.id,
-//             contextId: v.context,
-//           })),
-//         })
-//       )
-//     }
+    // Run hypothesization.
+    await step.sendEvent({
+      name: "hypothesize",
+      data: { deliberationId },
+    })
+    await step.waitForEvent("hypothesize-finished", {
+      timeout: "15m",
+      if: `async.data.deliberationId == ${deliberationId}`,
+    })
 
-//     logger.info(`Graph generation completed`)
-
-//     return {
-//       message: "Graph generated successfully",
-//       totalValues: values.length,
-//       totalUpgrades: upgrades.length,
-//       totalQuestions: questions.length,
-//     }
-//   }
-// )
+    return {
+      message: "Graph generated successfully",
+    }
+  }
+)

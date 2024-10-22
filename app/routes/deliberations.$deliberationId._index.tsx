@@ -6,7 +6,7 @@ import {
   useRevalidator,
 } from "@remix-run/react"
 import { useEffect, useState } from "react"
-import { db } from "~/config.server"
+import { db, inngest } from "~/config.server"
 import { Button } from "~/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent } from "~/components/ui/card"
 import { redirect } from "@remix-run/node"
@@ -19,6 +19,8 @@ import {
 import { QuestionMarkCircledIcon } from "@radix-ui/react-icons"
 import { ChevronDownIcon } from "@radix-ui/react-icons"
 import { Loader2 } from "lucide-react"
+import { AlertCircle } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert"
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const deliberationId = Number(params.deliberationId)!
@@ -37,12 +39,20 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
       _count: {
         select: {
           edges: true,
-          valuesCards: true,
+          edgeHypotheses: true,
+          valuesCards: {
+            where: {
+              seedGenerationRunId: {
+                equals: null,
+              },
+            },
+          },
           canonicalValuesCards: true,
         },
       },
     },
   })
+
   return { deliberation }
 }
 
@@ -91,6 +101,15 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     })
 
     return json({ success: true })
+  } else if (action === "generateSeedGraph") {
+    const deliberationId = Number(params.deliberationId)!
+
+    await inngest.send({
+      name: "gen-seed-graph",
+      data: { deliberationId },
+    })
+
+    return json({ success: true, message: "Seed graph generation initiated" })
   }
 }
 
@@ -163,6 +182,11 @@ export default function DeliberationDashboard() {
     setOpenQuestionId(openQuestionId === questionId ? null : questionId)
   }
 
+  const handleGenerateSeedGraph = () => {
+    alert("Seed graph generation started in the background.")
+    submit({ action: "generateSeedGraph" }, { method: "post" })
+  }
+
   return (
     <div className="container mx-auto py-6 max-w-2xl">
       <div className="flex justify-between items-center mb-8">
@@ -210,15 +234,43 @@ export default function DeliberationDashboard() {
                 </p>
               </div>
             </div>
-            <div className="mt-8 flex justify-between items-center space-x-4">
-              <Link to={`/data/graph`} prefetch="intent">
-                <Button variant="outline">Show Graph</Button>
+            {deliberation._count.valuesCards === 0 && (
+              <Alert className="mt-6 mb-4 bg-slate-50">
+                <div className="flex flex-row space-x-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>No responses yet</AlertTitle>
+                </div>
+
+                <AlertDescription className="flex flex-col sm:flex-row items-center justify-between">
+                  <span>Would you like to generate a seed graph?</span>
+                  <Button
+                    variant="ghost"
+                    onClick={handleGenerateSeedGraph}
+                    className="mt-2 sm:mt-0"
+                  >
+                    Seed Graph
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            )}
+            <div className="mt-8 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <Link
+                to={`/data/graph`}
+                prefetch="intent"
+                className="w-full sm:w-auto"
+              >
+                <Button variant="outline" className="w-full sm:w-auto">
+                  Show Graph
+                </Button>
               </Link>
               <Link
                 to={`/deliberation/${deliberation.id}/start`}
                 prefetch="intent"
+                className="w-full sm:w-auto"
               >
-                <Button>Show Participant View</Button>
+                <Button className="w-full sm:w-auto">
+                  Show Participant View
+                </Button>
               </Link>
             </div>
           </CardContent>

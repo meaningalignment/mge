@@ -3,14 +3,14 @@ import { db, inngest } from "~/config.server"
 import { calculateAverageEmbedding } from "~/lib/utils"
 import { embedValue } from "values-tools"
 
-export async function embedDeduplicatedCard(
+export async function embedCanonicalCard(
   card: CanonicalValuesCard
 ): Promise<void> {
   // Embed card.
   const embedding: number[] = await embedValue(card)
 
   // Update in DB.
-  await db.$executeRaw`UPDATE "DeduplicatedCard" SET embedding = ${JSON.stringify(
+  await db.$executeRaw`UPDATE "CanonicalValuesCard" SET embedding = ${JSON.stringify(
     embedding
   )}::vector WHERE id = ${card.id};`
 }
@@ -74,7 +74,7 @@ export const embed = inngest.createFunction(
 
     for (const card of deduplicatedCards) {
       await step.run("Embed deduplocated card", async () => {
-        await embedDeduplicatedCard(card)
+        await embedCanonicalCard(card)
       })
     }
 

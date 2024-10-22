@@ -1,6 +1,6 @@
 import { json } from "@remix-run/node"
 import { db } from "../config.server"
-import { embedDeduplicatedCard } from "./embedding"
+import { embedCanonicalCard } from "./embedding"
 import { genText } from "values-tools"
 
 export const definitionOfASourceOfMeaning = `
@@ -78,7 +78,7 @@ export async function runTaskFromForm(formData: FormData) {
     const card = await db.canonicalValuesCard.findUnique({
       where: { id: Number(formData.get("cardId")) },
     })
-    await embedDeduplicatedCard(card as any)
+    await embedCanonicalCard(card as any)
     return json({ ok: true })
   } else {
     return json({ error: "Unknown task" }, { status: 400 })

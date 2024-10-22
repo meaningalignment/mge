@@ -2,6 +2,7 @@ import { CanonicalValuesCard, EdgeHypothesis } from "@prisma/client"
 import { db, inngest } from "~/config.server"
 import { generateUpgrades, Upgrade } from "values-tools"
 import { getUserEmbedding } from "./embedding"
+import { Value } from "values-tools/src/types"
 
 type EdgeHypothesisData = {
   to: CanonicalValuesCard
@@ -161,14 +162,51 @@ async function cleanupTransitions(hypothesisRunId: string): Promise<{
 // Ingest function for creating edge hypotheses.
 //
 
-export const hypothesize_cron = inngest.createFunction(
+export const hypothesizeCron = inngest.createFunction(
   { name: "Create Hypothetical Edges Cron", concurrency: 1 },
   { cron: "0 */12 * * *" },
-  async ({ step }) => {
+  async ({ step, logger }) => {
     await step.sendEvent({ name: "hypothesize", data: {} })
 
+    // Get all deliberations
+    const deliberations = await step.run(
+      "Fetching all deliberations",
+      async () => {
+        return db.deliberation.findMany()
+      }
+    )
+
+    for (const deliberation of deliberations) {
+      // Get the latest canonical card for this deliberation
+      const latestCanonicalCard = await step.run(
+        `Get latest canonical card for deliberation ${deliberation.id}`,
+        async () =>
+          db.canonicalValuesCard.findFirst({
+            where: { deliberationId: deliberation.id },
+            orderBy: { createdAt: "desc" },
+          })
+      )
+
+      // Check if the latest card is older than 12 hours
+      if (
+        latestCanonicalCard?.createdAt &&
+        new Date(latestCanonicalCard.createdAt) >
+          new Date(Date.now() - 12 * 60 * 60 * 1000)
+      ) {
+        // If the card is recent, trigger the hypothesize event
+        await step.sendEvent({
+          name: "hypothesize",
+          data: { deliberationId: deliberation.id },
+        })
+      } else {
+        logger.info(
+          `Skipping deliberation ${deliberation.id}: Latest card is more than 12 hours old or doesn't exist.`
+        )
+      }
+    }
+
     return {
-      message: "Triggered a hypothesization run.",
+      message: "Triggered hypothesization runs for eligible deliberations.",
     }
   }
 )
@@ -176,32 +214,10 @@ export const hypothesize_cron = inngest.createFunction(
 export const hypothesize = inngest.createFunction(
   { name: "Create Hypothetical Edges", concurrency: 1 },
   { event: "hypothesize" },
-  async ({ step, logger, runId }) => {
+  async ({ event, step, logger, runId }) => {
     logger.info("Creating hypothetical links for all cases.")
 
-    const deliberationId = 1 // TODO! This is hardcoded for now.
-
-    //
-    // Don't run the expensive prompt if the latest card is older than last time
-    // this cron job ran.
-    //
-    const latestCanonicalCard = (await step.run(
-      "Get latest canonical card",
-      async () =>
-        db.canonicalValuesCard.findFirst({
-          orderBy: { createdAt: "desc" },
-        })
-    )) as any as CanonicalValuesCard | null
-
-    if (
-      latestCanonicalCard?.createdAt &&
-      new Date(latestCanonicalCard.createdAt) <
-        new Date(Date.now() - 12 * 60 * 60 * 1000)
-    ) {
-      return {
-        message: "Latest card is more than 12 hours old, skipping.",
-      }
-    }
+    const deliberationId = event.data!.deliberationId as number
 
     logger.info(`Running hypothetical links generation`)
 
@@ -216,7 +232,11 @@ export const hypothesize = inngest.createFunction(
                   id: true,
                 },
               },
-              valuesCard: true,
+              valuesCard: {
+                include: {
+                  canonicalCard: true,
+                },
+              },
             },
           },
         },
@@ -227,27 +247,35 @@ export const hypothesize = inngest.createFunction(
     // Create and upsert transitions for each context.
     //
     for (const cluster of contexts) {
-      const values = cluster.ContextsForValueCards.map((c) => c.valuesCard)
-      const context = cluster.ContextsForValueCards[0].context // All contexts are the same.
+      // Extract unique canonical values connected to the context.
+      const values = Array.from(
+        new Map(
+          cluster.ContextsForValueCards.map((c) => c.valuesCard.canonicalCard)
+            .filter((c): c is NonNullable<typeof c> => c !== null)
+            .map((card) => [card.id, card])
+        ).values()
+      )
+
+      if (values.length < 2) {
+        logger.info(`Skipping: Not enough values.`)
+        continue
+      }
+
+      const contextId = cluster.ContextsForValueCards[0].contextId // contexts in cluster are the same.
 
       const upgrades = await step.run(
-        `Generate transitions for context ${context.id}`,
+        `Generate transitions for context ${contextId}`,
         async () => generateUpgrades(values)
       )
 
-      console.log(
-        `Created ${upgrades.length} transitions for context ${context.id}.`
+      logger.info(
+        `Created ${upgrades.length} transitions for context ${contextId}.`
       )
 
       await step.run(
-        `Add transitions for context ${context.id} to database`,
+        `Add transitions for context ${contextId} to database`,
         async () =>
-          upsertHypothesizedUpgrades(
-            upgrades,
-            runId,
-            context.id,
-            deliberationId
-          )
+          upsertHypothesizedUpgrades(upgrades, runId, contextId, deliberationId)
       )
     }
 
@@ -258,6 +286,11 @@ export const hypothesize = inngest.createFunction(
       `Remove old transitions from database`,
       async () => cleanupTransitions(runId)
     )) as any as { old: number; added: number }
+
+    await step.sendEvent({
+      name: "hypothesize-finished",
+      data: { deliberationId },
+    })
 
     return {
       message: `Success. Removed ${old} transitions. Added ${added} transitions.`,
