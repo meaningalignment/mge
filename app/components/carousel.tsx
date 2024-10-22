@@ -5,7 +5,7 @@ import ValuesCard from "./values-card"
 type CardWithCounts = CanonicalValuesCard & {
   valuesCards: { userId: number }[]
   _count: {
-    Edge: number
+    edgesTo: number
   }
 }
 
@@ -17,7 +17,7 @@ export default function Carousel({ cards }: { cards: CardWithCounts[] }) {
   }
 
   const uniqueVotes = (card: CardWithCounts) => {
-    return card._count.Edge
+    return card._count.edgesTo
   }
 
   const footerText = (card: CardWithCounts) =>

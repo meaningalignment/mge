@@ -86,7 +86,7 @@ export async function generateGraph(
 
   // Save graph to json file using fs
   const dateTimeString = new Date().toISOString().replace(/:/g, "-")
-  const filename = `./graph-${dateTimeString}.json`
+  const filename = `./app/lib/graph.json`
   console.log(`Saving graph to ${filename}...`)
   await fs.writeFile(
     filename,

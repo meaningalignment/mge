@@ -127,7 +127,7 @@ export default function QuestionSelectScreen() {
           <div className="flex flex-col justify-center items-center my-4 h-4">
             {!selected && (
               <p className="text-stone-300">
-                {`Select a user question to continue`}
+                {`Select a question to continue`}
               </p>
             )}
           </div>

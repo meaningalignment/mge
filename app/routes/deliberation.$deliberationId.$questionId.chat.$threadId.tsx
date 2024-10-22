@@ -66,13 +66,18 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export default function ChatScreen() {
-  const { threadId } = useParams()
+  const { threadId, deliberationId, questionId } = useParams()
   const { messages } = useLoaderData<typeof loader>()
 
   return (
     <div className="flex flex-col h-screen w-screen">
       <Header />
-      <Chat threadId={threadId!} oldMessages={messages} />
+      <Chat
+        deliberationId={Number(deliberationId)}
+        questionId={Number(questionId)}
+        oldMessages={messages}
+        threadId={threadId!}
+      />
     </div>
   )
 }

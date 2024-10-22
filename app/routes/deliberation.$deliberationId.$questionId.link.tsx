@@ -1,7 +1,13 @@
 import { Button } from "~/components/ui/button"
 import Header from "~/components/header"
-import { useLoaderData, useNavigate, useParams } from "@remix-run/react"
-import { LoaderFunctionArgs, json } from "@remix-run/node"
+import {
+  useLoaderData,
+  useNavigate,
+  useParams,
+  useSubmit,
+  useNavigation,
+} from "@remix-run/react"
+import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node"
 import { auth, db } from "~/config.server"
 import ValuesCard from "~/components/values-card"
 import { useEffect, useState } from "react"
@@ -15,17 +21,19 @@ import { Label } from "~/components/ui/label"
 import { Textarea } from "~/components/ui/textarea"
 import va from "@vercel/analytics"
 import { getDraw } from "~/services/linking"
+import LoadingButton from "~/components/loading-button"
 
 type Relationship = "upgrade" | "no_upgrade" | "not_sure"
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
+  const deliberationId = parseInt(params.deliberationId!)
   const userId = await auth.getUserId(request)
-  const draw = await getDraw(userId, 3)
+  const draw = await getDraw(userId, deliberationId, 3)
 
   return json({ draw })
 }
 
-export async function action({ request }: LoaderFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const userId = await auth.getUserId(request)
   const body = await request.json()
   const { edge, comment, relationship } = body
@@ -43,10 +51,12 @@ export async function action({ request }: LoaderFunctionArgs) {
       },
     },
     create: {
+      comment,
+      type: relationship,
+      story: edge.story,
       user: { connect: { id: userId } },
       to: { connect: { id: edge.to.id } },
       from: { connect: { id: edge.from.id } },
-      story: edge.story,
       context: {
         connect: {
           id_deliberationId: {
@@ -56,15 +66,11 @@ export async function action({ request }: LoaderFunctionArgs) {
         },
       },
       deliberation: { connect: { id: edge.deliberationId } },
-      contextId: edge.contextId,
-      type: relationship,
-      comment,
     },
     update: {
-      story: edge.story,
-      contextId: edge.contextId,
-      type: relationship,
       comment,
+      type: relationship,
+      story: edge.story,
     },
   })
 
@@ -73,28 +79,29 @@ export async function action({ request }: LoaderFunctionArgs) {
 
 export default function LinkScreen() {
   const navigate = useNavigate()
+  const submit = useSubmit()
+  const navigation = useNavigation()
 
-  const { questionId } = useParams()
+  const { deliberationId } = useParams()
 
   const [index, setIndex] = useState<number>(0)
   const [showCards, setShowCards] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [relationship, setRelationship] = useState<Relationship | null>(null)
   const [comment, setComment] = useState<string | null>(null)
 
   const { draw } = useLoaderData<typeof loader>()
+  const isLoading =
+    navigation.state === "submitting" || navigation.state === "loading"
 
   // If there are no values in the draw, continue to next step.
   useEffect(() => {
     if (draw.length === 0) {
-      navigate("/finished")
+      navigate(`/deliberation/${deliberationId}/finished`)
     }
   }, [draw])
 
   const onContinue = async () => {
     va.track(`Submitted Edge ${index + 1}`)
-
-    setIsLoading(true)
 
     const body = {
       edge: draw[index],
@@ -102,20 +109,9 @@ export default function LinkScreen() {
       comment,
     }
 
-    const response = await fetch(`/case/${questionId}/link`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    })
+    console.log("Submitting edge", body)
 
-    if (!response.ok) {
-      setIsLoading(false)
-      const text = await response.json()
-      console.error(text)
-      return
-    }
+    submit(body, { method: "post", encType: "application/json" })
 
     // If we're at the end of the draw, navigate to the finish screen.
     if (index === draw.length - 1) {
@@ -124,7 +120,6 @@ export default function LinkScreen() {
     }
 
     setRelationship(null)
-    setIsLoading(false)
     setComment(null)
 
     // Move to the next pair.
@@ -184,7 +179,8 @@ export default function LinkScreen() {
         >
           When{" "}
           <span className="font-bold">
-            {draw[index].contextId.split(" ").slice(1).join(" ")}
+            {draw[index].contextId.charAt(0).toLowerCase() +
+              draw[index].contextId.slice(1)}
           </span>
           , this person used to focus on{" "}
           <span className="font-bold">{draw[index].from.title}</span>.<br />

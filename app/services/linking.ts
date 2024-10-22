@@ -10,10 +10,12 @@ type EdgeHypothesisData = {
   contextId: string
   story: string
   hypothesisRunId: string
+  deliberationId: number
 }
 
 async function getDistanceFromUserValuesMap(
-  userId: number
+  userId: number,
+  deliberationId: number
 ): Promise<Map<number, number>> {
   // Get the user's embedding vector.
   const vector = await getUserEmbedding(userId)
@@ -27,6 +29,8 @@ async function getDistanceFromUserValuesMap(
       "CanonicalValuesCard" cvc
     INNER JOIN "EdgeHypothesis" eh
     ON eh."fromId" = cvc.id
+    WHERE
+      eh."deliberationId" = ${deliberationId}
     ORDER BY
       "_distance" DESC
     LIMIT 500;`
@@ -43,12 +47,14 @@ async function getDistanceFromUserValuesMap(
 
 export async function getDraw(
   userId: number,
+  deliberationId: number,
   size: number = 3
 ): Promise<EdgeHypothesisData[]> {
   // Find edge hypotheses that the user has not linked together yet.
   const hypotheses = (await db.edgeHypothesis.findMany({
     where: {
       AND: [
+        { deliberationId },
         { from: { edgesFrom: { none: { userId } } } },
         { to: { edgesTo: { none: { userId } } } },
       ],
@@ -68,7 +74,7 @@ export async function getDraw(
   )
 
   // The map of distances between the user's embedding and the "from" values.
-  const distances = await getDistanceFromUserValuesMap(userId)
+  const distances = await getDistanceFromUserValuesMap(userId, deliberationId)
 
   //
   // Sort the hypotheses on similarity to the user's embedding.
@@ -88,6 +94,7 @@ export async function getDraw(
       from: h.from,
       story: h.story,
       contextId: h.contextId,
+      deliberationId: h.deliberationId,
     } as EdgeHypothesisData
   })
 }

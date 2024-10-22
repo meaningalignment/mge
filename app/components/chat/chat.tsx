@@ -8,9 +8,17 @@ import { ChatScrollAnchor } from "./chat-scroll-anchor"
 export interface ChatProps extends React.ComponentProps<"div"> {
   oldMessages?: Message[]
   threadId: string
+  deliberationId: number
+  questionId: number
 }
 
-export function Chat({ threadId, oldMessages, className }: ChatProps) {
+export function Chat({
+  threadId,
+  questionId,
+  deliberationId,
+  oldMessages,
+  className,
+}: ChatProps) {
   const {
     messages: newMessages,
     append,
@@ -20,6 +28,7 @@ export function Chat({ threadId, oldMessages, className }: ChatProps) {
   } = useAssistant({
     api: "/api/chat-assistant",
     threadId,
+    body: { questionId, deliberationId },
   })
 
   const messages = [...(oldMessages ?? []), ...newMessages]

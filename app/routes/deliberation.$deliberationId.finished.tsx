@@ -4,8 +4,9 @@ import { useLoaderData } from "@remix-run/react"
 import { auth, db } from "~/config.server"
 import Carousel from "~/components/carousel"
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
   const userId = await auth.getUserId(request)
+  const deliberationId = parseInt(params.deliberationId!)
 
   const [
     userValuesCount,
@@ -15,16 +16,21 @@ export async function loader({ request }: LoaderFunctionArgs) {
   ] = await Promise.all([
     db.valuesCard.count({
       where: {
+        deliberationId,
         chat: {
           userId,
         },
       },
     }),
-    db.canonicalValuesCard.count(),
-    db.edge.count(),
+    db.canonicalValuesCard.count({ where: { deliberationId } }),
+    db.edge.count({ where: { deliberationId } }),
     db.canonicalValuesCard.findMany({
       take: 12,
+      where: { deliberationId },
       include: {
+        _count: {
+          select: { edgesTo: true },
+        },
         valuesCards: {
           select: {
             chat: {

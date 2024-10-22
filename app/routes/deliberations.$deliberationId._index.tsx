@@ -234,7 +234,7 @@ export default function DeliberationDashboard() {
                 </p>
               </div>
             </div>
-            {deliberation._count.valuesCards === 0 && (
+            {deliberation._count.canonicalValuesCards === 0 && (
               <Alert className="mt-6 mb-4 bg-slate-50">
                 <div className="flex flex-row space-x-2">
                   <AlertCircle className="h-4 w-4" />

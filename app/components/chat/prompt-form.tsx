@@ -20,9 +20,9 @@ export interface PromptProps
 }
 
 const FinishedView = () => {
-  const { questionId } = useParams()
+  const { deliberationId, questionId } = useParams()
 
-  const continueUrl = `/case/${questionId}/select`
+  const continueUrl = `/deliberation/${deliberationId}/${questionId}/link-explainer`
 
   return (
     <div className="flex flex-col items-center justify-center">

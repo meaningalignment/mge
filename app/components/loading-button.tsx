@@ -13,7 +13,7 @@ export default function LoadingButton({
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    if (navigation.state === "submitting") {
+    if (navigation.state === "submitting" || navigation.state === "loading") {
       setIsLoading(true)
     } else if (navigation.state === "idle" && isLoading) {
       const timer = setTimeout(() => setIsLoading(false), 5000)
@@ -23,9 +23,15 @@ export default function LoadingButton({
 
   return (
     <Button disabled={isLoading || disabled} {...props}>
-      {children}
-      {isLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-      {iconRight && iconRight}
+      {isLoading ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Loading...
+        </>
+      ) : (
+        children
+      )}
+      {!isLoading && iconRight && iconRight}
     </Button>
   )
 }

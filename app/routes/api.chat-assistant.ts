@@ -10,10 +10,10 @@ export const config = { maxDuration: 300 }
 export async function action({ request }: ActionFunctionArgs) {
   const authorId = await ensureLoggedIn(request)
 
-  const { threadId, deliberationId, message } = await request.json()
+  const { threadId, deliberationId, questionId, message } = await request.json()
   return await assistantResponseWithTools({
     assistant_id: "asst_aPIlnXJb5RmDyVuSWd2FLil5",
-    context: { authorId, threadId, deliberationId },
+    context: { authorId, threadId, deliberationId, questionId },
     threadId,
     message,
     tools: { submit_values_card: submitValuesCard },
@@ -24,8 +24,14 @@ async function submitValuesCard(
   {
     authorId,
     threadId,
+    questionId,
     deliberationId,
-  }: { authorId: number; threadId: string; deliberationId: number },
+  }: {
+    authorId: number
+    threadId: string
+    questionId: number
+    deliberationId: number
+  },
   {
     title,
     description,
@@ -41,8 +47,9 @@ async function submitValuesCard(
     create: {
       id: threadId,
       userId: authorId,
-      deliberationId, // TODO: Add deliberationId
-      transcript: [], // TODO: Add transcript
+      deliberationId,
+      questionId,
+      transcript: [],
     },
     update: {},
     where: { id: threadId },
@@ -64,6 +71,7 @@ async function submitValuesCard(
     where: { chatId: chat.id },
   })
   await embedNonCanonicalCard(card)
+  // TODO Here we should create a new context for the card if needed, or link card to existing contexts.
   const data = {
     type: "values_card",
     title,
