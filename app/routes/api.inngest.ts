@@ -4,8 +4,9 @@ import { embed } from "~/services/embedding"
 import { inngest } from "~/config.server"
 import { hypothesize, hypothesizeCron } from "~/services/linking"
 import {
-  generateSeedGraph as genGraph,
-  generateSeedQuestionsAndContexts as genQuestionsAndContexts,
+  generateSeedQuestionsAndContexts,
+  generateSeedContexts,
+  generateSeedGraph,
 } from "~/services/generation"
 
 const handler = serve(inngest, [
@@ -14,8 +15,9 @@ const handler = serve(inngest, [
   hypothesizeCron,
   deduplicate,
   deduplicateCron,
-  genQuestionsAndContexts,
-  genGraph,
+  generateSeedQuestionsAndContexts,
+  generateSeedContexts,
+  generateSeedGraph,
 ])
 
 export const config = {

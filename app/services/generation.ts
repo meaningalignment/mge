@@ -109,9 +109,24 @@ async function addContextsInDb(
   )
 }
 
+function resetDeliberationStatus(deliberationId: number) {
+  return db.deliberation.update({
+    where: { id: deliberationId },
+    data: { setupStatus: "ready" },
+  })
+}
+
+async function onFailure({ event, step }: { event: any; step: any }) {
+  const deliberationId = event.data.event.data.deliberationId as number
+  await step.run(`Resetting deliberation status`, async () =>
+    resetDeliberationStatus(deliberationId)
+  )
+}
+
 export const generateSeedQuestionsAndContexts = inngest.createFunction(
-  { name: "Generate Seed Questions and Contexts" },
+  { name: "Generate Seed Questions and Contexts", onFailure },
   { event: "gen-seed-questions-contexts" },
+
   async ({ event, step, logger }) => {
     logger.info(`Running deliberation setup.`)
 
@@ -119,6 +134,13 @@ export const generateSeedQuestionsAndContexts = inngest.createFunction(
     const topic = event.data.topic as string
     const numQuestions = event.data.numQuestions ?? 5
     const numContexts = event.data.numContexts ?? 5
+
+    await step.run(`Marking seeding in db`, async () =>
+      db.deliberation.update({
+        where: { id: deliberationId },
+        data: { setupStatus: "generating_contexts" },
+      })
+    )
 
     const questions = await step.run(
       `Generate deliberation questions for topic: ${topic}`,
@@ -151,10 +173,48 @@ export const generateSeedQuestionsAndContexts = inngest.createFunction(
     }
 
     await step.run(`Marking setup as finished`, async () =>
+      resetDeliberationStatus(deliberationId)
+    )
+
+    return { message: "Finished" }
+  }
+)
+
+export const generateSeedContexts = inngest.createFunction(
+  { name: "Generate Seed Contexts", onFailure },
+  { event: "gen-seed-contexts" },
+  async ({ event, step, logger }) => {
+    logger.info(`Running deliberation setup.`)
+
+    const deliberationId = event.data.deliberationId as number
+    const questionIds = event.data.questionIds as number[]
+    const numContexts = event.data.numContexts ?? 5
+
+    await step.run(`Marking seeding in db`, async () =>
       db.deliberation.update({
         where: { id: deliberationId },
-        data: { setupStatus: "completed" },
+        data: { setupStatus: "generating_contexts" },
       })
+    )
+
+    for (const questionId of questionIds) {
+      const question = await step.run(
+        `Fetching question: ${questionId}`,
+        async () => db.question.findUniqueOrThrow({ where: { id: questionId } })
+      )
+
+      const contexts = await step.run(
+        `Generate contexts for question: ${questionId}`,
+        async () => generateContexts(question.question, numContexts)
+      )
+
+      await step.run(`Inserting or updating contexts in DB`, async () =>
+        addContextsInDb(deliberationId, question.id, contexts)
+      )
+    }
+
+    await step.run(`Marking setup as finished`, async () =>
+      resetDeliberationStatus(deliberationId)
     )
 
     return { message: "Finished" }
@@ -162,10 +222,17 @@ export const generateSeedQuestionsAndContexts = inngest.createFunction(
 )
 
 export const generateSeedGraph = inngest.createFunction(
-  { name: "Generate Seed Graph" },
+  { name: "Generate Seed Graph", onFailure },
   { event: "gen-seed-graph" },
   async ({ event, step, logger, runId }) => {
     logger.info(`Starting graph generation for deliberation`)
+
+    await step.run(`Marking graph gen in db`, async () =>
+      db.deliberation.update({
+        where: { id: deliberationId },
+        data: { setupStatus: "generating_graph" },
+      })
+    )
 
     const deliberationId = event.data.deliberationId as number
 
@@ -254,6 +321,10 @@ export const generateSeedGraph = inngest.createFunction(
       timeout: "15m",
       if: `async.data.deliberationId == ${deliberationId}`,
     })
+
+    await step.run(`Marking setup as finished`, async () =>
+      resetDeliberationStatus(deliberationId)
+    )
 
     return {
       message: "Graph generated successfully",
