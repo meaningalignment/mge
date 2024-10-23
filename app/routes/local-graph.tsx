@@ -5,7 +5,6 @@ import MoralGraphSettings, {
   GraphSettings,
   defaultGraphSettings,
 } from "~/components/moral-graph-settings"
-import { useSearchParams } from "@remix-run/react"
 
 function LoadingScreen() {
   return (
@@ -15,11 +14,10 @@ function LoadingScreen() {
   )
 }
 
-export default function DefaultGraphPage() {
+export default function LocalGraphPage() {
   const [settings, setSettings] = useState<GraphSettings>(defaultGraphSettings)
   const [graph, setGraph] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [searchParams, _] = useSearchParams()
 
   useEffect(() => {
     setIsLoading(true)
@@ -40,7 +38,7 @@ export default function DefaultGraphPage() {
     }
 
     const graph = await fetch(
-      "/api/data/graph?" + new URLSearchParams(params).toString(),
+      "/api/data/graph/local?" + new URLSearchParams(params).toString(),
       { headers }
     ).then((res) => res.json())
 

@@ -85,7 +85,6 @@ export async function generateGraph(
   console.log(`Total upgrades generated: ${upgrades.length}`)
 
   // Save graph to json file using fs
-  const dateTimeString = new Date().toISOString().replace(/:/g, "-")
   const filename = `./app/lib/graph.json`
   console.log(`Saving graph to ${filename}...`)
   await fs.writeFile(
