@@ -110,7 +110,7 @@ export default function QuestionSelectScreen() {
             showQuestions ? "opacity-100" : "opacity-0"
           }`}
         >
-          <LoadingButton>
+          <LoadingButton isLoadingOnPageNavigation>
             <Link
               to={
                 selected

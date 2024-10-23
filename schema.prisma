@@ -25,6 +25,7 @@ model User {
 }
 
 enum DeliberationSetupStatus {
+  generating_questions
   generating_contexts
   generating_graph
   ready

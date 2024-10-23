@@ -9,10 +9,10 @@ import {
 } from "@remix-run/react"
 import { auth, db } from "./config.server"
 import { Deliberation, User, ValuesCard } from "@prisma/client"
+import { TooltipProvider } from "@radix-ui/react-tooltip"
+import { Toaster } from "sonner"
 
 import "./globals.css"
-import { TooltipProvider } from "@radix-ui/react-tooltip"
-import { d } from "node_modules/vite/dist/node/types.d-aGj9QkWt"
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const userId = await auth.getUserId(request)
@@ -71,6 +71,7 @@ export default function App() {
           <Outlet />
           <ScrollRestoration />
           <Scripts />
+          <Toaster />
         </body>
       </html>
     </TooltipProvider>

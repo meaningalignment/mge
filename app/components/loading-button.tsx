@@ -7,16 +7,23 @@ export default function LoadingButton({
   children,
   disabled,
   iconRight,
+  isLoadingOnPageNavigation,
   ...props
-}: ButtonProps & { iconRight?: React.ReactNode }) {
+}: ButtonProps & {
+  iconRight?: React.ReactNode
+  isLoadingOnPageNavigation?: boolean
+}) {
   const navigation = useNavigation()
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    if (navigation.state === "submitting" || navigation.state === "loading") {
+    if (
+      navigation.state === "submitting" ||
+      (isLoadingOnPageNavigation && navigation.state === "loading")
+    ) {
       setIsLoading(true)
     } else if (navigation.state === "idle" && isLoading) {
-      const timer = setTimeout(() => setIsLoading(false), 5000)
+      const timer = setTimeout(() => setIsLoading(false), 3_000)
       return () => clearTimeout(timer)
     }
   }, [navigation.state, isLoading])

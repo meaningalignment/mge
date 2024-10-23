@@ -138,7 +138,7 @@ export const generateSeedQuestionsAndContexts = inngest.createFunction(
     await step.run(`Marking seeding in db`, async () =>
       db.deliberation.update({
         where: { id: deliberationId },
-        data: { setupStatus: "generating_contexts" },
+        data: { setupStatus: "generating_questions" },
       })
     )
 

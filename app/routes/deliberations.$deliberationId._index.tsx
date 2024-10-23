@@ -164,7 +164,7 @@ export default function DeliberationDashboard() {
 
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | null = null
-    if (deliberation.setupStatus === "in_progress") {
+    if (deliberation.setupStatus !== "ready") {
       intervalId = setInterval(() => {
         revalidator.revalidate()
       }, 5000)
@@ -236,25 +236,26 @@ export default function DeliberationDashboard() {
                 </p>
               </div>
             </div>
-            {deliberation._count.canonicalValuesCards === 0 && (
-              <Alert className="mt-6 mb-4 bg-slate-50">
-                <div className="flex flex-row space-x-2">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>No responses yet</AlertTitle>
-                </div>
+            {deliberation._count.canonicalValuesCards === 0 &&
+              deliberation.setupStatus === "ready" && (
+                <Alert className="mt-6 mb-4 bg-slate-50">
+                  <div className="flex flex-row space-x-2">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>No responses yet</AlertTitle>
+                  </div>
 
-                <AlertDescription className="flex flex-col sm:flex-row items-center justify-between">
-                  <span>Would you like to generate a seed graph?</span>
-                  <Button
-                    variant="ghost"
-                    onClick={handleGenerateSeedGraph}
-                    className="mt-2 sm:mt-0"
-                  >
-                    Seed Graph
-                  </Button>
-                </AlertDescription>
-              </Alert>
-            )}
+                  <AlertDescription className="flex flex-col sm:flex-row items-center justify-between">
+                    <span>Would you like to generate a seed graph?</span>
+                    <Button
+                      variant="ghost"
+                      onClick={handleGenerateSeedGraph}
+                      className="mt-2 sm:mt-0"
+                    >
+                      Seed Graph
+                    </Button>
+                  </AlertDescription>
+                </Alert>
+              )}
             <div className="mt-8 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4">
               <Link
                 to={`/deliberation/${deliberationId}/graph`}
@@ -280,10 +281,15 @@ export default function DeliberationDashboard() {
 
         <div className="flex items-center justify-between mt-8 mb-4">
           <h2 className="text-2xl font-semibold">Questions</h2>
-          {deliberation.setupStatus === "in_progress" && (
+          {deliberation.setupStatus !== "ready" && (
             <div className="flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1.5 rounded-md">
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Generating Questions
+              {deliberation.setupStatus === "generating_graph" &&
+                "Generating Graph..."}
+              {deliberation.setupStatus === "generating_contexts" &&
+                "Generating Contexts..."}
+              {deliberation.setupStatus === "generating_questions" &&
+                "Generating Questions..."}
             </div>
           )}
         </div>

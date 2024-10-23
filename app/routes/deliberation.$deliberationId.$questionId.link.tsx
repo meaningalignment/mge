@@ -21,7 +21,6 @@ import { Label } from "~/components/ui/label"
 import { Textarea } from "~/components/ui/textarea"
 import va from "@vercel/analytics"
 import { getDraw } from "~/services/linking"
-import LoadingButton from "~/components/loading-button"
 
 type Relationship = "upgrade" | "no_upgrade" | "not_sure"
 

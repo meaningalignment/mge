@@ -1,6 +1,6 @@
 import { ActionFunction, json, redirect } from "@remix-run/node"
-import { Form, useNavigate } from "@remix-run/react"
-import { useState } from "react"
+import { Form, useActionData, useNavigate } from "@remix-run/react"
+import { useEffect, useState } from "react"
 import { auth, db, inngest } from "~/config.server"
 import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
@@ -13,6 +13,7 @@ import {
   unstable_parseMultipartFormData,
   unstable_createMemoryUploadHandler,
 } from "@remix-run/node"
+import { toast } from "sonner"
 
 export const action: ActionFunction = async ({ request }) => {
   const uploadHandler = unstable_createMemoryUploadHandler()
@@ -26,20 +27,16 @@ export const action: ActionFunction = async ({ request }) => {
   const welcomeText = formData.get("welcomeText") as string
   const questionsFile = formData.get("questionsFile") as File | null
 
-  const deliberation = await db.deliberation.create({
-    data: {
-      title,
-      welcomeText,
-      topic: topic ?? title,
-      user: {
-        connect: {
-          id: user.id,
-        },
-      },
-    },
-  })
-
   if (topic) {
+    const deliberation = await db.deliberation.create({
+      data: {
+        title,
+        welcomeText,
+        topic,
+        user: { connect: { id: user.id } },
+      },
+    })
+
     await inngest.send({
       name: "gen-seed-questions-contexts",
       data: {
@@ -49,27 +46,37 @@ export const action: ActionFunction = async ({ request }) => {
         numContexts: 5,
       },
     })
+
+    return redirect(`/deliberations/${deliberation.id}`)
   } else if (questionsFile) {
     const questions = (await questionsFile.text())
       .split("\n")
       .filter((line) => line.trim())
       .map((line) => JSON.parse(line))
 
-    if (questions.find((q: any) => !q.question || !q.title || !q.id)) {
+    if (questions.find((q: any) => !q.question || !q.title)) {
       return json(
         {
           error:
-            "Invalid questions format. Each question must have 'question', 'title', and 'id' fields.",
+            "Invalid questions format. Each question must have 'question' and 'title' fields.",
         },
         { status: 400 }
       )
     }
 
+    const deliberation = await db.deliberation.create({
+      data: {
+        title,
+        welcomeText,
+        topic: topic ?? title,
+        user: { connect: { id: user.id } },
+      },
+    })
+
     const dbQuestions = await Promise.all(
       questions.map((q: any) =>
         db.question.create({
           data: {
-            id: q.id,
             title: q.title,
             question: q.question,
             deliberationId: deliberation.id,
@@ -82,13 +89,13 @@ export const action: ActionFunction = async ({ request }) => {
       name: "gen-seed-contexts",
       data: {
         deliberationId: deliberation.id,
-        questions: dbQuestions.map((q) => q.id),
+        questionIds: dbQuestions.map((q) => q.id),
         topic,
       },
     })
-  }
 
-  return redirect(`/deliberations/${deliberation.id}`)
+    return redirect(`/deliberations/${deliberation.id}`)
+  }
 }
 
 export default function NewDeliberation() {
@@ -97,6 +104,14 @@ export default function NewDeliberation() {
   const [title, setTitle] = useState("")
   const [inputMethod, setInputMethod] = useState<"topic" | "file">("topic")
   const [hasFile, setHasFile] = useState(false)
+
+  const actionData = useActionData<{ error?: string }>()
+
+  useEffect(() => {
+    if (actionData?.error) {
+      toast.error(actionData.error)
+    }
+  }, [actionData])
 
   return (
     <div className="w-full max-w-2xl mx-auto">
@@ -201,7 +216,7 @@ export default function NewDeliberation() {
             </div>
             <p className="text-sm text-muted-foreground mt-2">
               Upload a JSONL file containing your questions. Each line should be
-              a JSON object with "question", "title" and "id" fields.
+              a JSON object with "question" and "title" fields.
             </p>
           </div>
         )}

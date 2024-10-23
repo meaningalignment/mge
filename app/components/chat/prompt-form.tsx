@@ -30,7 +30,10 @@ const FinishedView = () => {
         Thank you for sharing your story!
       </p>
       <div className="flex justify-center pt-2">
-        <LoadingButton iconRight={<IconArrowRight className="ml-2" />}>
+        <LoadingButton
+          isLoadingOnPageNavigation
+          iconRight={<IconArrowRight className="ml-2" />}
+        >
           <Link
             to={continueUrl}
             prefetch="render"
