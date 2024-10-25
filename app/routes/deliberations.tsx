@@ -4,6 +4,7 @@ import {
   useLoaderData,
   redirect,
   useParams,
+  useLocation,
 } from "@remix-run/react"
 import type { LoaderFunctionArgs } from "@remix-run/node"
 import { auth, db } from "~/config.server"
@@ -41,6 +42,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 
 export default function Deliberations() {
   const { deliberations, participatingIn } = useLoaderData<typeof loader>()
+  const params = useParams()
+  const location = useLocation()
+
+  const currentDeliberation = [...deliberations, ...participatingIn].find(
+    (d) => d.id === Number(params.deliberationId)
+  )
+
+  // Get the last segment of the URL
+  const lastSegment = location.pathname.split("/").pop()
 
   return (
     <div className="h-screen w-screen bg-white dark:bg-slate-900">
@@ -173,6 +183,33 @@ export default function Deliberations() {
         </div>
       </aside>
       <main className="ml-64 p-4 overflow-auto">
+        {params.deliberationId && (
+          <nav className="mb-8">
+            <ol className="flex items-center text-sm">
+              <li className="font-medium text-slate-800 dark:text-slate-200">
+                <NavLink
+                  to={`/deliberations/${params.deliberationId}`}
+                  className="hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                >
+                  {currentDeliberation?.title}
+                </NavLink>
+              </li>
+              {lastSegment && lastSegment !== params.deliberationId && (
+                <>
+                  <li className="mx-2 text-slate-400 dark:text-slate-500">/</li>
+                  <li className="font-medium text-slate-500 dark:text-slate-400 capitalize">
+                    <NavLink
+                      to={`/deliberations/${params.deliberationId}/${lastSegment}`}
+                      className="hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+                    >
+                      {lastSegment}
+                    </NavLink>
+                  </li>
+                </>
+              )}
+            </ol>
+          </nav>
+        )}
         <Outlet />
       </main>
     </div>

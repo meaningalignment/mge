@@ -153,8 +153,7 @@ export default function SelectScreen() {
   }
 
   return (
-    <div className="flex flex-col h-screen w-screen">
-      <Header />
+    <div className="flex flex-col h-full w-full">
       <div className="grid flex-grow place-items-center space-y-8 py-12 mx-3">
         <div className="flex flex-col justify-center items-center">
           <h1 className="text-3xl text-center">

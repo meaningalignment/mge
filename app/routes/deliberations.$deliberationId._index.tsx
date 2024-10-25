@@ -198,7 +198,12 @@ export default function DeliberationDashboard() {
         </Link>
       </div>
       <div className="space-y-6">
-        <h2 className="text-2xl font-semibold mb-4">Summary</h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-semibold mb-4">Summary</h2>
+          <Link to={`/deliberations/${deliberationId}/admin`} prefetch="intent">
+            <Button variant="ghost">Admin Panel</Button>
+          </Link>
+        </div>
         <Card>
           <CardContent>
             <div className="space-y-4">
