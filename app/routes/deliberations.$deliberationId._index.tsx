@@ -206,14 +206,14 @@ export default function DeliberationDashboard() {
               <span>Edit Deliberation</span>
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
             </Link>
-            <Link
+            {/* <Link
               to={`/deliberations/${deliberationId}/merge`}
               prefetch="render"
               className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700"
             >
               <span>Merge Values</span>
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
-            </Link>
+            </Link> */}
             <Link
               to={`/deliberations/${deliberationId}/links`}
               prefetch="render"
@@ -227,7 +227,7 @@ export default function DeliberationDashboard() {
               prefetch="intent"
               className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700"
             >
-              <span>View Chats</span>
+              <span>Manage Chats</span>
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
             </Link>
           </nav>

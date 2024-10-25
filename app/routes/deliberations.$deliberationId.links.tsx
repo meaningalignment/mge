@@ -52,36 +52,51 @@ export default function AdminLinks() {
   const { deliberationId } = useParams()
 
   return (
-    <div className="grid grid-cols-5">
-      <div className="col-span-1 border-r h-screen overflow-y-auto">
-        <h1 className="text-2xl font-bold mb-4 px-4 py-2">Links</h1>
-        <ul>
+    <div className="grid grid-cols-4 h-screen">
+      <div className="col-span-1 border-r overflow-y-auto bg-white dark:bg-slate-900 px-3 py-4">
+        <div className="mb-10 flex items-center rounded-lg px-3 py-2 text-slate-900 dark:text-white">
+          <svg
+            className="h-5 w-5"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+          </svg>
+          <span className="ml-3 text-base font-semibold">Links</span>
+        </div>
+        <ul className="space-y-2 text-sm font-medium">
           {data.edges.map((edge) => (
             <NavLink
               to={`/deliberations/${deliberationId}/links/${edge.userId}/${edge.fromId}/${edge.toId}`}
               key={edge.userId + edge.fromId + edge.toId}
               className={({ isActive, isPending }) =>
-                isPending
-                  ? "block bg-slate-100"
-                  : isActive
-                  ? "block bg-slate-200"
-                  : ""
+                cn(
+                  "block rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700",
+                  isPending && "bg-slate-50 dark:bg-slate-800",
+                  isActive && "bg-slate-100 dark:bg-slate-700"
+                )
               }
             >
-              <li
-                key={edge.userId + edge.fromId + edge.toId}
-                className="border-b border-gray-300 py-2 px-4 py-2 "
-              >
-                <div>{edge.user.name}</div>
-                <div>{edge.user.email}</div>
-                <div className="text-xs text-neutral-500">{edge.createdAt}</div>
+              <li className="px-3 py-2">
+                <div className="font-medium">{edge.user.name}</div>
+                <div className="text-sm text-slate-500 dark:text-slate-400">
+                  {edge.user.email}
+                </div>
+                <div className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                  {edge.createdAt}
+                </div>
                 <StatusBadge status={edge.type} />
               </li>
             </NavLink>
           ))}
         </ul>
       </div>
-      <div className="col-span-4 border-l my-4">
+      <div className="col-span-3 p-4 overflow-y-auto h-screen">
         <Outlet />
       </div>
     </div>
