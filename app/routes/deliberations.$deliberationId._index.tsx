@@ -22,6 +22,7 @@ import { ChevronDownIcon } from "@radix-ui/react-icons"
 import { Loader2 } from "lucide-react"
 import { AlertCircle } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert"
+import { ChevronRightIcon } from "@radix-ui/react-icons"
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const deliberationId = Number(params.deliberationId)!
@@ -119,11 +120,11 @@ function ValueContextInfo() {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button variant="ghost" size="sm">
-            <h4 className="text-sm font-semibold mr-2">Value Contexts</h4>
+          <div className="flex items-center">
+            <h4 className="text-sm font-semibold mr-1.5">Value Contexts</h4>
             <QuestionMarkCircledIcon className="h-4 w-4" />
             <span className="sr-only">Value</span>
-          </Button>
+          </div>
         </TooltipTrigger>
         <TooltipContent className="w-80 p-4">
           <div className="space-y-2">
@@ -190,162 +191,191 @@ export default function DeliberationDashboard() {
   }
 
   return (
-    <div className="container mx-auto py-6 max-w-2xl">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">{deliberation.title}</h1>
-        <Link to={`/deliberations/${deliberation.id}/edit`} prefetch="intent">
-          <Button variant="outline">Edit</Button>
-        </Link>
-      </div>
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-semibold mb-4">Summary</h2>
-          <Link to={`/deliberations/${deliberationId}/admin`} prefetch="intent">
-            <Button variant="ghost">Admin Panel</Button>
-          </Link>
-        </div>
-        <Card>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex justify-between items-center mt-4">
-                <div>
-                  <h4 className="text-sm font-semibold">Participants</h4>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    How many participants have entered the deliberation.
-                  </p>
-                </div>
-                <p className="text-lg font-medium">
-                  {deliberation._count.valuesCards}
-                </p>
-              </div>
-              <div className="flex justify-between items-center">
-                <div>
-                  <h4 className="text-sm font-semibold">Values</h4>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    How many values cards have been articulated.
-                  </p>
-                </div>
-                <p className="text-lg font-medium">
-                  {deliberation._count.canonicalValuesCards}
-                </p>
-              </div>
-              <div className="flex justify-between items-center">
-                <div>
-                  <h4 className="text-sm font-semibold">Upgrades</h4>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    How many upgrades have been agreed upon.
-                  </p>
-                </div>
-                <p className="text-lg font-medium">
-                  {deliberation._count.edges}
-                </p>
-              </div>
-            </div>
-            {deliberation._count.canonicalValuesCards === 0 &&
-              deliberation.setupStatus === "ready" && (
-                <Alert className="mt-6 mb-4 bg-slate-50">
-                  <div className="flex flex-row space-x-2">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertTitle>No responses yet</AlertTitle>
-                  </div>
+    <div className="container mx-auto py-6 max-w-2xl space-y-6">
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg">Options</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <nav className="space-y-2 text-sm font-medium">
+            <Link
+              to={`/deliberations/${deliberationId}/edit`}
+              prefetch="render"
+              className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700"
+            >
+              <span>Edit Deliberation</span>
+              <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
+            </Link>
+            <Link
+              to={`/deliberations/${deliberationId}/merge`}
+              prefetch="render"
+              className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700"
+            >
+              <span>Merge Values</span>
+              <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
+            </Link>
+            <Link
+              to={`/deliberations/${deliberationId}/links`}
+              prefetch="render"
+              className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700"
+            >
+              <span>Manage Links</span>
+              <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
+            </Link>
+            <Link
+              to={`/deliberations/${deliberationId}/chats`}
+              prefetch="intent"
+              className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700"
+            >
+              <span>View Chats</span>
+              <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
+            </Link>
+          </nav>
+        </CardContent>
+      </Card>
 
-                  <AlertDescription className="flex flex-col sm:flex-row items-center justify-between">
-                    <span>Would you like to generate a seed graph?</span>
-                    <Button
-                      variant="ghost"
-                      onClick={handleGenerateSeedGraph}
-                      className="mt-2 sm:mt-0"
-                    >
-                      Seed Graph
-                    </Button>
-                  </AlertDescription>
-                </Alert>
-              )}
-            <div className="mt-8 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4">
-              <Link
-                to={`/deliberation/${deliberationId}/graph`}
-                prefetch="intent"
-                className="w-full sm:w-auto"
-              >
-                <Button variant="outline" className="w-full sm:w-auto">
-                  Show Graph
-                </Button>
-              </Link>
-              <Link
-                to={`/deliberation/${deliberation.id}/start`}
-                prefetch="intent"
-                className="w-full sm:w-auto"
-              >
-                <Button className="w-full sm:w-auto">
-                  Show Participant View
-                </Button>
-              </Link>
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg">Summary</CardTitle>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center mt-4">
+              <div>
+                <h4 className="text-sm font-semibold">Participants</h4>
+                <p className="text-sm text-muted-foreground mt-2">
+                  How many participants have entered the deliberation.
+                </p>
+              </div>
+              <p className="text-lg font-medium">
+                {deliberation._count.valuesCards}
+              </p>
             </div>
+            <div className="flex justify-between items-center">
+              <div>
+                <h4 className="text-sm font-semibold">Values</h4>
+                <p className="text-sm text-muted-foreground mt-2">
+                  How many values cards have been articulated.
+                </p>
+              </div>
+              <p className="text-lg font-medium">
+                {deliberation._count.canonicalValuesCards}
+              </p>
+            </div>
+            <div className="flex justify-between items-center">
+              <div>
+                <h4 className="text-sm font-semibold">Upgrades</h4>
+                <p className="text-sm text-muted-foreground mt-2">
+                  How many upgrades have been agreed upon.
+                </p>
+              </div>
+              <p className="text-lg font-medium">{deliberation._count.edges}</p>
+            </div>
+          </div>
+          {deliberation._count.canonicalValuesCards === 0 &&
+            deliberation.setupStatus === "ready" && (
+              <Alert className="mt-6 mb-4 bg-slate-50">
+                <div className="flex flex-row space-x-2">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>No responses yet</AlertTitle>
+                </div>
+
+                <AlertDescription className="flex flex-col sm:flex-row items-center justify-between">
+                  <span>Would you like to generate a seed graph?</span>
+                  <Button
+                    variant="ghost"
+                    onClick={handleGenerateSeedGraph}
+                    className="mt-2 sm:mt-0"
+                  >
+                    Seed Graph
+                  </Button>
+                </AlertDescription>
+              </Alert>
+            )}
+          <div className="mt-8 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4">
+            <Link
+              to={`/deliberation/${deliberationId}/graph`}
+              prefetch="intent"
+              className="w-full sm:w-auto"
+            >
+              <Button variant="outline" className="w-full sm:w-auto">
+                Show Graph
+              </Button>
+            </Link>
+            <Link
+              to={`/deliberation/${deliberation.id}/start`}
+              prefetch="intent"
+              className="w-full sm:w-auto"
+            >
+              <Button className="w-full sm:w-auto">
+                Show Participant View
+              </Button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="flex items-center justify-between mt-8 mb-4">
+        <h2 className="text-2xl font-bold">Questions</h2>
+        {deliberation.setupStatus !== "ready" && (
+          <div className="flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1.5 rounded-md">
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            {deliberation.setupStatus === "generating_graph" &&
+              "Generating Graph..."}
+            {deliberation.setupStatus === "generating_contexts" &&
+              "Generating Contexts..."}
+            {deliberation.setupStatus === "generating_questions" &&
+              "Generating Questions..."}
+          </div>
+        )}
+      </div>
+
+      {deliberation.questions.map((question) => (
+        <Card key={question.id}>
+          <CardHeader>
+            <CardTitle className="text-md font-bold flex items-center">
+              {question.title}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-gray-600 mb-4">{question.question}</p>
+            <div
+              className="flex items-center justify-between mb-2 cursor-pointer hover:bg-gray-100 rounded-md p-2 transition-colors duration-200"
+              onClick={() => toggleQuestionDropdown(question.id)}
+            >
+              <div className="flex flex-row items-center">
+                <ValueContextInfo />
+              </div>
+              <ChevronDownIcon
+                className={`h-4 w-4 transition-transform ${
+                  openQuestionId === question.id ? "transform rotate-180" : ""
+                }`}
+              />
+            </div>
+            {openQuestionId === question.id && (
+              <ul className="space-y-2">
+                {question.ContextsForQuestions.map((context, index) => (
+                  <li
+                    key={index}
+                    className="flex flex-col bg-gray-50 p-2 rounded-md"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold">
+                        {context.context.id}
+                      </span>
+                    </div>
+                    {context.application && (
+                      <span className="text-xs text-gray-600 mt-1">
+                        {context.application}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
           </CardContent>
         </Card>
-
-        <div className="flex items-center justify-between mt-8 mb-4">
-          <h2 className="text-2xl font-semibold">Questions</h2>
-          {deliberation.setupStatus !== "ready" && (
-            <div className="flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1.5 rounded-md">
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              {deliberation.setupStatus === "generating_graph" &&
-                "Generating Graph..."}
-              {deliberation.setupStatus === "generating_contexts" &&
-                "Generating Contexts..."}
-              {deliberation.setupStatus === "generating_questions" &&
-                "Generating Questions..."}
-            </div>
-          )}
-        </div>
-
-        {deliberation.questions.map((question) => (
-          <Card key={question.id}>
-            <CardHeader>
-              <CardTitle className="text-md font-bold flex items-center">
-                {question.title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-gray-600 mb-4">{question.question}</p>
-              <div
-                className="flex items-center justify-between mb-2 cursor-pointer hover:bg-gray-100 rounded-md p-2 transition-colors duration-200"
-                onClick={() => toggleQuestionDropdown(question.id)}
-              >
-                <div className="flex flex-row items-center">
-                  <ValueContextInfo />
-                </div>
-                <ChevronDownIcon
-                  className={`h-4 w-4 transition-transform ${
-                    openQuestionId === question.id ? "transform rotate-180" : ""
-                  }`}
-                />
-              </div>
-              {openQuestionId === question.id && (
-                <ul className="space-y-2">
-                  {question.ContextsForQuestions.map((context, index) => (
-                    <li
-                      key={index}
-                      className="flex flex-col bg-gray-50 p-2 rounded-md"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-semibold">
-                          {context.context.id}
-                        </span>
-                      </div>
-                      {context.application && (
-                        <span className="text-xs text-gray-600 mt-1">
-                          {context.application}
-                        </span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      ))}
       <div className="mt-8 flex justify-end">
         <Button variant="destructive" onClick={handleDeleteDeliberation}>
           Delete Deliberation

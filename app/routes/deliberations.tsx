@@ -19,6 +19,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const deliberations = await db.deliberation.findMany({ where })
   const participatingIn = await db.deliberation.findMany({
     where: {
+      createdBy: {
+        not: user.id,
+      },
       OR: [
         {
           edges: {
@@ -188,6 +191,7 @@ export default function Deliberations() {
             <ol className="flex items-center text-sm">
               <li className="font-medium text-slate-800 dark:text-slate-200">
                 <NavLink
+                  prefetch="render"
                   to={`/deliberations/${params.deliberationId}`}
                   className="hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                 >
@@ -199,6 +203,7 @@ export default function Deliberations() {
                   <li className="mx-2 text-slate-400 dark:text-slate-500">/</li>
                   <li className="font-medium text-slate-500 dark:text-slate-400 capitalize">
                     <NavLink
+                      prefetch="intent"
                       to={`/deliberations/${params.deliberationId}/${lastSegment}`}
                       className="hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
                     >

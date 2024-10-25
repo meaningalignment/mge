@@ -30,7 +30,9 @@ export default function DeliberationsIndex() {
         To get started, create a new type of deliberation.
       </p>
       <Button asChild>
-        <Link to="/deliberations/new">New Deliberation</Link>
+        <Link prefetch="intent" to="/deliberations/new">
+          New Deliberation
+        </Link>
       </Button>
     </div>
   )

@@ -1,5 +1,5 @@
 import { json } from "@remix-run/node"
-import { NavLink, Outlet, useLoaderData } from "@remix-run/react"
+import { NavLink, Outlet, useLoaderData, useParams } from "@remix-run/react"
 import { db } from "~/config.server"
 import { cn } from "~/lib/utils"
 
@@ -47,8 +47,10 @@ function StatusBadge({ status }: { status: string }) {
   )
 }
 
-export default function AdminChats() {
+export default function AdminLinks() {
   const data = useLoaderData<typeof loader>()
+  const { deliberationId } = useParams()
+
   return (
     <div className="grid grid-cols-5">
       <div className="col-span-1 border-r h-screen overflow-y-auto">
@@ -56,7 +58,7 @@ export default function AdminChats() {
         <ul>
           {data.edges.map((edge) => (
             <NavLink
-              to={`/admin/links/${edge.userId}/${edge.fromId}/${edge.toId}`}
+              to={`/deliberations/${deliberationId}/links/${edge.userId}/${edge.fromId}/${edge.toId}`}
               key={edge.userId + edge.fromId + edge.toId}
               className={({ isActive, isPending }) =>
                 isPending

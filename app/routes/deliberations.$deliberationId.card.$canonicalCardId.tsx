@@ -4,7 +4,7 @@ import {
   LoaderFunctionArgs,
   SerializeFrom,
 } from "@remix-run/node"
-import { Link, useLoaderData } from "@remix-run/react"
+import { Link, useLoaderData, useParams } from "@remix-run/react"
 import { CanonicalValuesCard } from "@prisma/client"
 import ValuesCard from "~/components/values-card"
 import { db } from "~/config.server"
@@ -43,12 +43,17 @@ export async function action({ request }: ActionFunctionArgs) {
 
 function Chats() {
   const { card } = useLoaderData<typeof loader>()
+  const { deliberationId } = useParams()
+
   return (
     <div className="flex flex-col items-center justify-center p-8">
       <h1 className="text-3xl font-bold my-8 text-center">Chats</h1>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mx-auto gap-4">
         {card.valuesCards.map((c) => (
-          <Link to={`/admin/chats/${c.chat!.id}`} className="mb-6">
+          <Link
+            to={`/deliberations/${deliberationId}/${c.chat!.id}`}
+            className="mb-6"
+          >
             {c.chat!.id}
           </Link>
         ))}
@@ -59,15 +64,20 @@ function Chats() {
 
 function SimilarCards({
   similar,
+  deliberationId,
 }: {
   similar: SerializeFrom<CanonicalValuesCard[]>
+  deliberationId: number
 }) {
   return (
     <div>
       <h1 className="text-3xl font-bold my-8 text-center">Similar cards</h1>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mx-auto gap-4">
         {similar.map((card) => (
-          <Link to={`/admin/card/${card.id}`} className="mb-6">
+          <Link
+            to={`/deliberations/${deliberationId}/card/${card.id}`}
+            className="mb-6"
+          >
             <ValuesCard
               detailsInline
               key={card.id}
@@ -85,11 +95,13 @@ function SimilarCards({
 
 export default function EditCardPage() {
   const { card, similar } = useLoaderData<typeof loader>()
+  const { deliberationId } = useParams()
+
   return (
     <div className="flex flex-col items-center justify-center p-8">
       <ValuesCardEditor card={card} cardType="canonical" />
       <Chats />
-      <SimilarCards similar={similar} />
+      <SimilarCards similar={similar} deliberationId={Number(deliberationId)} />
     </div>
   )
 }
