@@ -1,4 +1,4 @@
-# Moral Graph Deliberation Tooling
+# Moral Graph Elicitation
 
 *Developed by the [Meaning Alignment Institute](https://www.meaningalignment.org/), funded by [OpenAI](https://openai.com/blog/democratic-inputs-to-ai). Live deployment available at [dft.meaningalignment.org](https://dft.meaningalignment.org).*
 
