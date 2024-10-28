@@ -17,7 +17,7 @@
 
 # Overview
 
-Democratic Fine-Tuning (DFT) is an initiative aimed at achieving a fine-tuned model that bridges political, cultural, and ideological boundaries. More info can be found in our [paper](./paper.pdf). 
+Moral Graph Elicitation (MGE) is an initiative aimed at achieving a fine-tuned model that bridges political, cultural, and ideological boundaries. More info can be found in our [paper](./paper.pdf). 
 
 This repository hosts code for an application with a new democratic process that takes ~15 minutes to complete.
 
