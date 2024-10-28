@@ -8,8 +8,8 @@ import { configureValuesTools, PromptCache } from "values-tools"
 export const db = new PrismaClient()
 
 export const auth = cowpunkify({
-  site: "Democratic Fine-Tuning",
-  loginFrom: "Democratic Fine-Tuning <info@meaningalignment.org>",
+  site: "Moral Graph Elicitation",
+  loginFrom: "Moral Graph Elicitation <info@meaningalignment.org>",
   users: db.user,
   emailCodes: db.emailCodes,
 })
@@ -28,7 +28,7 @@ export async function ensureLoggedIn(request: Request, extraParams = {}) {
 }
 
 export const inngest = new Inngest({
-  name: process.env.INNGEST_NAME ?? "Democratic Fine-Tuning",
+  name: process.env.INNGEST_NAME ?? "Moral Graph Elicitation",
   apiKey: process.env.INNGEST_API_KEY,
   eventKey: process.env.INNGEST_EVENT_KEY,
 })
