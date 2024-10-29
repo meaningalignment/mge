@@ -87,6 +87,7 @@ export default function Deliberations() {
               {deliberations.map((delib: any) => (
                 <li key={delib.id}>
                   <NavLink
+                    prefetch="render"
                     to={`/deliberations/${delib.id}`}
                     className={({ isActive, isPending }) =>
                       cn(

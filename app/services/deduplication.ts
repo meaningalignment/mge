@@ -53,12 +53,12 @@ async function fetchSimilarCanonicalCard(
   )
 
   // Embed the candidate.
-  const card_embeddings = await embedValue(candidate)
+  const cardEmbeddings = await embedValue(candidate)
 
   console.log("Got card embeddings, fetching canonical card.")
 
   // Fetch `limit` canonical cards for the case based on similarity.
-  const canonical = await similaritySearch(card_embeddings, limit, 0.1)
+  const canonical = await similaritySearch(cardEmbeddings, limit, 0.1)
 
   console.log(`Got ${canonical.length} canonical cards`)
 
@@ -95,6 +95,9 @@ async function fetchNonCanonicalizedValues(
     where: {
       canonicalCardId: null,
       deliberationId: deliberationId,
+    },
+    include: {
+      ContextsForValueCards: true,
     },
     take: limit,
   })) as ValuesCard[]
@@ -140,7 +143,7 @@ export const deduplicate = inngest.createFunction(
     // Get all non-canonicalized submitted values cards for this deliberation.
     const cards = (await step.run(
       `Get non-canonicalized cards for deliberation ${deliberationId}`,
-      async () => fetchNonCanonicalizedValues(deliberationId)
+      async () => fetchNonCanonicalizedValues(deliberationId, 100)
     )) as any as ValuesCard[]
 
     if (cards.length === 0) {
@@ -153,7 +156,7 @@ export const deduplicate = inngest.createFunction(
     // Cluster the non-canonicalized cards with a prompt / dbscan.
     const clusters = (await step.run(`Cluster cards using prompt`, async () => {
       const useDbScan = cards.length > 20 // Only use dbscan when we're dealing with a lot of cards.
-      return deduplicateValues<ValuesCard>(cards, null, useDbScan)
+      return deduplicateValues<ValuesCard>(cards, null, useDbScan) // @TODO: take context into account here.
     })) as any as ValuesCard[][]
 
     logger.info(

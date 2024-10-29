@@ -227,14 +227,14 @@ export const generateSeedGraph = inngest.createFunction(
   async ({ event, step, logger, runId }) => {
     logger.info(`Starting graph generation for deliberation`)
 
+    const deliberationId = event.data.deliberationId as number
+
     await step.run(`Marking graph gen in db`, async () =>
       db.deliberation.update({
         where: { id: deliberationId },
         data: { setupStatus: "generating_graph" },
       })
     )
-
-    const deliberationId = event.data.deliberationId as number
 
     const questions = await step.run("Fetching questions", async () =>
       db.question.findMany({ where: { deliberationId } })

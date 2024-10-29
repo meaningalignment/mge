@@ -2,7 +2,6 @@ import { CanonicalValuesCard, EdgeHypothesis } from "@prisma/client"
 import { db, inngest } from "~/config.server"
 import { generateUpgrades, Upgrade } from "values-tools"
 import { getUserEmbedding } from "./embedding"
-import { Value } from "values-tools/src/types"
 
 type EdgeHypothesisData = {
   to: CanonicalValuesCard
@@ -231,6 +230,7 @@ export const hypothesize = inngest.createFunction(
     // Get contexts.
     const contexts = await step.run("Fetching contexts with values", async () =>
       db.context.findMany({
+        where: { deliberationId },
         include: {
           ContextsForValueCards: {
             include: {
@@ -276,7 +276,7 @@ export const hypothesize = inngest.createFunction(
       )
 
       logger.info(
-        `Created ${upgrades.length} transitions for context ${contextId}.`
+        `Created ${upgrades.length} transitions for context: ${contextId}.`
       )
 
       await step.run(

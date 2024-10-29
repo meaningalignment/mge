@@ -5,6 +5,7 @@ import {
   Link,
   useRevalidator,
   useParams,
+  useFetcher,
 } from "@remix-run/react"
 import { useEffect, useState } from "react"
 import { db, inngest } from "~/config.server"
@@ -23,6 +24,7 @@ import { Loader2 } from "lucide-react"
 import { AlertCircle } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert"
 import { ChevronRightIcon } from "@radix-ui/react-icons"
+import LoadingButton from "~/components/loading-button"
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const deliberationId = Number(params.deliberationId)!
@@ -62,7 +64,24 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const action = formData.get("action")
 
-  if (action === "deleteDeliberation") {
+  if (action === "resetDeliberation") {
+    const deliberationId = Number(params.deliberationId)!
+
+    await db.$transaction([
+      db.valuesCard.deleteMany({
+        where: { deliberationId },
+      }),
+      db.canonicalValuesCard.deleteMany({
+        where: { deliberationId },
+      }),
+      db.deliberation.update({
+        where: { id: deliberationId },
+        data: { setupStatus: "ready" },
+      }),
+    ])
+
+    return json({ success: true, refetch: true })
+  } else if (action === "deleteDeliberation") {
     const deliberationId = Number(params.deliberationId)!
     await db.deliberation.delete({
       where: { id: deliberationId },
@@ -106,12 +125,17 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   } else if (action === "generateSeedGraph") {
     const deliberationId = Number(params.deliberationId)!
 
+    await db.deliberation.update({
+      where: { id: deliberationId },
+      data: { setupStatus: "generating_graph" },
+    })
+
     await inngest.send({
       name: "gen-seed-graph",
       data: { deliberationId },
     })
 
-    return json({ success: true, message: "Seed graph generation initiated" })
+    return json({ success: true, refetch: true })
   }
 }
 
@@ -158,14 +182,17 @@ function ValueContextInfo() {
 
 export default function DeliberationDashboard() {
   const { deliberation } = useLoaderData<typeof loader>()
-  const submit = useSubmit()
+  const fetcher = useFetcher()
   const revalidator = useRevalidator()
   const { deliberationId } = useParams()
   const [openQuestionId, setOpenQuestionId] = useState<number | null>(null)
+  const [isGeneratingGraph, setIsGeneratingGraph] = useState(false)
 
+  // Poll for setup status if the deliberation is not ready
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval> | null = null
     if (deliberation.setupStatus !== "ready") {
+      setIsGeneratingGraph(false)
       intervalId = setInterval(() => {
         revalidator.revalidate()
       }, 5000)
@@ -175,9 +202,17 @@ export default function DeliberationDashboard() {
     }
   }, [deliberation.setupStatus, revalidator])
 
+  // Revalidate when the fetcher data changes
+  useEffect(() => {
+    console.log(fetcher.data)
+    if (fetcher.data && (fetcher.data as any)?.refetch) {
+      revalidator.revalidate()
+    }
+  }, [fetcher.data, revalidator])
+
   const handleDeleteDeliberation = () => {
     if (confirm("Are you sure you want to delete this deliberation?")) {
-      submit({ action: "deleteDeliberation" }, { method: "post" })
+      fetcher.submit({ action: "deleteDeliberation" }, { method: "post" })
     }
   }
 
@@ -186,8 +221,18 @@ export default function DeliberationDashboard() {
   }
 
   const handleGenerateSeedGraph = () => {
-    alert("Seed graph generation started in the background.")
-    submit({ action: "generateSeedGraph" }, { method: "post" })
+    setIsGeneratingGraph(true)
+    fetcher.submit({ action: "generateSeedGraph" }, { method: "post" })
+  }
+
+  const handleResetDeliberation = () => {
+    if (
+      confirm(
+        "Are you sure you want to reset this deliberation? This will clear all progress."
+      )
+    ) {
+      fetcher.submit({ action: "resetDeliberation" }, { method: "post" })
+    }
   }
 
   return (
@@ -272,26 +317,34 @@ export default function DeliberationDashboard() {
               <p className="text-lg font-medium">{deliberation._count.edges}</p>
             </div>
           </div>
-          {deliberation._count.canonicalValuesCards === 0 &&
-            deliberation.setupStatus === "ready" && (
-              <Alert className="mt-6 mb-4 bg-slate-50">
-                <div className="flex flex-row space-x-2">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>No responses yet</AlertTitle>
-                </div>
+          {(deliberation._count.canonicalValuesCards === 0 ||
+            deliberation.setupStatus === "generating_graph") && (
+            <Alert className="mt-6 mb-4 bg-slate-50">
+              <div className="flex flex-row space-x-2">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>No responses yet</AlertTitle>
+              </div>
 
-                <AlertDescription className="flex flex-col sm:flex-row items-center justify-between">
-                  <span>Would you like to generate a seed graph?</span>
+              <AlertDescription className="flex flex-col sm:flex-row items-center justify-between">
+                <span>Would you like to generate a seed graph?</span>
+                {deliberation.setupStatus === "generating_graph" ||
+                isGeneratingGraph ? (
+                  <div className="bg-white rounded-md px-2 py-1 border flex flex-row items-center gap-1 mt-2 sm:mt-0">
+                    <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+                    <span className="text-gray-400">Generating Graph...</span>
+                  </div>
+                ) : (
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     onClick={handleGenerateSeedGraph}
                     className="mt-2 sm:mt-0"
                   >
                     Seed Graph
                   </Button>
-                </AlertDescription>
-              </Alert>
-            )}
+                )}
+              </AlertDescription>
+            </Alert>
+          )}
           <div className="mt-8 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4">
             <Link
               to={`/deliberation/${deliberationId}/graph`}
@@ -317,11 +370,10 @@ export default function DeliberationDashboard() {
 
       <div className="flex items-center justify-between mt-8 mb-4">
         <h2 className="text-2xl font-bold">Questions</h2>
-        {deliberation.setupStatus !== "ready" && (
-          <div className="flex items-center bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1.5 rounded-md">
+        {(deliberation.setupStatus === "generating_contexts" ||
+          deliberation.setupStatus === "generating_questions") && (
+          <div className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1.5 rounded-md">
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            {deliberation.setupStatus === "generating_graph" &&
-              "Generating Graph..."}
             {deliberation.setupStatus === "generating_contexts" &&
               "Generating Contexts..."}
             {deliberation.setupStatus === "generating_questions" &&
@@ -376,10 +428,21 @@ export default function DeliberationDashboard() {
           </CardContent>
         </Card>
       ))}
-      <div className="mt-8 flex justify-end">
-        <Button variant="destructive" onClick={handleDeleteDeliberation}>
+      <div className="mt-8 flex justify-between">
+        <LoadingButton
+          variant="outline"
+          onClick={handleResetDeliberation}
+          disabled={fetcher.state !== "idle"}
+        >
+          Reset Deliberation
+        </LoadingButton>
+        <LoadingButton
+          variant="destructive"
+          onClick={handleDeleteDeliberation}
+          disabled={fetcher.state !== "idle"}
+        >
           Delete Deliberation
-        </Button>
+        </LoadingButton>
       </div>
     </div>
   )
