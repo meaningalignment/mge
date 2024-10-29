@@ -14,7 +14,6 @@ export const loader: LoaderFunction = async ({ params, request }) => {
 
   const deliberation = await db.deliberation.findUnique({
     where: { id: parseInt(params.deliberationId!) },
-    include: { questions: true },
   })
 
   if (!deliberation) {
@@ -33,11 +32,9 @@ export const action: ActionFunction = async ({ request, params }) => {
   const user = await auth.getCurrentUser(request)
   if (!user) return redirect("/auth/login")
 
-  const newQuestion = formData.get("question") as string
   const title = formData.get("title") as string
   const welcomeText = formData.get("welcomeText") as string
-  const questionId = formData.get("questionId") as string
-  const originalQuestion = formData.get("originalQuestion") as string
+  const topic = formData.get("topic") as string
 
   // Update deliberation
   await db.deliberation.update({
@@ -45,27 +42,9 @@ export const action: ActionFunction = async ({ request, params }) => {
     data: {
       title,
       welcomeText,
+      topic,
     },
   })
-
-  // Only update question and contextsForQuestion if the question has changed
-  if (newQuestion !== originalQuestion) {
-    await Promise.all([
-      db.question.update({
-        where: {
-          deliberationId: parseInt(params.deliberationId!),
-          id: questionId,
-        },
-        data: {
-          question: newQuestion,
-          title: newQuestion,
-        },
-      }),
-      db.contextsForQuestions.deleteMany({
-        where: { questionId },
-      }),
-    ])
-  }
 
   return redirect(`/deliberations/${params.deliberationId}`)
 }
@@ -73,18 +52,13 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function EditDeliberation() {
   const { deliberation } = useLoaderData<typeof loader>()
   const navigate = useNavigate()
-  const [question, setQuestion] = useState(deliberation.questions[0].question)
+  const [topic, setTopic] = useState(deliberation.topic)
   const [title, setTitle] = useState(deliberation.title)
 
   return (
     <div className="w-full max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold mb-8">Edit Deliberation</h1>
       <Form method="post" className="space-y-8">
-        <input
-          type="hidden"
-          name="questionId"
-          value={deliberation.questions[0].id}
-        />
         <div>
           <Label htmlFor="title">Title</Label>
           <Input
@@ -115,26 +89,26 @@ export default function EditDeliberation() {
           </p>
         </div>
         <div>
-          <Label htmlFor="question">Question</Label>
+          <Label htmlFor="topic">Topic</Label>
           <Input
             className="mt-2"
-            id="question"
-            name="question"
-            placeholder="Enter your question"
+            id="topic"
+            name="topic"
+            placeholder="Enter your topic"
             required
             type="text"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
+            value={topic}
+            onChange={(e) => setTopic(e.target.value)}
           />
           <p className="text-sm text-muted-foreground mt-2">
-            This is the question that participants will deliberate about.
+            This is the topic that participants will deliberate about.
           </p>
         </div>
         <div className="flex justify-between mt-6">
           <Button variant="outline" onClick={() => navigate(-1)}>
             Cancel
           </Button>
-          <LoadingButton type="submit" disabled={!question || !title}>
+          <LoadingButton type="submit" disabled={!topic || !title}>
             Save Changes
           </LoadingButton>
         </div>
