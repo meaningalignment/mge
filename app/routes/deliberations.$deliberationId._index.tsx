@@ -329,7 +329,7 @@ export default function DeliberationDashboard() {
                 <span>Would you like to generate a seed graph?</span>
                 {deliberation.setupStatus === "generating_graph" ||
                 isGeneratingGraph ? (
-                  <div className="bg-white rounded-md px-2 py-1 border flex flex-row items-center gap-1 mt-2 sm:mt-0">
+                  <div className="bg-white rounded-md px-2 py-1 border flex flex-row items-center gap-1 mt-2 sm:mt-0 animate-pulse">
                     <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
                     <span className="text-gray-400">Generating Graph...</span>
                   </div>
@@ -372,15 +372,29 @@ export default function DeliberationDashboard() {
         <h2 className="text-2xl font-bold">Questions</h2>
         {(deliberation.setupStatus === "generating_contexts" ||
           deliberation.setupStatus === "generating_questions") && (
-          <div className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1.5 rounded-md">
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            {deliberation.setupStatus === "generating_contexts" &&
-              "Generating Contexts..."}
-            {deliberation.setupStatus === "generating_questions" &&
-              "Generating Questions..."}
+          <div className="bg-white rounded-md px-2 py-1 border flex flex-row items-center gap-1 animate-pulse">
+            <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
+            <span className="text-gray-400 text-sm">
+              {deliberation.setupStatus === "generating_contexts"
+                ? "Generating Contexts"
+                : "Generating Questions"}
+            </span>
           </div>
         )}
       </div>
+
+      {deliberation.questions.length === 0 && (
+        <Alert className="mt-6 mb-4 bg-slate-50">
+          <div className="flex flex-row space-x-2">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle className="mb-2">No questions yet</AlertTitle>
+          </div>
+
+          <AlertDescription className="flex flex-col sm:flex-row items-center justify-between mt-2">
+            Questions will appear here when ready
+          </AlertDescription>
+        </Alert>
+      )}
 
       {deliberation.questions.map((question) => (
         <Card key={question.id}>
@@ -428,7 +442,7 @@ export default function DeliberationDashboard() {
           </CardContent>
         </Card>
       ))}
-      <div className="mt-8 flex justify-between">
+      <div className="mt-12 flex justify-between">
         <LoadingButton
           variant="outline"
           onClick={handleResetDeliberation}

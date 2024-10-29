@@ -6,7 +6,6 @@ import { Button } from "~/components/ui/button"
 import { Input } from "~/components/ui/input"
 import { Textarea } from "~/components/ui/textarea"
 import { Label } from "~/components/ui/label"
-import { v4 as uuid } from "uuid"
 import LoadingButton from "~/components/loading-button"
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group"
 import {
@@ -14,6 +13,13 @@ import {
   unstable_createMemoryUploadHandler,
 } from "@remix-run/node"
 import { toast } from "sonner"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "~/components/ui/select"
 
 export const action: ActionFunction = async ({ request }) => {
   const uploadHandler = unstable_createMemoryUploadHandler()
@@ -28,6 +34,9 @@ export const action: ActionFunction = async ({ request }) => {
   const questionsFile = formData.get("questionsFile") as File | null
 
   if (topic) {
+    const numQuestions = parseInt(formData.get("numQuestions") as string) || 5
+    const numContexts = parseInt(formData.get("numContexts") as string) || 5
+
     const deliberation = await db.deliberation.create({
       data: {
         title,
@@ -42,8 +51,8 @@ export const action: ActionFunction = async ({ request }) => {
       data: {
         deliberationId: deliberation.id,
         topic,
-        numQuestions: 5,
-        numContexts: 5,
+        numQuestions,
+        numContexts,
       },
     })
 
@@ -104,6 +113,8 @@ export default function NewDeliberation() {
   const [title, setTitle] = useState("")
   const [inputMethod, setInputMethod] = useState<"topic" | "file">("topic")
   const [hasFile, setHasFile] = useState(false)
+  const [numQuestions, setNumQuestions] = useState("5")
+  const [numContexts, setNumContexts] = useState("5")
 
   const actionData = useActionData<{ error?: string }>()
 
@@ -164,22 +175,71 @@ export default function NewDeliberation() {
         </div>
 
         {inputMethod === "topic" ? (
-          <div>
-            <Label htmlFor="topic">Topic</Label>
-            <Input
-              className="mt-2"
-              id="topic"
-              name="topic"
-              placeholder="Enter your topic"
-              required={inputMethod === "topic"}
-              type="text"
-              value={topic}
-              onChange={(e) => setQuestion(e.target.value)}
-            />
-            <p className="text-sm text-muted-foreground mt-2">
-              This is the topic that participants will deliberate about.
-              Questions will be generated based on this topic in the background.
-            </p>
+          <div className="space-y-6">
+            <div>
+              <Label htmlFor="topic">Topic</Label>
+              <Input
+                className="mt-2"
+                id="topic"
+                name="topic"
+                placeholder="Enter your topic"
+                required={inputMethod === "topic"}
+                type="text"
+                value={topic}
+                onChange={(e) => setQuestion(e.target.value)}
+              />
+              <p className="text-sm text-muted-foreground mt-2">
+                This is the topic that participants will deliberate about.
+                Questions will be generated based on this topic in the
+                background.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-8">
+              <div className="w-full">
+                <Label htmlFor="numQuestions">Number of Questions</Label>
+                <Select
+                  name="numQuestions"
+                  value={numQuestions}
+                  onValueChange={setNumQuestions}
+                >
+                  <SelectTrigger className="mt-2">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                      <SelectItem key={num} value={num.toString()}>
+                        {num}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground mt-2">
+                  How many questions to generate for the topic
+                </p>
+              </div>
+              <div className="w-full">
+                <Label htmlFor="numContexts">Contexts per Question</Label>
+                <Select
+                  name="numContexts"
+                  value={numContexts}
+                  onValueChange={setNumContexts}
+                >
+                  <SelectTrigger className="mt-2">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                      <SelectItem key={num} value={num.toString()}>
+                        {num}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground mt-2">
+                  How many contexts to generate per question
+                </p>
+              </div>
+            </div>
           </div>
         ) : (
           <div>
@@ -221,7 +281,7 @@ export default function NewDeliberation() {
           </div>
         )}
 
-        <div className="flex justify-between mt-6">
+        <div className="flex justify-between mt-8">
           <Button variant="outline" onClick={() => navigate(-1)}>
             Cancel
           </Button>
