@@ -179,7 +179,8 @@ export const deduplicate = inngest.createFunction(
         async () => getRepresentativeValue<ValuesCard>(cluster)
       )) as any as ValuesCard
 
-      const existingCanonicalDuplicate = (await step.run(
+      const existingCanonicalDuplicate = (await step.
+        run(
         "Fetch canonical duplicate",
         async () => fetchSimilarCanonicalCard(representative)
       )) as any as CanonicalValuesCard | null

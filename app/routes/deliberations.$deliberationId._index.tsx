@@ -54,6 +54,17 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
           canonicalValuesCards: true,
         },
       },
+      chats: {
+        select: {
+          userId: true,
+        },
+        where: {
+          ValuesCard: {
+            isNot: null,
+          },
+        },
+        distinct: ["userId"],
+      },
     },
   })
 
@@ -292,9 +303,7 @@ export default function DeliberationDashboard() {
                   How many participants have entered the deliberation.
                 </p>
               </div>
-              <p className="text-lg font-medium">
-                {deliberation._count.valuesCards}
-              </p>
+              <p className="text-lg font-medium">{deliberation.chats.length}</p>
             </div>
             <div className="flex justify-between items-center">
               <div>
@@ -316,8 +325,20 @@ export default function DeliberationDashboard() {
               </div>
               <p className="text-lg font-medium">{deliberation._count.edges}</p>
             </div>
+            <div className="flex justify-between items-center">
+              <div>
+                <h4 className="text-sm font-semibold">Upgrade Stories</h4>
+                <p className="text-sm text-muted-foreground mt-2">
+                  How many upgrade stories have been generated.
+                </p>
+              </div>
+              <p className="text-lg font-medium">
+                {deliberation._count.edgeHypotheses}
+              </p>
+            </div>
           </div>
-          {(deliberation._count.canonicalValuesCards === 0 ||
+          {((deliberation._count.canonicalValuesCards === 0 &&
+            deliberation.setupStatus === "ready") ||
             deliberation.setupStatus === "generating_graph") && (
             <Alert className="mt-6 mb-4 bg-slate-50">
               <div className="flex flex-row space-x-2">
@@ -367,6 +388,13 @@ export default function DeliberationDashboard() {
           </div>
         </CardContent>
       </Card>
+
+      {deliberation.topic && (
+        <div className="mt-8 mb-8">
+          <h2 className="text-2xl font-bold">Topic</h2>
+          <p className="text-sm mt-2">{deliberation.topic}</p>
+        </div>
+      )}
 
       <div className="flex items-center justify-between mt-8 mb-4">
         <h2 className="text-2xl font-bold">Questions</h2>
