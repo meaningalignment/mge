@@ -248,6 +248,10 @@ export default function DeliberationDashboard() {
 
   return (
     <div className="container mx-auto py-6 max-w-2xl space-y-6">
+      {deliberation.topic && (
+        <h1 className="text-3xl font-bold mb-8">{deliberation.topic}</h1>
+      )}
+
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Options</CardTitle>
@@ -388,13 +392,6 @@ export default function DeliberationDashboard() {
           </div>
         </CardContent>
       </Card>
-
-      {deliberation.topic && (
-        <div className="mt-8 mb-8">
-          <h2 className="text-2xl font-bold">Topic</h2>
-          <p className="text-sm mt-2">{deliberation.topic}</p>
-        </div>
-      )}
 
       <div className="flex items-center justify-between mt-8 mb-4">
         <h2 className="text-2xl font-bold">Questions</h2>

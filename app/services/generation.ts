@@ -1,7 +1,8 @@
 import { z } from "zod"
-import { generateValueContext, genObj } from "values-tools"
+import { deduplicateContexts, generateValueContext, genObj } from "values-tools"
 import { db, inngest } from "~/config.server"
 import { Question } from "@prisma/client"
+import { Logger } from "inngest/middleware/logger"
 
 export async function generateQuestions(
   topic: string,
@@ -69,44 +70,73 @@ export async function generateContexts(question: string, numContexts = 5) {
   }).then((res) => res.factors.map((f) => f.generalizedFactor))
 }
 
-async function addContextsInDb(
+async function upsertContextsInDb(
+  deliberationId: number,
+  contexts: { context: string; questionId: number }[],
+  logger: Logger
+) {
+  const contextIds = [...new Set(contexts.map((c) => c.context))]
+  logger.info(`Deduplicating ${contextIds.length} contexts`)
+  const clusters = await deduplicateContexts(contextIds, false)
+  logger.info(`After deduplication: ${clusters.length} unique contexts`)
+  const questionIds = [...new Set(contexts.map((c) => c.questionId))]
+
+  for (const questionId of questionIds) {
+    const deduplicatedContextsForQuestion = [
+      ...new Set(
+        contexts
+          .filter((c) => c.questionId === questionId)
+          .map((c) => {
+            const cluster = clusters.find((clust) => clust.includes(c.context))
+            return cluster ? cluster[0] : c.context
+          })
+      ),
+    ]
+
+    await upsertContextsForQuestionInDb(
+      deliberationId,
+      questionId,
+      deduplicatedContextsForQuestion
+    )
+  }
+}
+
+async function upsertContextsForQuestionInDb(
   deliberationId: number,
   questionId: number,
   contexts: string[]
 ) {
-  return Promise.all(
-    contexts.map((context) =>
-      db.context.upsert({
-        where: {
-          id_deliberationId: {
-            id: context,
-            deliberationId: deliberationId,
-          },
-        },
-        create: {
+  for (const context of contexts) {
+    await db.context.upsert({
+      where: {
+        id_deliberationId: {
           id: context,
-          deliberation: { connect: { id: deliberationId } },
-          ContextsForQuestions: {
+          deliberationId: deliberationId,
+        },
+      },
+      create: {
+        id: context,
+        deliberation: { connect: { id: deliberationId } },
+        ContextsForQuestions: {
+          create: { questionId },
+        },
+      },
+      update: {
+        ContextsForQuestions: {
+          connectOrCreate: {
+            where: {
+              contextId_questionId_deliberationId: {
+                contextId: context,
+                questionId,
+                deliberationId,
+              },
+            },
             create: { questionId },
           },
         },
-        update: {
-          ContextsForQuestions: {
-            connectOrCreate: {
-              where: {
-                contextId_questionId_deliberationId: {
-                  contextId: context,
-                  questionId,
-                  deliberationId,
-                },
-              },
-              create: { questionId },
-            },
-          },
-        },
-      })
-    )
-  )
+      },
+    })
+  }
 }
 
 function resetDeliberationStatus(deliberationId: number) {
@@ -134,6 +164,7 @@ export const generateSeedQuestionsAndContexts = inngest.createFunction(
     const topic = event.data.topic as string
     const numQuestions = event.data.numQuestions ?? 5
     const numContexts = event.data.numContexts ?? 5
+    const contexts: { context: string; questionId: number }[] = []
 
     await step.run(`Marking seeding in db`, async () =>
       db.deliberation.update({
@@ -162,15 +193,22 @@ export const generateSeedQuestionsAndContexts = inngest.createFunction(
           }) as any as Question
       )
 
-      const contexts = await step.run(
+      const questionContexts = await step.run(
         `Generate contexts for question: ${question}`,
         async () => generateContexts(question.question, numContexts)
       )
 
-      await step.run(`Inserting or updating contexts in DB`, async () =>
-        addContextsInDb(deliberationId, dbQuestion.id, contexts)
+      contexts.push(
+        ...questionContexts.map((context) => ({
+          context,
+          questionId: dbQuestion.id,
+        }))
       )
     }
+
+    await step.run("Adding contexts to DB", async () =>
+      upsertContextsInDb(deliberationId, contexts, logger)
+    )
 
     await step.run(`Marking setup as finished`, async () =>
       resetDeliberationStatus(deliberationId)
@@ -189,6 +227,7 @@ export const generateSeedContexts = inngest.createFunction(
     const deliberationId = event.data.deliberationId as number
     const questionIds = event.data.questionIds as number[]
     const numContexts = event.data.numContexts ?? 5
+    const contexts: { context: string; questionId: number }[] = []
 
     await step.run(`Marking seeding in db`, async () =>
       db.deliberation.update({
@@ -203,15 +242,19 @@ export const generateSeedContexts = inngest.createFunction(
         async () => db.question.findUniqueOrThrow({ where: { id: questionId } })
       )
 
-      const contexts = await step.run(
+      const contextsForQuestion = await step.run(
         `Generate contexts for question: ${questionId}`,
         async () => generateContexts(question.question, numContexts)
       )
 
-      await step.run(`Inserting or updating contexts in DB`, async () =>
-        addContextsInDb(deliberationId, question.id, contexts)
+      contexts.push(
+        ...contextsForQuestion.map((context) => ({ context, questionId }))
       )
     }
+
+    await step.run("Deduplicate contexts", async () => {
+      upsertContextsInDb(deliberationId, contexts, logger)
+    })
 
     await step.run(`Marking setup as finished`, async () =>
       resetDeliberationStatus(deliberationId)
@@ -285,7 +328,7 @@ export const generateSeedGraph = inngest.createFunction(
                   policies: v.policies,
                   title: v.title,
                   deliberationId,
-                  // Link values card to all contexts for question, even though it was created for a particular one. Otherwise, our final seed graph will not be linked correctly, as all values will be for specific contexts.
+                  // Link values card to all contexts for question, even though it was created for a particular one.
                   ContextsForValueCards: {
                     createMany: {
                       data: contextsForQuestion.map((c) => ({

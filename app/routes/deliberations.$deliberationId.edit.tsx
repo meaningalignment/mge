@@ -36,7 +36,6 @@ export const action: ActionFunction = async ({ request, params }) => {
   const welcomeText = formData.get("welcomeText") as string
   const topic = formData.get("topic") as string
 
-  // Update deliberation
   await db.deliberation.update({
     where: { id: parseInt(params.deliberationId!) },
     data: {

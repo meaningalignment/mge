@@ -3,6 +3,7 @@ import { db, inngest } from "~/config.server"
 import {
   deduplicateValues,
   getExistingDuplicateValue,
+  getExistingDuplicateContext,
   getRepresentativeValue,
 } from "values-tools"
 import { embedCanonicalCard } from "./embedding"
@@ -103,6 +104,17 @@ async function fetchNonCanonicalizedValues(
   })) as ValuesCard[]
 }
 
+export async function fetchDuplicateContext(
+  context: string,
+  deliberationId: number
+): Promise<string | null> {
+  const contexts = await db.context.findMany({ where: { deliberationId } })
+  return getExistingDuplicateContext(
+    context,
+    contexts.map((c) => c.id)
+  )
+}
+
 // Cron function
 export const deduplicateCron = inngest.createFunction(
   { name: "Deduplicate Cron", concurrency: 1 },
@@ -179,8 +191,7 @@ export const deduplicate = inngest.createFunction(
         async () => getRepresentativeValue<ValuesCard>(cluster)
       )) as any as ValuesCard
 
-      const existingCanonicalDuplicate = (await step.
-        run(
+      const existingCanonicalDuplicate = (await step.run(
         "Fetch canonical duplicate",
         async () => fetchSimilarCanonicalCard(representative)
       )) as any as CanonicalValuesCard | null
