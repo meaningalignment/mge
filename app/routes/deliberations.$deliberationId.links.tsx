@@ -52,8 +52,8 @@ export default function AdminLinks() {
   const { deliberationId } = useParams()
 
   return (
-    <div className="grid grid-cols-4 h-screen">
-      <div className="col-span-1 border-r overflow-y-auto bg-white dark:bg-slate-900 px-3 py-4">
+    <div className="flex h-screen">
+      <div className="w-64 flex-shrink-0 border-r overflow-y-auto bg-white dark:bg-slate-900 px-3 py-4">
         <div className="mb-10 flex items-center rounded-lg px-3 py-2 text-slate-900 dark:text-white">
           <svg
             className="h-5 w-5"
@@ -96,7 +96,7 @@ export default function AdminLinks() {
           ))}
         </ul>
       </div>
-      <div className="col-span-3 p-4 overflow-y-auto h-screen">
+      <div className="flex-1 overflow-y-auto">
         <Outlet />
       </div>
     </div>

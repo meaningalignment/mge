@@ -2,7 +2,7 @@ import { CanonicalValuesCard, Edge } from "@prisma/client"
 import { LoaderFunctionArgs, json } from "@remix-run/node"
 import { useLoaderData } from "@remix-run/react"
 import StaticChatMessage from "~/components/chat/static-chat-message"
-import { IconArrowRight } from "~/components/ui/icons"
+import { IconArrowDown, IconArrowRight } from "~/components/ui/icons"
 import { Label } from "~/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group"
 import { Separator } from "~/components/ui/separator"
@@ -52,7 +52,7 @@ export default function AdminLink() {
         )}
       >
         <ValuesCard card={edge.from as any} />
-        <IconArrowRight className="h-8 w-8 mx-auto rotate-90 md:rotate-0" />
+        <IconArrowDown className="h-8 w-8 mx-auto" />
         <ValuesCard card={edge.to as any} />
       </div>
       <div className={cn(`w-full flex items-center justify-center py-8`)}>

@@ -102,14 +102,15 @@ function selectRandomOption<T extends { probability: number }>(
 }
 
 export async function generateScenario(
-  schema: ScenarioGenerationSchema
+  schema: ScenarioGenerationSchema,
+  selectedContexts?: string[]
 ): Promise<{ story: string; title: string; contexts: string[] }> {
-  const contexts = representativeContexts(schema)
+  const contexts = selectedContexts ?? representativeContexts(schema)
 
   console.log("Contexts:", contexts)
 
   const result = await genObj({
-    prompt: `You will be given a few strings that describes the situation a homeless person is finding themselves in. Your task is to generate a story depicting someone in that situation.`,
+    prompt: `You will be given a few strings that describes the situation a homeless person is finding themselves in. Your task is to generate a story depicting someone in that situation, ending in a question about what the SF government can do about it.`,
     data: { contexts },
     schema: z.object({
       story: z
