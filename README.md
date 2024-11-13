@@ -31,7 +31,7 @@ This process generates a [moral graph](https://dft.meaningalignment.org/data/edg
 
 ![Moral Graph](./graph.png)
 
-The intricacies of the graph can be [explored here](https://dft.meaningalignment.org/data/edges).
+An example graph can be [explored here](https://dft.meaningalignment.org/data/edges).
 
 ## Background
 
