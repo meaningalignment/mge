@@ -2,7 +2,7 @@ import { ActionFunctionArgs } from "@remix-run/node"
 import { kv } from "@vercel/kv"
 import { AssistantResponse, DataMessage } from "ai"
 import { AssistantStream } from "openai/lib/AssistantStream.mjs"
-import { openai, ensureLoggedIn, db } from "~/config.server"
+import { openai, ensureLoggedIn, db, inngest } from "~/config.server"
 import { embedNonCanonicalCard } from "~/services/embedding"
 
 export const config = { maxDuration: 300 }
@@ -18,6 +18,22 @@ export async function action({ request }: ActionFunctionArgs) {
     message,
     tools: { submit_values_card: submitValuesCard },
   })
+}
+
+async function getTranscript(threadId: string) {
+  const response = await openai.beta.threads.messages.list(threadId, {
+    order: "asc",
+  })
+
+  const messages = response.data.map((m: any) => {
+    const m2: any = m
+    if (m.content && m.content[0]?.text?.value) {
+      m2.content = m.content[0].text.value
+    }
+    return m2
+  })
+
+  return messages
 }
 
 async function submitValuesCard(
@@ -43,13 +59,14 @@ async function submitValuesCard(
   },
   sendDataMessage: (message: DataMessage) => void
 ) {
+  const transcript = await getTranscript(threadId)
   const chat = await db.chat.upsert({
     create: {
       id: threadId,
       userId: authorId,
       deliberationId,
       questionId,
-      transcript: [],
+      transcript,
     },
     update: {},
     where: { id: threadId },
@@ -70,8 +87,16 @@ async function submitValuesCard(
     },
     where: { chatId: chat.id },
   })
+
   await embedNonCanonicalCard(card)
-  // TODO Here we should create a new context for the card if needed, or link card to existing contexts.
+  await inngest.send({
+    name: "find-new-contexts",
+    data: {
+      deliberationId,
+      chatId: chat.id,
+    },
+  })
+
   const data = {
     type: "values_card",
     title,

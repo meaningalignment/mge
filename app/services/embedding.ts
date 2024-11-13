@@ -1,7 +1,7 @@
 import { CanonicalValuesCard, ValuesCard } from "@prisma/client"
 import { db, inngest } from "~/config.server"
 import { calculateAverageEmbedding } from "~/lib/utils"
-import { embedValue } from "values-tools"
+import { embedText, embedValue } from "values-tools"
 
 export async function embedCanonicalCard(
   card: CanonicalValuesCard
@@ -54,13 +54,23 @@ export async function getUserEmbedding(userId: number): Promise<number[]> {
   }
 }
 
+export async function embedContext(contextId: string): Promise<void> {
+  // Embed context.
+  const embedding: number[] = await embedText(contextId)
+
+  // Update in DB.
+  await db.$executeRaw`UPDATE "Context" SET embedding = ${JSON.stringify(
+    embedding
+  )}::vector WHERE id = ${contextId};`
+}
+
 //
-// Ingest function for embedding.
+// Ingest functions for embedding.
 //
 
-export const embed = inngest.createFunction(
+export const embedCards = inngest.createFunction(
   { name: "Embed all cards" },
-  { event: "embed" },
+  { event: "embed-cards" },
   async ({ step, logger }) => {
     const deduplicatedCards = (await step.run(
       "Fetching deduplicated cards",
@@ -90,6 +100,31 @@ export const embed = inngest.createFunction(
 
     return {
       message: `Embedded ${deduplicatedCards.length} canonical cards and ${nonCanonicalCards.length} non-canonical cards.`,
+    }
+  }
+)
+
+export const embedContexts = inngest.createFunction(
+  { name: "Embed all contexts" },
+  { event: "embed-contexts" },
+  async ({ step, logger }) => {
+    const contextsToEmbed = await step.run(
+      "Fetching contexts without embeddings",
+      async () => db.$queryRaw<Array<{ id: string }>>`
+          SELECT id FROM "Context" 
+          WHERE embedding IS NULL`
+    )
+
+    for (const context of contextsToEmbed) {
+      await step.run(`Embed context ${context.id}`, async () =>
+        embedContext(context.id)
+      )
+    }
+
+    logger.info(`Embedded ${contextsToEmbed.length} contexts`)
+
+    return {
+      message: `Embedded ${contextsToEmbed.length} contexts`,
     }
   }
 )

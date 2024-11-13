@@ -1,5 +1,8 @@
 import { Value } from "values-tools/src/types"
-import { generateContexts, generateQuestions } from "../app/services/generation"
+import {
+  generateContextsFromQuestion,
+  generateQuestions,
+} from "../app/services/generation"
 import {
   configureValuesTools,
   generateUpgrades,
@@ -42,7 +45,10 @@ export async function generateGraph(
     console.log(`Processing question: ${question.question}`)
     // 2. generate contexts for each question
     console.log(`Generating ${numContexts} contexts...`)
-    const contexts = await generateContexts(question.question, numContexts)
+    const contexts = await generateContextsFromQuestion(
+      question.question,
+      numContexts
+    )
     console.log(`Generated contexts:`, contexts)
 
     // 3. Generate values for each context

@@ -1,4 +1,4 @@
-import { CanonicalValuesCard, ValuesCard } from "@prisma/client"
+import { CanonicalValuesCard, Context, ValuesCard } from "@prisma/client"
 import { db, inngest } from "~/config.server"
 import {
   deduplicateValues,
@@ -26,15 +26,17 @@ async function createCanonicalCard(
   return canonical
 }
 
-async function similaritySearch(
-  vector: number[],
+export async function searchSimilarCards(
+  deliberationId: number,
+  embeddingArray: number[],
   limit: number = 10,
   minimumDistance: number = 0.1
 ): Promise<Array<CanonicalValuesCard>> {
   const query = `SELECT DISTINCT cvc.id, cvc.title, cvc."description", cvc."policies", cvc.embedding <=> '${JSON.stringify(
-    vector
+    embeddingArray
   )}'::vector as "_distance"
     FROM "CanonicalValuesCard" cvc
+    WHERE cvc."deliberationId" = ${deliberationId} AND cvc.embedding IS NOT NULL
     ORDER BY "_distance" ASC
     LIMIT ${limit};`
 
@@ -42,10 +44,32 @@ async function similaritySearch(
     Array<CanonicalValuesCard & { _distance: number }>
   >(query)
 
-  return result.filter((r) => r._distance < minimumDistance)
+  return result.filter((r) => r._distance <= minimumDistance)
+}
+
+export async function searchSimilarContexts(
+  deliberationId: number,
+  embeddingArray: number[],
+  limit: number = 10,
+  minimumDistance: number = 0.5
+): Promise<Array<Context>> {
+  const query = `SELECT DISTINCT c.id, c."deliberationId", c.embedding <=> '${JSON.stringify(
+    embeddingArray
+  )}'::vector as "_distance"
+    FROM "Context" c
+    WHERE c."deliberationId" = ${deliberationId} AND c.embedding IS NOT NULL
+    ORDER BY "_distance" ASC
+    LIMIT ${limit};`
+
+  const result = await db.$queryRawUnsafe<
+    Array<Context & { _distance: number }>
+  >(query)
+
+  return result.filter((r) => r._distance <= minimumDistance)
 }
 
 async function fetchSimilarCanonicalCard(
+  deliberationId: number,
   candidate: ValuesCard,
   limit: number = 5
 ): Promise<CanonicalValuesCard | null> {
@@ -59,7 +83,12 @@ async function fetchSimilarCanonicalCard(
   console.log("Got card embeddings, fetching canonical card.")
 
   // Fetch `limit` canonical cards for the case based on similarity.
-  const canonical = await similaritySearch(cardEmbeddings, limit, 0.1)
+  const canonical = await searchSimilarCards(
+    deliberationId,
+    cardEmbeddings,
+    limit,
+    0.1
+  )
 
   console.log(`Got ${canonical.length} canonical cards`)
 
@@ -96,9 +125,6 @@ async function fetchNonCanonicalizedValues(
     where: {
       canonicalCardId: null,
       deliberationId: deliberationId,
-    },
-    include: {
-      ContextsForValueCards: true,
     },
     take: limit,
   })) as ValuesCard[]
@@ -193,7 +219,7 @@ export const deduplicate = inngest.createFunction(
 
       const existingCanonicalDuplicate = (await step.run(
         "Fetch canonical duplicate",
-        async () => fetchSimilarCanonicalCard(representative)
+        async () => fetchSimilarCanonicalCard(deliberationId, representative)
       )) as any as CanonicalValuesCard | null
 
       if (existingCanonicalDuplicate) {

@@ -1,4 +1,7 @@
-import { generateQuestions, generateContexts } from "../app/services/generation"
+import {
+  generateQuestions,
+  generateContextsFromQuestion,
+} from "../app/services/generation"
 
 async function generateQuestionsAndContexts(topic: string) {
   try {
@@ -6,7 +9,7 @@ async function generateQuestionsAndContexts(topic: string) {
 
     for (const question of questions) {
       console.log(`Question: ${question}`)
-      const contexts = await generateContexts(question, 2)
+      const contexts = await generateContextsFromQuestion(question, 2)
       console.log("Contexts:")
       contexts.forEach((context) => console.log(context))
     }

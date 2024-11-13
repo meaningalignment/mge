@@ -62,21 +62,20 @@ model EmailCodes {
 }
 
 model ValuesCard {
-  id                    Int                          @id @default(autoincrement())
-  title                 String
-  description           String
-  policies              String[]
-  createdAt             DateTime                     @default(now())
-  updatedAt             DateTime                     @updatedAt
-  canonicalCardId       Int?
-  seedGenerationRunId   String? // Present if the card was generated as a seed value.
-  chatId                String?                      @unique // Present if the card was articulated in a chat.
-  chat                  Chat?                        @relation(fields: [chatId], references: [id], onDelete: Cascade)
-  canonicalCard         CanonicalValuesCard?         @relation(fields: [canonicalCardId], references: [id], onDelete: SetNull)
-  embedding             Unsupported("vector(1536)")?
-  deliberationId        Int
-  deliberation          Deliberation                 @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
-  ContextsForValueCards ContextsForValueCards[]
+  id                  Int                          @id @default(autoincrement())
+  title               String
+  description         String
+  policies            String[]
+  createdAt           DateTime                     @default(now())
+  updatedAt           DateTime                     @updatedAt
+  canonicalCardId     Int?
+  seedGenerationRunId String? // Present if the card was generated as a seed value.
+  chatId              String?                      @unique // Present if the card was articulated in a chat.
+  chat                Chat?                        @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  canonicalCard       CanonicalValuesCard?         @relation(fields: [canonicalCardId], references: [id], onDelete: SetNull)
+  embedding           Unsupported("vector(1536)")?
+  deliberationId      Int
+  deliberation        Deliberation                 @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 }
 
 model CanonicalValuesCard {
@@ -160,15 +159,16 @@ model EdgeHypothesis {
 }
 
 model Context {
-  id                    String
-  deliberationId        Int
-  deliberation          Deliberation            @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
-  ContextsForQuestions  ContextsForQuestions[]
-  Edge                  Edge[]
-  EdgeHypothesis        EdgeHypothesis[]
-  createdAt             DateTime                @default(now())
-  updatedAt             DateTime                @updatedAt
-  ContextsForValueCards ContextsForValueCards[]
+  id                   String
+  deliberationId       Int
+  embedding            Unsupported("vector(1536)")?
+  createdInChatId      String? // If the context comes from a user's chat.
+  deliberation         Deliberation                 @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+  ContextsForQuestions ContextsForQuestions[]
+  Edge                 Edge[]
+  EdgeHypothesis       EdgeHypothesis[]
+  createdAt            DateTime                     @default(now())
+  updatedAt            DateTime                     @updatedAt
 
   @@id([id, deliberationId])
 }
@@ -195,19 +195,6 @@ model ContextsForQuestions {
   updatedAt      DateTime @updatedAt
 
   @@id([contextId, questionId, deliberationId])
-}
-
-model ContextsForValueCards {
-  contextId      String
-  valuesCardId   Int
-  application    String?
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt
-  context        Context    @relation(fields: [contextId, deliberationId], references: [id, deliberationId], onDelete: Cascade)
-  valuesCard     ValuesCard @relation(fields: [valuesCardId], references: [id], onDelete: Cascade)
-  deliberationId Int
-
-  @@id([contextId, valuesCardId, deliberationId])
 }
 
 // How to do several dedupes during training?

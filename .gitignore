@@ -12,3 +12,4 @@ node_modules.nosync
 
 cache.sqlite
 /components
+/scripts/test.ts

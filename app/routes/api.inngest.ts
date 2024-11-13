@@ -1,6 +1,6 @@
 import { serve } from "inngest/remix"
 import { deduplicateCron, deduplicate } from "~/services/deduplication"
-import { embed } from "~/services/embedding"
+import { embedCards, embedContext, embedContexts } from "~/services/embedding"
 import { inngest } from "~/config.server"
 import { hypothesize, hypothesizeCron } from "~/services/linking"
 import {
@@ -8,9 +8,11 @@ import {
   generateSeedContexts,
   generateSeedGraph,
 } from "~/services/generation"
+import { findNewContexts } from "~/services/contexts"
 
 const handler = serve(inngest, [
-  embed,
+  embedCards,
+  embedContexts,
   hypothesize,
   hypothesizeCron,
   deduplicate,
@@ -18,6 +20,7 @@ const handler = serve(inngest, [
   generateSeedQuestionsAndContexts,
   generateSeedContexts,
   generateSeedGraph,
+  findNewContexts,
 ])
 
 export const config = {
