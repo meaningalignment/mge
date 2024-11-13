@@ -20,6 +20,150 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select"
+import {
+  allContexts,
+  parseScenarioGenerationData,
+} from "~/services/scenario-generation"
+import { Deliberation } from "@prisma/client"
+
+async function handleTopicSubmission(
+  deliberationData: {
+    title: string
+    welcomeText: string
+    topic: string
+    userId: number
+  },
+  numQuestions: number,
+  numContexts: number
+) {
+  const { title, welcomeText, topic, userId } = deliberationData
+
+  const deliberation = await db.deliberation.create({
+    data: {
+      title,
+      welcomeText,
+      topic,
+      user: { connect: { id: userId } },
+    },
+  })
+
+  await inngest.send({
+    name: "gen-seed-questions-contexts",
+    data: {
+      deliberationId: deliberation.id,
+      topic,
+      numQuestions,
+      numContexts,
+    },
+  })
+
+  return deliberation
+}
+
+async function handleQuestionsFileSubmission(
+  deliberationData: {
+    title: string
+    welcomeText: string
+    topic: string | null
+    userId: number
+  },
+  questionsFile: File
+) {
+  const { title, welcomeText, topic, userId } = deliberationData
+
+  const questions = (await questionsFile.text())
+    .split("\n")
+    .filter((line) => line.trim())
+    .map((line) => JSON.parse(line))
+
+  if (questions.find((q: any) => !q.question || !q.title)) {
+    throw new Error(
+      "Invalid questions format. Each question must have 'question' and 'title' fields."
+    )
+  }
+
+  const deliberation = await db.deliberation.create({
+    data: {
+      title,
+      welcomeText,
+      topic: topic ?? title,
+      user: { connect: { id: userId } },
+    },
+  })
+
+  const dbQuestions = await Promise.all(
+    questions.map((q: any) =>
+      db.question.create({
+        data: {
+          title: q.title,
+          question: q.question,
+          deliberationId: deliberation.id,
+        },
+      })
+    )
+  )
+
+  await inngest.send({
+    name: "gen-seed-contexts",
+    data: {
+      deliberationId: deliberation.id,
+      questionIds: dbQuestions.map((q) => q.id),
+      topic,
+    },
+  })
+
+  return deliberation
+}
+
+async function handleContextsFileSubmission(
+  deliberationData: {
+    title: string
+    welcomeText: string
+    topic: string | null
+    userId: number
+  },
+  contextsFile: File
+) {
+  const { title, welcomeText, topic, userId } = deliberationData
+  const data = parseScenarioGenerationData(await contextsFile.text())
+
+  if (!data) {
+    throw new Error(
+      "Invalid contexts format. Each context must have required fields."
+    )
+  }
+
+  const contexts = allContexts(data)
+  const deliberation = await db.deliberation.create({
+    data: {
+      title,
+      welcomeText,
+      topic: topic ?? title,
+      user: { connect: { id: userId } },
+    },
+  })
+
+  await Promise.all(
+    contexts.map((context) =>
+      db.context.create({
+        data: {
+          id: context,
+          deliberationId: deliberation.id,
+        },
+      })
+    )
+  )
+
+  await inngest.send({
+    name: "gen-seed-questions",
+    data: {
+      deliberationId: deliberation.id,
+      schema: JSON.stringify(data),
+    },
+  })
+
+  return deliberation
+}
 
 export const action: ActionFunction = async ({ request }) => {
   const uploadHandler = unstable_createMemoryUploadHandler()
@@ -32,78 +176,44 @@ export const action: ActionFunction = async ({ request }) => {
   const title = formData.get("title") as string
   const welcomeText = formData.get("welcomeText") as string
   const questionsFile = formData.get("questionsFile") as File | null
+  const contextsFile = formData.get("contextsFile") as File | null
+  const numQuestions = parseInt((formData.get("numQuestions") || "5") as string)
+  const numContexts = parseInt((formData.get("numContexts") || "5") as string)
 
-  if (topic) {
-    const numQuestions = parseInt(formData.get("numQuestions") as string) || 5
-    const numContexts = parseInt(formData.get("numContexts") as string) || 5
+  const deliberationData = { title, welcomeText, topic, userId: user.id }
 
-    const deliberation = await db.deliberation.create({
-      data: {
-        title,
-        welcomeText,
-        topic,
-        user: { connect: { id: user.id } },
-      },
-    })
+  try {
+    let deliberation: Deliberation
 
-    await inngest.send({
-      name: "gen-seed-questions-contexts",
-      data: {
-        deliberationId: deliberation.id,
-        topic,
+    if (topic) {
+      deliberation = await handleTopicSubmission(
+        deliberationData,
         numQuestions,
-        numContexts,
-      },
-    })
-
-    return redirect(`/deliberations/${deliberation.id}`)
-  } else if (questionsFile) {
-    const questions = (await questionsFile.text())
-      .split("\n")
-      .filter((line) => line.trim())
-      .map((line) => JSON.parse(line))
-
-    if (questions.find((q: any) => !q.question || !q.title)) {
-      return json(
-        {
-          error:
-            "Invalid questions format. Each question must have 'question' and 'title' fields.",
-        },
-        { status: 400 }
+        numContexts
+      )
+    } else if (questionsFile) {
+      deliberation = await handleQuestionsFileSubmission(
+        deliberationData,
+        questionsFile
+      )
+    } else if (contextsFile) {
+      deliberation = await handleContextsFileSubmission(
+        deliberationData,
+        contextsFile
       )
     }
 
-    const deliberation = await db.deliberation.create({
-      data: {
-        title,
-        welcomeText,
-        topic: topic ?? title,
-        user: { connect: { id: user.id } },
+    return redirect(`/deliberations/${deliberation!.id}`)
+  } catch (error) {
+    return json(
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred",
       },
-    })
-
-    const dbQuestions = await Promise.all(
-      questions.map((q: any) =>
-        db.question.create({
-          data: {
-            title: q.title,
-            question: q.question,
-            deliberationId: deliberation.id,
-          },
-        })
-      )
+      { status: 400 }
     )
-
-    await inngest.send({
-      name: "gen-seed-contexts",
-      data: {
-        deliberationId: deliberation.id,
-        questionIds: dbQuestions.map((q) => q.id),
-        topic,
-      },
-    })
-
-    return redirect(`/deliberations/${deliberation.id}`)
   }
 }
 
@@ -111,7 +221,9 @@ export default function NewDeliberation() {
   const navigate = useNavigate()
   const [topic, setQuestion] = useState("")
   const [title, setTitle] = useState("")
-  const [inputMethod, setInputMethod] = useState<"topic" | "file">("topic")
+  const [inputMethod, setInputMethod] = useState<
+    "topic" | "questions" | "contexts"
+  >("topic")
   const [hasFile, setHasFile] = useState(false)
   const [numQuestions, setNumQuestions] = useState("5")
   const [numContexts, setNumContexts] = useState("5")
@@ -160,7 +272,9 @@ export default function NewDeliberation() {
           <RadioGroup
             defaultValue="topic"
             value={inputMethod}
-            onValueChange={(value) => setInputMethod(value as "topic" | "file")}
+            onValueChange={(value) =>
+              setInputMethod(value as "topic" | "questions" | "contexts")
+            }
             className="flex space-x-8"
           >
             <div className="flex items-center space-x-2">
@@ -168,8 +282,12 @@ export default function NewDeliberation() {
               <Label htmlFor="topic-input">Generate From Topic</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <RadioGroupItem value="file" id="file-input" />
-              <Label htmlFor="file-input">Upload Questions File</Label>
+              <RadioGroupItem value="questions" id="questions-input" />
+              <Label htmlFor="questions-input">Upload Questions</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="contexts" id="contexts-input" />
+              <Label htmlFor="contexts-input">Upload Contexts</Label>
             </div>
           </RadioGroup>
         </div>
@@ -241,7 +359,7 @@ export default function NewDeliberation() {
               </div>
             </div>
           </div>
-        ) : (
+        ) : inputMethod === "questions" ? (
           <div>
             <Label htmlFor="questionsFile">Questions File (JSONL)</Label>
             <div className="flex items-center gap-4 mt-2">
@@ -260,7 +378,7 @@ export default function NewDeliberation() {
                 name="questionsFile"
                 type="file"
                 accept=".jsonl"
-                required={inputMethod === "file"}
+                required={inputMethod === "questions"}
                 onChange={(e) => {
                   const fileName = e.target.files?.[0]?.name
                   const fileLabel = document.getElementById("fileLabel")
@@ -279,7 +397,46 @@ export default function NewDeliberation() {
               a JSON object with "question" and "title" fields.
             </p>
           </div>
-        )}
+        ) : inputMethod === "contexts" ? (
+          <div>
+            <Label htmlFor="contextsFile">Contexts File (JSONL)</Label>
+            <div className="flex items-center gap-4 mt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => document.getElementById("contextsFile")?.click()}
+              >
+                Choose File
+              </Button>
+              <Input
+                className="hidden"
+                id="contextsFile"
+                name="contextsFile"
+                type="file"
+                accept=".jsonl"
+                required={inputMethod === "contexts"}
+                onChange={(e) => {
+                  const fileName = e.target.files?.[0]?.name
+                  const fileLabel = document.getElementById("contextsLabel")
+                  if (fileLabel) {
+                    fileLabel.textContent = fileName || "No file chosen"
+                  }
+                  setHasFile(!!fileName)
+                }}
+              />
+              <span
+                id="contextsLabel"
+                className="text-sm text-muted-foreground"
+              >
+                No file chosen
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              Upload a JSONL file containing your contexts. Each line should be
+              a JSON object with "context" and "topic" fields.
+            </p>
+          </div>
+        ) : null}
 
         <div className="flex justify-between mt-8">
           <Button variant="outline" onClick={() => navigate(-1)}>

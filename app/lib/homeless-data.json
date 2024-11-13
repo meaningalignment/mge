@@ -1,0 +1,305 @@
+{
+  "metadata": {
+    "title": "SF Homelessness Scenario Generator",
+    "description": "Generates statistically representative scenarios of individuals experiencing homelessness in San Francisco",
+    "version": "1.0.0"
+  },
+  "categories": {
+    "age": {
+      "type": "single_select",
+      "probability": 1.0,
+      "options": [
+        {
+          "text": "When a person is under 18 years old",
+          "probability": 0.07
+        },
+        {
+          "text": "When a person is 18-24 years old",
+          "probability": 0.14
+        },
+        {
+          "text": "When a person is 25-34 years old",
+          "probability": 0.2
+        },
+        {
+          "text": "When a person is 35-44 years old",
+          "probability": 0.27
+        },
+        {
+          "text": "When a person is 45-54 years old",
+          "probability": 0.17
+        },
+        {
+          "text": "When a person is 55-64 years old",
+          "probability": 0.1
+        },
+        {
+          "text": "When a person is 65 years or older",
+          "probability": 0.05
+        }
+      ]
+    },
+    "primary_cause": {
+      "type": "single_select",
+      "probability": 1.0,
+      "options": [
+        {
+          "text": "When a person became homeless after losing their job",
+          "probability": 0.22
+        },
+        {
+          "text": "When a person became homeless due to alcohol or drug use",
+          "probability": 0.19
+        },
+        {
+          "text": "When a person became homeless after eviction",
+          "probability": 0.14
+        },
+        {
+          "text": "When a person became homeless after an argument with family/friend who asked them to leave",
+          "probability": 0.11
+        },
+        {
+          "text": "When a person became homeless after a divorce/separation/breakup",
+          "probability": 0.09
+        },
+        {
+          "text": "When a person became homeless due to mental health issues",
+          "probability": 0.07
+        },
+        {
+          "text": "When a person became homeless due to other causes",
+          "probability": 0.18
+        }
+      ]
+    },
+    "race_ethnicity": {
+      "type": "single_select",
+      "probability": 1.0,
+      "options": [
+        {
+          "text": "When a person identifies as White",
+          "probability": 0.29
+        },
+        {
+          "text": "When a person identifies as Black/African American",
+          "probability": 0.24
+        },
+        {
+          "text": "When a person identifies as Hispanic/Latino/a/e/o",
+          "probability": 0.17
+        },
+        {
+          "text": "When a person identifies as Asian or Asian American",
+          "probability": 0.04
+        },
+        {
+          "text": "When a person identifies as American Indian, Alaska Native, or Indigenous",
+          "probability": 0.04
+        },
+        {
+          "text": "When a person identifies as Multi-Racial",
+          "probability": 0.17
+        },
+        {
+          "text": "When a person identifies as other race/ethnicity",
+          "probability": 0.05
+        }
+      ]
+    },
+    "lgbtq_status": {
+      "type": "single_select",
+      "probability": 1.0,
+      "options": [
+        {
+          "text": "When a person identifies as LGBTQ+",
+          "probability": 0.28
+        },
+        {
+          "text": "When a person does not identify as LGBTQ+",
+          "probability": 0.72
+        }
+      ]
+    },
+    "sleeping_situation": {
+      "type": "single_select",
+      "probability": 1.0,
+      "options": [
+        {
+          "text": "When a person is staying in a shelter",
+          "probability": 0.48
+        },
+        {
+          "text": "When a person is living on the street outdoors",
+          "probability": 0.29
+        },
+        {
+          "text": "When a person is living in a tent",
+          "probability": 0.05
+        },
+        {
+          "text": "When a person is living in a vehicle",
+          "probability": 0.05
+        },
+        {
+          "text": "When a person is in other unsheltered situation",
+          "probability": 0.13
+        }
+      ]
+    },
+    "health_conditions": {
+      "type": "multi_select",
+      "probability": 0.67,
+      "options": [
+        {
+          "text": "When a person has psychiatric or emotional conditions",
+          "probability": 0.51
+        },
+        {
+          "text": "When a person is struggling with drug or alcohol abuse",
+          "probability": 0.51
+        },
+        {
+          "text": "When a person has chronic health problems",
+          "probability": 0.42
+        },
+        {
+          "text": "When a person has a physical disability",
+          "probability": 0.29
+        },
+        {
+          "text": "When a person requires special education services",
+          "probability": 0.17
+        },
+        {
+          "text": "When a person has AIDS or HIV-related illness",
+          "probability": 0.06
+        }
+      ]
+    },
+    "domestic_violence": {
+      "type": "single_select",
+      "probability": 1.0,
+      "options": [
+        {
+          "text": "When a person is currently experiencing domestic violence",
+          "probability": 0.2
+        },
+        {
+          "text": "When a person has experienced domestic violence in the past",
+          "probability": 0.31
+        },
+        {
+          "text": "When a person has not experienced domestic violence",
+          "probability": 0.49
+        }
+      ]
+    },
+    "foster_care": {
+      "type": "single_select",
+      "probability": 1.0,
+      "options": [
+        {
+          "text": "When a person has a history of being in the foster care system",
+          "probability": 0.26,
+          "conditions": [
+            {
+              "when": { "age": "When a person is 18-24 years old" },
+              "probability": 0.33
+            }
+          ]
+        },
+        {
+          "text": "When a person has no history of foster care",
+          "probability": 0.74,
+          "conditions": [
+            {
+              "when": { "age": "When a person is 18-24 years old" },
+              "probability": 0.67
+            }
+          ]
+        }
+      ]
+    },
+    "time_in_sf": {
+      "type": "single_select",
+      "probability": 1.0,
+      "options": [
+        {
+          "text": "When a person has lived in San Francisco for less than 1 year",
+          "probability": 0.32
+        },
+        {
+          "text": "When a person has lived in San Francisco for 1-4 years",
+          "probability": 0.26
+        },
+        {
+          "text": "When a person has lived in San Francisco for 5-9 years",
+          "probability": 0.14
+        },
+        {
+          "text": "When a person has lived in San Francisco for 10+ years",
+          "probability": 0.28
+        }
+      ]
+    },
+    "first_homeless_age": {
+      "type": "single_select",
+      "probability": 1.0,
+      "options": [
+        {
+          "text": "When a person first experienced homelessness under age 18",
+          "probability": 0.27
+        },
+        {
+          "text": "When a person first experienced homelessness between 18-24 years old",
+          "probability": 0.35
+        },
+        {
+          "text": "When a person first experienced homelessness at age 25 or older",
+          "probability": 0.38
+        }
+      ]
+    },
+    "chronic_status": {
+      "type": "single_select",
+      "probability": 1.0,
+      "options": [
+        {
+          "text": "When a person is chronically homeless",
+          "probability": 0.36
+        },
+        {
+          "text": "When a person is not chronically homeless",
+          "probability": 0.64
+        }
+      ]
+    },
+    "veteran_status": {
+      "type": "single_select",
+      "probability": 1.0,
+      "options": [
+        {
+          "text": "When a person is a veteran",
+          "probability": 0.07,
+          "conditions": [
+            {
+              "when": { "age": "When a person is under 18 years old" },
+              "probability": 0
+            }
+          ]
+        },
+        {
+          "text": "When a person is not a veteran",
+          "probability": 0.93,
+          "conditions": [
+            {
+              "when": { "age": "When a person is under 18 years old" },
+              "probability": 1
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
