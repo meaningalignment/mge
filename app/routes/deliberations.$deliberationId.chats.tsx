@@ -18,9 +18,7 @@ export async function loader() {
           email: true,
         },
       },
-      ValuesCard: {
-        select: { id: true },
-      },
+      ValuesCard: true,
     },
   })
 
@@ -44,11 +42,10 @@ function StatusBadge({ hasValuesCard }: { hasValuesCard: boolean }) {
 
 export default function AdminChats() {
   const data = useLoaderData<typeof loader>()
-  const { deliberationId } = useParams()
 
   return (
-    <div className="grid grid-cols-4 h-screen">
-      <div className="col-span-1 border-r overflow-y-auto bg-white dark:bg-slate-900 px-3 py-4">
+    <div className="flex h-screen">
+      <div className="w-64 flex-shrink-0 border-r overflow-y-auto bg-white dark:bg-slate-900 px-3 py-4">
         <div className="mb-10 flex items-center rounded-lg px-3 py-2 text-slate-900 dark:text-white">
           <svg
             className="h-5 w-5"
@@ -67,7 +64,7 @@ export default function AdminChats() {
         <ul className="space-y-2 text-sm font-medium">
           {data.chats.map((chat) => (
             <NavLink
-              to={`/deliberations/${deliberationId}/chats/${chat.id}`}
+              to={chat.id}
               key={chat.id}
               className={({ isActive, isPending }) =>
                 cn(
@@ -105,7 +102,7 @@ export default function AdminChats() {
           ))}
         </ul>
       </div>
-      <div className="col-span-3 p-4 overflow-y-auto h-screen">
+      <div className="flex-1 overflow-y-auto">
         <Outlet />
       </div>
     </div>

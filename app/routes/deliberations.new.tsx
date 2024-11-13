@@ -237,7 +237,7 @@ export default function NewDeliberation() {
   }, [actionData])
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full max-w-2xl mx-auto mt-12">
       <h1 className="text-2xl font-bold mb-8">Create New Deliberation</h1>
       <Form method="post" className="space-y-8" encType="multipart/form-data">
         <div>
@@ -287,7 +287,7 @@ export default function NewDeliberation() {
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="contexts" id="contexts-input" />
-              <Label htmlFor="contexts-input">Upload Contexts</Label>
+              <Label htmlFor="contexts-input">Upload Demographics</Label>
             </div>
           </RadioGroup>
         </div>
@@ -300,7 +300,7 @@ export default function NewDeliberation() {
                 className="mt-2"
                 id="topic"
                 name="topic"
-                placeholder="Enter your topic"
+                placeholder="eg. What should the SF government do about homelessness?"
                 required={inputMethod === "topic"}
                 type="text"
                 value={topic}
@@ -432,9 +432,23 @@ export default function NewDeliberation() {
               </span>
             </div>
             <p className="text-sm text-muted-foreground mt-2">
-              Upload a JSONL file containing your contexts. Each line should be
-              a JSON object with "context" and "topic" fields.
+              Upload a JSON file containing your demographic information. The
+              file should follow this schema:
             </p>
+            <pre className="mt-2 p-4 bg-muted rounded-lg text-sm overflow-x-auto">
+              <code>{`{
+  categories: {
+    [key: string]: {
+      type: "single_select" | "multi_select",
+      probability: number,
+      options: [{
+        text: string,
+        probability: number
+      }]
+    }
+  }
+}`}</code>
+            </pre>
           </div>
         ) : null}
 

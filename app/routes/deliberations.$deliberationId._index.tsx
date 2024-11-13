@@ -35,7 +35,12 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
         include: {
           ContextsForQuestions: {
             include: {
-              context: true,
+              context: {
+                select: {
+                  id: true,
+                  createdInChatId: true,
+                },
+              },
             },
           },
         },
@@ -274,7 +279,7 @@ export default function DeliberationDashboard() {
               <span>Merge Values</span>
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
             </Link> */}
-            {/* <Link
+            <Link
               to={`/deliberations/${deliberationId}/links`}
               prefetch="render"
               className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700"
@@ -289,7 +294,7 @@ export default function DeliberationDashboard() {
             >
               <span>Manage Chats</span>
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
-            </Link> */}
+            </Link>
           </nav>
         </CardContent>
       </Card>
@@ -454,6 +459,25 @@ export default function DeliberationDashboard() {
                       <span className="text-sm font-semibold">
                         {context.context.id}
                       </span>
+                      {context.context.createdInChatId && (
+                        <div className="flex items-center gap-1 text-gray-500">
+                          <span className="text-xs">Articulated by user</span>
+                          <svg
+                            className="w-3 h-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                            />
+                          </svg>
+                        </div>
+                      )}
                     </div>
                     {context.application && (
                       <span className="text-xs text-gray-600 mt-1">

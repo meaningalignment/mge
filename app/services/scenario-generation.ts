@@ -103,7 +103,7 @@ function selectRandomOption<T extends { probability: number }>(
 
 export async function generateScenario(
   schema: ScenarioGenerationSchema
-): Promise<{ story: string; contexts: string[] }> {
+): Promise<{ story: string; title: string; contexts: string[] }> {
   const contexts = representativeContexts(schema)
 
   console.log("Contexts:", contexts)
@@ -117,11 +117,14 @@ export async function generateScenario(
         .describe(
           `A brief personal story (2-3 sentences) depicting a specific scenario related to the topic, followed by a question about how to address the situation. The questions should be values-laden and focus on how to best support or address the situations described.`
         ),
+      title: z
+        .string()
+        .describe(`A short 2-5 word title that summarizes the question.`),
     }),
   })
 
   return {
-    story: result.story,
+    ...result,
     contexts,
   }
 }

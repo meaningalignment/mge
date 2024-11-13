@@ -5,6 +5,10 @@ import { Question } from "@prisma/client"
 import { Logger } from "inngest/middleware/logger"
 import { readFileSync } from "fs"
 import { embedContext } from "./embedding"
+import {
+  generateScenario,
+  ScenarioGenerationSchema,
+} from "./scenario-generation"
 
 const generateContextsPrompt = readFileSync(
   "app/services/prompts/generate-contexts-from-transcript.md",
@@ -423,5 +427,57 @@ export const generateSeedGraph = inngest.createFunction(
     return {
       message: "Graph generated successfully",
     }
+  }
+)
+
+export const generateSeedQuestions = inngest.createFunction(
+  { name: "Generate Seed Questions", onFailure },
+  { event: "gen-seed-questions" },
+  async ({ event, step, logger }) => {
+    logger.info(`Running deliberation setup.`)
+
+    const deliberationId = event.data.deliberationId as number
+    const numQuestions = event.data.numQuestions ?? 5
+    const schema: ScenarioGenerationSchema = JSON.parse(
+      event.data.schema as string
+    )
+
+    await step.run(`Marking seeding in db`, async () =>
+      db.deliberation.update({
+        where: { id: deliberationId },
+        data: { setupStatus: "generating_questions" },
+      })
+    )
+
+    for (let i = 0; i < numQuestions; i++) {
+      logger.info(`Generating question ${i + 1}`)
+
+      const question = await step.run(
+        `Generate deliberation question ${i + 1}`,
+        async () => generateScenario(schema)
+      )
+
+      await step.run(`Inserting question in DB`, async () =>
+        db.question.create({
+          data: {
+            question: question.story,
+            title: question.title,
+            deliberationId,
+            ContextsForQuestions: {
+              create: question.contexts.map((context) => ({
+                contextId: context,
+                deliberationId,
+              })),
+            },
+          },
+        })
+      )
+    }
+
+    await step.run(`Marking setup as finished`, async () =>
+      resetDeliberationStatus(deliberationId)
+    )
+
+    return { message: "Finished" }
   }
 )

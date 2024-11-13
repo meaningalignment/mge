@@ -52,8 +52,11 @@ export default function Deliberations() {
     (d) => d.id === Number(params.deliberationId)
   )
 
-  // Get the last segment of the URL
-  const lastSegment = location.pathname.split("/").pop()
+  const pathSegments = location.pathname
+    .split("/")
+    .filter(Boolean)
+    .slice(2) // Skip 'deliberations' and deliberationId
+    .filter((segment) => isNaN(Number(segment))) // Filter out numeric segments
 
   return (
     <div className="h-screen w-screen bg-white dark:bg-slate-900">
@@ -199,20 +202,22 @@ export default function Deliberations() {
                   {currentDeliberation?.title}
                 </NavLink>
               </li>
-              {lastSegment && lastSegment !== params.deliberationId && (
-                <>
-                  <li className="mx-2 text-slate-400 dark:text-slate-500">/</li>
-                  <li className="font-medium text-slate-500 dark:text-slate-400 capitalize">
-                    <NavLink
-                      prefetch="intent"
-                      to={`/deliberations/${params.deliberationId}/${lastSegment}`}
-                      className="hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
-                    >
-                      {lastSegment}
-                    </NavLink>
-                  </li>
-                </>
-              )}
+              {pathSegments.map((segment, index) => (
+                <li key={segment} className="flex items-center">
+                  <span className="mx-2 text-slate-400 dark:text-slate-500">
+                    /
+                  </span>
+                  <NavLink
+                    prefetch="intent"
+                    to={`/deliberations/${params.deliberationId}/${pathSegments
+                      .slice(0, index + 1)
+                      .join("/")}`}
+                    className="font-medium text-slate-500 dark:text-slate-400 capitalize hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+                  >
+                    {segment}
+                  </NavLink>
+                </li>
+              ))}
             </ol>
           </nav>
         )}
