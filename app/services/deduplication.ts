@@ -31,7 +31,7 @@ export async function searchSimilarCards(
   embeddingArray: number[],
   limit: number = 10,
   minimumDistance: number = 0.1
-): Promise<Array<CanonicalValuesCard>> {
+): Promise<Array<CanonicalValuesCard & { _distance: number }>> {
   const query = `SELECT DISTINCT cvc.id, cvc.title, cvc."description", cvc."policies", cvc.embedding <=> '${JSON.stringify(
     embeddingArray
   )}'::vector as "_distance"
@@ -52,7 +52,7 @@ export async function searchSimilarContexts(
   embeddingArray: number[],
   limit: number = 10,
   minimumDistance: number = 0.5
-): Promise<Array<Context>> {
+): Promise<Array<Context & { _distance: number }>> {
   const query = `SELECT DISTINCT c.id, c."deliberationId", c.embedding <=> '${JSON.stringify(
     embeddingArray
   )}'::vector as "_distance"

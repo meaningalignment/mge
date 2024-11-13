@@ -227,21 +227,23 @@ export const hypothesize = inngest.createFunction(
 
     logger.info(`Running hypothetical links generation`)
 
-    // Get contexts.
+    // Contexts are connected to values cards through the questions. Each question is connected
+    // to a series of questions. When a user finds a new context, that new context
+    // is added to the question as well. If they identify a context as relevant to a question,
+    // but it already exists for another question, then it is linked to the new question.
     const contexts = await step.run("Fetching contexts with values", async () =>
       db.context.findMany({
         where: { deliberationId },
         include: {
-          ContextsForValueCards: {
+          ContextsForQuestions: {
             include: {
-              context: {
-                select: {
-                  id: true,
-                },
-              },
-              valuesCard: {
+              question: {
                 include: {
-                  canonicalCard: true,
+                  ValuesCard: {
+                    include: {
+                      canonicalCard: true,
+                    },
+                  },
                 },
               },
             },
@@ -257,7 +259,8 @@ export const hypothesize = inngest.createFunction(
       // Extract unique canonical values connected to the context.
       const values = Array.from(
         new Map(
-          cluster.ContextsForValueCards.map((c) => c.valuesCard.canonicalCard)
+          cluster.ContextsForQuestions.flatMap((c) => c.question.ValuesCard)
+            .map((card) => card.canonicalCard)
             .filter((c): c is NonNullable<typeof c> => c !== null)
             .map((card) => [card.id, card])
         ).values()
@@ -268,7 +271,7 @@ export const hypothesize = inngest.createFunction(
         continue
       }
 
-      const contextId = cluster.ContextsForValueCards[0].contextId // contexts in cluster are the same.
+      const contextId = cluster.ContextsForQuestions[0].contextId // contexts in cluster are the same.
 
       const upgrades = await step.run(
         `Generate transitions for context ${contextId}`,

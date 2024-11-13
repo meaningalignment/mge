@@ -54,6 +54,12 @@ export async function findDuplicateContext(
   const similarContexts = await searchSimilarContexts(deliberationId, embedding)
   if (!similarContexts.length) return null
 
+  // If there's a near identical context, don't use our prompt unnecessarily.
+  const nearIdenticalContext = similarContexts.find((c) => c._distance < 0.01)
+  if (nearIdenticalContext) {
+    return nearIdenticalContext.id
+  }
+
   // Check if any similar contexts are duplicates
   const deduped = await deduplicateContexts([
     context,

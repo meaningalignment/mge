@@ -9,7 +9,7 @@ async function generateQuestionsAndContexts(topic: string) {
 
     for (const question of questions) {
       console.log(`Question: ${question}`)
-      const contexts = await generateContextsFromQuestion(question, 2)
+      const contexts = await generateContextsFromQuestion(question.question, 2)
       console.log("Contexts:")
       contexts.forEach((context) => console.log(context))
     }

@@ -383,6 +383,7 @@ export const generateSeedGraph = inngest.createFunction(
               db.valuesCard.create({
                 data: {
                   seedGenerationRunId: runId,
+                  questionId: question.id,
                   description: v.description,
                   policies: v.policies,
                   title: v.title,
