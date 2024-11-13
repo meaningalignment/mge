@@ -1,7 +1,7 @@
 import { genObj } from "values-tools"
 import { z } from "zod"
 
-export const scenarioGenerationSchema = z.object({
+export const schema = z.object({
   metadata: z.object({
     title: z.string(),
     description: z.string().optional(),
@@ -31,20 +31,20 @@ export const scenarioGenerationSchema = z.object({
   ),
 })
 
-export type ScenarioGeneration = z.infer<typeof scenarioGenerationSchema>
+export type ScenarioGenerationSchema = z.infer<typeof schema>
 
 export function parseScenarioGenerationData(
   data: unknown
-): ScenarioGeneration | null {
+): ScenarioGenerationSchema | null {
   try {
-    return scenarioGenerationSchema.parse(data)
+    return schema.parse(data)
   } catch (error) {
     console.error(error)
     return null
   }
 }
 
-export function allContexts(data: ScenarioGeneration): string[] {
+export function allContexts(data: ScenarioGenerationSchema): string[] {
   return [
     ...new Set(
       Object.values(data.categories).flatMap((category) =>
@@ -54,7 +54,7 @@ export function allContexts(data: ScenarioGeneration): string[] {
   ]
 }
 
-function representativeContexts(data: ScenarioGeneration): string[] {
+function representativeContexts(data: ScenarioGenerationSchema): string[] {
   const selected: string[] = []
 
   for (const category of Object.values(data.categories)) {
@@ -78,7 +78,7 @@ function representativeContexts(data: ScenarioGeneration): string[] {
 }
 
 function getEffectiveProbability(
-  option: ScenarioGeneration["categories"][string]["options"][number],
+  option: ScenarioGenerationSchema["categories"][string]["options"][number],
   selectedTexts: string[]
 ): number {
   if (!option.conditions) return option.probability
@@ -102,7 +102,7 @@ function selectRandomOption<T extends { probability: number }>(
 }
 
 export async function generateScenario(
-  schema: ScenarioGeneration
+  schema: ScenarioGenerationSchema
 ): Promise<{ story: string; contexts: string[] }> {
   const contexts = representativeContexts(schema)
 
