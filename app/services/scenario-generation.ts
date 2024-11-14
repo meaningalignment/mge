@@ -121,7 +121,7 @@ export async function generateScenario(
         ),
       title: z
         .string()
-        .describe(`A short 2-5 word title that summarizes the question.`),
+        .describe(`A short 2-5 word title that summarizes the unique story.`),
     }),
   })
 

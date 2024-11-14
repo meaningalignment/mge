@@ -34,7 +34,7 @@ async function generateContextsFromTranscript(
             generalizedFactor: z
               .string()
               .describe(
-                `The factor where any unnecessary information is removed, but the meaning is preserved. For example, "The girl is in distress" could be generalized as "A person is in distress". The fact that she is a girl does not change the values one should approach the distress with. However, don't generalize away detail that do change the values one should approach the question with. For example, "The girl considering an abortion is a christian" should not be generalized to "A religious person is considering an abortion". The fact that she is a christian is relevant, as the christian faith has specific views on abortion.`
+                `The factor where any unnecessary information is removed, but the meaning is preserved. For example, "The little girl is in distress" could be generalized as "A person is in distress". The fact that she is a girl does not change the values one should approach the distress with. However, don't generalize away detail that do change the values one should approach the question with. For example, "The girl considering an abortion is a christian" should not be generalized to "A religious person is considering an abortion". The fact that she is a christian is relevant, as the christian faith has specific views on abortion.`
               ),
           })
         )
@@ -150,10 +150,10 @@ export const findNewContexts = inngest.createFunction(
       )
     )
 
-    return {
-      message: `Added ${
-        duplicates.filter((d) => d === null).length
-      } new contexts to the question.`,
-    }
+    const message = `Added ${
+      duplicates.filter((d) => d === null).length
+    } new contexts to the question.`
+    logger.info(message)
+    return { message }
   }
 )

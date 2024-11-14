@@ -23,7 +23,7 @@ export async function generateQuestions(
     Return a list of ${numQuestions} such questions that would be relevant to consider for the topic.
     
     For example, if the topic is "Abortion policy in the US", a question might be "A christian girl is considering an abortion, grappling with her faith and personal needs. What support could be provided to her?"`,
-    data: { Topic: topic },
+    data: { topic },
     schema: z.object({
       questions: z
         .array(

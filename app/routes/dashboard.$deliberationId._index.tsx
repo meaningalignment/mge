@@ -493,7 +493,7 @@ export default function DeliberationDashboard() {
                         {context.context.id}
                       </span>
                       {context.context.createdInChatId && (
-                        <div className="flex items-center gap-1 text-gray-500">
+                        <div className="flex items-center gap-1 text-gray-500 whitespace-nowrap ml-2">
                           <span className="text-xs">Articulated by user</span>
                           <svg
                             className="w-3 h-3"
