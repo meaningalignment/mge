@@ -1,9 +1,5 @@
 {
-  "metadata": {
-    "title": "SF Homelessness Scenario Generator",
-    "description": "Generates statistically representative scenarios of individuals experiencing homelessness in San Francisco",
-    "version": "1.0.0"
-  },
+  "topic": "How should the city of San Francisco treat its homeless population?",
   "categories": {
     "age": {
       "type": "single_select",

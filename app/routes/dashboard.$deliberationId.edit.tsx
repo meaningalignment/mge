@@ -45,7 +45,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     },
   })
 
-  return redirect(`/deliberations/${params.deliberationId}`)
+  return redirect(`/dashboard/${params.deliberationId}`)
 }
 
 export default function EditDeliberation() {

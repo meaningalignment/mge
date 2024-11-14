@@ -7,17 +7,11 @@ import {
 import { db, inngest } from "~/config.server"
 import { Question } from "@prisma/client"
 import { Logger } from "inngest/middleware/logger"
-import { readFileSync } from "fs"
 import { embedContext } from "./embedding"
 import {
   generateScenario,
   ScenarioGenerationSchema,
 } from "./scenario-generation"
-
-const generateContextsPrompt = readFileSync(
-  "app/services/prompts/generate-contexts-from-transcript.md",
-  "utf-8"
-)
 
 export async function generateQuestions(
   topic: string,
@@ -60,51 +54,6 @@ export async function generateContextsFromQuestion(
     
     For example, if the question is "I am a christian girl and am considering an abortion, what should I do?", the factors might be: "A person is considering an abortion", "A person is seeking guidance", "A person is grappling with their christian faith", "A person is dealing with conflicting values", "A person is considering a life-changing decision".`,
     data: { Question: question },
-    schema: z.object({
-      factors: z
-        .array(
-          z.object({
-            situationalContext: z
-              .string()
-              .describe(
-                `Describe in 1-2 sentences an aspect of the situation that that affects what's wise to do with regards to the question.`
-              ),
-            factor: z
-              .string()
-              .describe(
-                `The factor from the situational context, in as few words as possible. For example, "The girl is in distress". Should be phrased in a way such that it is possible to append it to the words: "What's wise to do when ...".`
-              ),
-            generalizedFactor: z
-              .string()
-              .describe(
-                `The factor where any unnecessary information is removed, but the meaning is preserved. For example, "The girl is in distress" could be generalized as "A person is in distress". The fact that she is a girl does not change the values one should approach the distress with. However, don't generalize away detail that do change the values one should approach the question with. For example, "The girl considering an abortion is a christian" should not be generalized to "A religious person is considering an abortion". The fact that she is a christian is relevant, as the christian faith has specific views on abortion.`
-              ),
-          })
-        )
-        .describe(
-          `${numContexts} of the most important factors to consider in answering the question wisely.`
-        ),
-    }),
-  }).then((res) => res.factors.map((f) => f.generalizedFactor))
-}
-
-async function generateContextsFromTranscript(
-  question: string,
-  transcript: { role: "user" | "assistant"; text: string }[],
-  numContexts = 5
-) {
-  const prompt = generateContextsPrompt.replace(
-    "{{NUM_CONTEXT}}",
-    numContexts.toString()
-  )
-
-  const dialogue = transcript.filter(
-    (t) => t.role === "user" || t.role === "assistant"
-  )
-
-  return genObj({
-    prompt,
-    data: { dialogue },
     schema: z.object({
       factors: z
         .array(
@@ -477,8 +426,20 @@ export const generateSeedQuestions = inngest.createFunction(
             deliberationId,
             ContextsForQuestions: {
               create: question.contexts.map((context) => ({
-                contextId: context,
-                deliberationId,
+                context: {
+                  connectOrCreate: {
+                    where: {
+                      id_deliberationId: {
+                        id: context,
+                        deliberationId,
+                      },
+                    },
+                    create: {
+                      id: context,
+                      deliberation: { connect: { id: deliberationId } },
+                    },
+                  },
+                },
               })),
             },
           },

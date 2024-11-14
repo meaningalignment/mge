@@ -5,6 +5,7 @@ import { inngest } from "~/config.server"
 import { hypothesize, hypothesizeCron } from "~/services/linking"
 import {
   generateSeedQuestionsAndContexts,
+  generateSeedQuestions,
   generateSeedContexts,
   generateSeedGraph,
 } from "~/services/generation"
@@ -18,6 +19,7 @@ const handler = serve(inngest, [
   deduplicate,
   deduplicateCron,
   generateSeedQuestionsAndContexts,
+  generateSeedQuestions,
   generateSeedContexts,
   generateSeedGraph,
   findNewContexts,

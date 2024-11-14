@@ -73,7 +73,7 @@ export default function AdminLinks() {
           {data.edges.map((edge) => (
             <NavLink
               prefetch="intent"
-              to={`/deliberations/${deliberationId}/links/${edge.userId}/${edge.fromId}/${edge.toId}`}
+              to={`/dashboard/${deliberationId}/links/${edge.userId}/${edge.fromId}/${edge.toId}`}
               key={edge.userId + edge.fromId + edge.toId}
               className={({ isActive, isPending }) =>
                 cn(

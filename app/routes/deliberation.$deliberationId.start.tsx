@@ -14,7 +14,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
     where: { id: Number(deliberationId) },
   })
   const title = deliberation?.title
-  const description = deliberation?.welcomeText
+  const description =
+    deliberation?.welcomeText ||
+    "Welcome! This process takes around 10-15 minutes."
 
   const carouselValues = await db.canonicalValuesCard.findMany({
     take: 12,

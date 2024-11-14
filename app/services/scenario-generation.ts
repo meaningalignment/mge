@@ -2,11 +2,7 @@ import { genObj } from "values-tools"
 import { z } from "zod"
 
 export const schema = z.object({
-  metadata: z.object({
-    title: z.string(),
-    description: z.string().optional(),
-    version: z.string().optional(),
-  }),
+  topic: z.string(),
   categories: z.record(
     z.string(),
     z.object({
@@ -110,17 +106,18 @@ export async function generateScenario(
   selectedContexts?: string[]
 ): Promise<{ story: string; title: string; contexts: string[] }> {
   const contexts = selectedContexts ?? representativeContexts(schema)
+  const topic = schema.topic
 
   console.log("Contexts:", contexts)
 
   const result = await genObj({
-    prompt: `You will be given a few strings that describes the situation a homeless person is finding themselves in. Your task is to generate a story depicting someone in that situation, ending in a question about what the SF government can do about it.`,
-    data: { contexts },
+    prompt: `You will be given a few strings that provide context about a particular situation. Your task is to generate a relatable and touching story depicting someone in that situation, ending in a question about the topic you were given. Make sure the situation you describe is realistic, hint at all the contexts you were given, but make it fairly short. Despite being short, include some detail so it remains vivid and relatable`,
+    data: { contexts, topic },
     schema: z.object({
       story: z
         .string()
         .describe(
-          `A brief personal story (2-3 sentences) depicting a specific scenario related to the topic, followed by a question about how to address the situation. The questions should be values-laden and focus on how to best support or address the situations described.`
+          `A brief personal story (1-3 sentences) depicting a specific scenario based on the contexts you were given, followed by a question about the topic. The question at the end should be to-the-point, using as few words as possible.`
         ),
       title: z
         .string()

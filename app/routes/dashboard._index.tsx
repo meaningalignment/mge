@@ -10,7 +10,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   })
 
   if (deliberation) {
-    return redirect(`/deliberations/${deliberation.id}`)
+    return redirect(`/dashboard/${deliberation.id}`)
   }
 
   return json({ hasDeliberations: false })
@@ -30,7 +30,7 @@ export default function DeliberationsIndex() {
         To get started, create a new type of deliberation.
       </p>
       <Button asChild>
-        <Link prefetch="intent" to="/deliberations/new">
+        <Link prefetch="intent" to="/dashboard/new">
           New Deliberation
         </Link>
       </Button>

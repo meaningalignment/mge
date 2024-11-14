@@ -91,7 +91,7 @@ export default function Deliberations() {
                 <li key={delib.id}>
                   <NavLink
                     prefetch="render"
-                    to={`/deliberations/${delib.id}`}
+                    to={`/dashboard/${delib.id}`}
                     className={({ isActive, isPending }) =>
                       cn(
                         "flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  ",
@@ -129,7 +129,7 @@ export default function Deliberations() {
                   {participatingIn.map((delib: any) => (
                     <li key={delib.id}>
                       <NavLink
-                        to={`/deliberations/${delib.id}`}
+                        to={`/dashboard/${delib.id}`}
                         className={({ isActive, isPending }) =>
                           cn(
                             "flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  ",
@@ -166,7 +166,7 @@ export default function Deliberations() {
           <div className="mt-auto pt-4">
             <Button variant="outline" className="w-full">
               <NavLink
-                to="/deliberations/new"
+                to="/dashboard/new"
                 prefetch="intent"
                 className="w-full flex items-center justify-center"
               >
@@ -196,7 +196,7 @@ export default function Deliberations() {
               <li className="font-medium text-slate-800 ">
                 <NavLink
                   prefetch="render"
-                  to={`/deliberations/${params.deliberationId}`}
+                  to={`/dashboard/${params.deliberationId}`}
                   className="hover:text-slate-600  transition-colors"
                 >
                   {currentDeliberation?.title}
@@ -207,7 +207,7 @@ export default function Deliberations() {
                   <span className="mx-2 text-slate-400 ">/</span>
                   <NavLink
                     prefetch="intent"
-                    to={`/deliberations/${params.deliberationId}/${pathSegments
+                    to={`/dashboard/${params.deliberationId}/${pathSegments
                       .slice(0, index + 1)
                       .join("/")}`}
                     className="font-medium text-slate-500  capitalize hover:text-slate-700  transition-colors"

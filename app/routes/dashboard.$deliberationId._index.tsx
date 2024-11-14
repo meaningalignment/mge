@@ -102,7 +102,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     await db.deliberation.delete({
       where: { id: deliberationId },
     })
-    return redirect("/deliberations")
+    return redirect("/dashboard")
   } else if (action === "removeContext") {
     const contextId = formData.get("contextId") as string
     const questionId = formData.get("questionId") as string
@@ -269,7 +269,7 @@ export default function DeliberationDashboard() {
         <CardContent className="pt-0">
           <nav className="space-y-2 text-sm font-medium">
             <Link
-              to={`/deliberations/${deliberationId}/edit`}
+              to={`/dashboard/${deliberationId}/edit`}
               prefetch="render"
               className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  "
             >
@@ -277,7 +277,7 @@ export default function DeliberationDashboard() {
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
             </Link>
             {/* <Link
-              to={`/deliberations/${deliberationId}/merge`}
+              to={`/dashboard/${deliberationId}/merge`}
               prefetch="render"
               className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  "
             >
@@ -285,7 +285,7 @@ export default function DeliberationDashboard() {
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
             </Link> */}
             <Link
-              to={`/deliberations/${deliberationId}/links`}
+              to={`/dashboard/${deliberationId}/links`}
               prefetch="render"
               className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  "
             >
@@ -293,7 +293,7 @@ export default function DeliberationDashboard() {
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
             </Link>
             <Link
-              to={`/deliberations/${deliberationId}/chats`}
+              to={`/dashboard/${deliberationId}/chats`}
               prefetch="intent"
               className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  "
             >
@@ -361,10 +361,15 @@ export default function DeliberationDashboard() {
               </div>
 
               <AlertDescription className="flex flex-col sm:flex-row items-center justify-between">
-                <span className="pr-4">
-                  Would you like to generate a moral graph to seed the
-                  deliberation?
-                </span>
+                <div>
+                  <span className="pr-4">
+                    Would you like to generate a moral graph to seed the
+                    deliberation?
+                  </span>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    This might take a few minutes to complete
+                  </p>
+                </div>
                 {deliberation.setupStatus === "generating_graph" ||
                 isGeneratingGraph ? (
                   <div className="bg-white rounded-md px-2 py-1 border flex flex-row items-center gap-1 mt-2 sm:mt-0 animate-pulse">

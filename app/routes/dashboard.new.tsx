@@ -22,22 +22,21 @@ import {
 } from "~/components/ui/select"
 import {
   allContexts,
-  parseScenarioGenerationData,
+  generateScenario,
+  parseScenarioGenerationData as parseScenarioGenData,
 } from "~/services/scenario-generation"
 import { Deliberation } from "@prisma/client"
-import ValueContextInfo from "~/components/value-context-info"
 
-async function handleTopicSubmission(
-  deliberationData: {
-    title: string
-    welcomeText: string
-    topic: string
-    userId: number
-  },
-  numQuestions: number,
+async function handleTopicSubmission(deliberationData: {
+  title: string
+  welcomeText: string
+  topic: string
+  userId: number
+  numQuestions: number
   numContexts: number
-) {
-  const { title, welcomeText, topic, userId } = deliberationData
+}) {
+  const { title, welcomeText, topic, userId, numContexts, numQuestions } =
+    deliberationData
 
   const deliberation = await db.deliberation.create({
     data: {
@@ -122,11 +121,12 @@ async function handleContextsFileSubmission(
     welcomeText: string
     topic: string | null
     userId: number
+    numQuestions: number
   },
   contextsFile: File
 ) {
-  const { title, welcomeText, topic, userId } = deliberationData
-  const data = parseScenarioGenerationData(await contextsFile.text())
+  const { title, welcomeText, userId, numQuestions } = deliberationData
+  const data = parseScenarioGenData(JSON.parse(await contextsFile.text()))
 
   if (!data) {
     throw new Error(
@@ -134,31 +134,20 @@ async function handleContextsFileSubmission(
     )
   }
 
-  const contexts = allContexts(data)
   const deliberation = await db.deliberation.create({
     data: {
       title,
       welcomeText,
-      topic: topic ?? title,
+      topic: data.topic,
       user: { connect: { id: userId } },
     },
   })
-
-  await Promise.all(
-    contexts.map((context) =>
-      db.context.create({
-        data: {
-          id: context,
-          deliberationId: deliberation.id,
-        },
-      })
-    )
-  )
 
   await inngest.send({
     name: "gen-seed-questions",
     data: {
       deliberationId: deliberation.id,
+      numQuestions,
       schema: JSON.stringify(data),
     },
   })
@@ -181,17 +170,20 @@ export const action: ActionFunction = async ({ request }) => {
   const numQuestions = parseInt((formData.get("numQuestions") || "5") as string)
   const numContexts = parseInt((formData.get("numContexts") || "5") as string)
 
-  const deliberationData = { title, welcomeText, topic, userId: user.id }
+  const deliberationData = {
+    title,
+    welcomeText,
+    topic,
+    userId: user.id,
+    numQuestions,
+    numContexts,
+  }
 
   try {
     let deliberation: Deliberation
 
     if (topic) {
-      deliberation = await handleTopicSubmission(
-        deliberationData,
-        numQuestions,
-        numContexts
-      )
+      deliberation = await handleTopicSubmission(deliberationData)
     } else if (questionsFile) {
       deliberation = await handleQuestionsFileSubmission(
         deliberationData,
@@ -204,7 +196,7 @@ export const action: ActionFunction = async ({ request }) => {
       )
     }
 
-    return redirect(`/deliberations/${deliberation!.id}`)
+    return redirect(`/dashboard/${deliberation!.id}`)
   } catch (error) {
     return json(
       {
@@ -399,7 +391,7 @@ export default function NewDeliberation() {
           </div>
         ) : inputMethod === "contexts" ? (
           <div>
-            <Label htmlFor="contextsFile">Contexts File (JSONL)</Label>
+            <Label htmlFor="contextsFile">Generation Schema (JSON)</Label>
             <div className="flex items-center gap-4 mt-2">
               <Button
                 type="button"
@@ -413,7 +405,7 @@ export default function NewDeliberation() {
                 id="contextsFile"
                 name="contextsFile"
                 type="file"
-                accept=".jsonl"
+                accept=".json"
                 required={inputMethod === "contexts"}
                 onChange={(e) => {
                   const fileName = e.target.files?.[0]?.name
@@ -432,23 +424,31 @@ export default function NewDeliberation() {
               </span>
             </div>
             <p className="text-sm text-muted-foreground mt-2">
-              Upload a JSON file with a representative distribution of value
-              contexts. The file should follow the schema below.{" "}
+              Upload a JSON file with a question generation schema.
             </p>
-            <pre className="mt-2 p-4 bg-muted rounded-lg text-sm overflow-x-auto">
-              <code>{`{
-  categories: {
-    [key: string]: {
-      type: "single_select" | "multi_select",
-      probability: number,
-      options: [{
-        text: string,
-        probability: number
-      }]
-    }
-  }
-}`}</code>
-            </pre>
+
+            <div className="mt-6 w-1/2">
+              <Label htmlFor="numQuestions">Number of Questions</Label>
+              <Select
+                name="numQuestions"
+                value={numQuestions}
+                onValueChange={setNumQuestions}
+              >
+                <SelectTrigger className="mt-2">
+                  <SelectValue placeholder="Select" />
+                </SelectTrigger>
+                <SelectContent>
+                  {[...Array(12)].map((_, i) => (
+                    <SelectItem key={i + 1} value={(i + 1).toString()}>
+                      {i + 1}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-sm text-muted-foreground mt-2">
+                How many representative questions to generate
+              </p>
+            </div>
           </div>
         ) : null}
 

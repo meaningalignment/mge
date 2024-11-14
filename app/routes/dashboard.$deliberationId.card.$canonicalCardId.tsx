@@ -51,7 +51,7 @@ function Chats() {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mx-auto gap-4">
         {card.valuesCards.map((c) => (
           <Link
-            to={`/deliberations/${deliberationId}/${c.chat!.id}`}
+            to={`/dashboard/${deliberationId}/${c.chat!.id}`}
             className="mb-6"
           >
             {c.chat!.id}
@@ -75,7 +75,7 @@ function SimilarCards({
       <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mx-auto gap-4">
         {similar.map((card) => (
           <Link
-            to={`/deliberations/${deliberationId}/card/${card.id}`}
+            to={`/dashboard/${deliberationId}/card/${card.id}`}
             className="mb-6"
           >
             <ValuesCard
