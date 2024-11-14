@@ -72,6 +72,7 @@ export default function AdminLinks() {
         <ul className="space-y-2 text-sm font-medium">
           {data.edges.map((edge) => (
             <NavLink
+              prefetch="intent"
               to={`/deliberations/${deliberationId}/links/${edge.userId}/${edge.fromId}/${edge.toId}`}
               key={edge.userId + edge.fromId + edge.toId}
               className={({ isActive, isPending }) =>

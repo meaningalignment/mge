@@ -64,6 +64,7 @@ export default function AdminChats() {
         <ul className="space-y-2 text-sm font-medium">
           {data.chats.map((chat) => (
             <NavLink
+              prefetch="intent"
               to={chat.id}
               key={chat.id}
               className={({ isActive, isPending }) =>

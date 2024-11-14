@@ -17,6 +17,7 @@ export const schema = z.object({
           text: z.string(),
           probability: z.number().min(0).max(1),
           description: z.string().optional(),
+          redundant: z.boolean().optional(),
           conditions: z
             .array(
               z.object({
@@ -48,7 +49,9 @@ export function allContexts(data: ScenarioGenerationSchema): string[] {
   return [
     ...new Set(
       Object.values(data.categories).flatMap((category) =>
-        category.options.map((option) => option.text)
+        category.options
+          .filter((option) => !option.redundant)
+          .map((option) => option.text)
       )
     ),
   ]
@@ -68,7 +71,8 @@ function representativeContexts(data: ScenarioGenerationSchema): string[] {
 
     for (const option of candidates) {
       const probability = getEffectiveProbability(option, selected)
-      if (Math.random() <= probability) {
+      const isRedundant = option.redundant === true
+      if (Math.random() <= probability && !isRedundant) {
         selected.push(option.text)
       }
     }

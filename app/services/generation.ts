@@ -1,5 +1,9 @@
 import { z } from "zod"
-import { deduplicateContexts, generateValueContext, genObj } from "values-tools"
+import {
+  deduplicateContexts,
+  generateValueFromContext,
+  genObj,
+} from "values-tools"
 import { db, inngest } from "~/config.server"
 import { Question } from "@prisma/client"
 import { Logger } from "inngest/middleware/logger"
@@ -334,6 +338,7 @@ export const generateSeedGraph = inngest.createFunction(
     logger.info(`Starting graph generation for deliberation`)
 
     const deliberationId = event.data.deliberationId as number
+    const numValues = (event.data.numValues ?? 10) as number
 
     await step.run(`Marking graph gen in db`, async () =>
       db.deliberation.update({
@@ -354,6 +359,7 @@ export const generateSeedGraph = inngest.createFunction(
       })
     )
 
+    const valuesPerQuestion = Math.ceil(numValues / questions.length)
     for (const question of questions) {
       logger.info(`Processing question: ${question.question}`)
 
@@ -361,20 +367,26 @@ export const generateSeedGraph = inngest.createFunction(
         c.ContextsForQuestions.some((q) => q.questionId === question.id)
       )
 
-      // Generate values for each context
+      // Generate values for the question.
       const values = await step.run(`Generating values for context`, async () =>
         Promise.all(
-          contextsForQuestion.map((context, index) =>
-            generateValueContext(question.question, context.id, {
-              includeStory: true,
-              includeTitle: true,
-            }).then((data) => ({
-              id: index,
-              title: (data as any).title,
-              description: (data as any).fictionalStory,
-              policies: data.revisedAttentionPolicies,
-            }))
-          )
+          Array(valuesPerQuestion)
+            .fill(null)
+            .map((_, index) =>
+              generateValueFromContext(
+                question.question,
+                contextsForQuestion[index % contextsForQuestion.length].id,
+                {
+                  includeStory: true,
+                  includeTitle: true,
+                }
+              ).then((data) => ({
+                id: index,
+                title: (data as any).title,
+                description: (data as any).fictionalStory,
+                policies: data.revisedAttentionPolicies,
+              }))
+            )
         )
       )
 

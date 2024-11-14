@@ -1,7 +1,6 @@
 import { LoaderFunctionArgs, ActionFunctionArgs, json } from "@remix-run/node"
 import {
   useLoaderData,
-  useSubmit,
   Link,
   useRevalidator,
   useParams,
@@ -25,6 +24,7 @@ import { AlertCircle } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert"
 import { ChevronRightIcon } from "@radix-ui/react-icons"
 import LoadingButton from "~/components/loading-button"
+import { Input } from "~/components/ui/input"
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const deliberationId = Number(params.deliberationId)!
@@ -140,6 +140,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     return json({ success: true })
   } else if (action === "generateSeedGraph") {
     const deliberationId = Number(params.deliberationId)!
+    const numValues = Number(formData.get("numValues")) || 10
 
     await db.deliberation.update({
       where: { id: deliberationId },
@@ -148,7 +149,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     await inngest.send({
       name: "gen-seed-graph",
-      data: { deliberationId },
+      data: { deliberationId, numValues },
     })
 
     return json({ success: true, refetch: true })
@@ -203,6 +204,7 @@ export default function DeliberationDashboard() {
   const { deliberationId } = useParams()
   const [openQuestionId, setOpenQuestionId] = useState<number | null>(null)
   const [isGeneratingGraph, setIsGeneratingGraph] = useState(false)
+  const [numValues, setNumValues] = useState(10)
 
   // Poll for setup status if the deliberation is not ready
   useEffect(() => {
@@ -238,7 +240,10 @@ export default function DeliberationDashboard() {
 
   const handleGenerateSeedGraph = () => {
     setIsGeneratingGraph(true)
-    fetcher.submit({ action: "generateSeedGraph" }, { method: "post" })
+    fetcher.submit(
+      { action: "generateSeedGraph", numValues: numValues.toString() },
+      { method: "post" }
+    )
   }
 
   const handleResetDeliberation = () => {
@@ -350,13 +355,16 @@ export default function DeliberationDashboard() {
             deliberation.setupStatus === "ready") ||
             deliberation.setupStatus === "generating_graph") && (
             <Alert className="mt-6 mb-4 bg-slate-50">
-              <div className="flex flex-row space-x-2">
+              <div className="flex flex-row space-x-2 mb-2">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>No responses yet</AlertTitle>
               </div>
 
               <AlertDescription className="flex flex-col sm:flex-row items-center justify-between">
-                <span>Would you like to generate a seed graph?</span>
+                <span className="pr-4">
+                  Would you like to generate a moral graph to seed the
+                  deliberation?
+                </span>
                 {deliberation.setupStatus === "generating_graph" ||
                 isGeneratingGraph ? (
                   <div className="bg-white rounded-md px-2 py-1 border flex flex-row items-center gap-1 mt-2 sm:mt-0 animate-pulse">
@@ -364,13 +372,33 @@ export default function DeliberationDashboard() {
                     <span className="text-gray-400">Generating Graph...</span>
                   </div>
                 ) : (
-                  <Button
-                    variant="outline"
-                    onClick={handleGenerateSeedGraph}
-                    className="mt-2 sm:mt-0"
-                  >
-                    Seed Graph
-                  </Button>
+                  <div className="flex items-center gap-2 mt-2 sm:mt-0">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Input
+                            type="number"
+                            min="1"
+                            max="50"
+                            value={numValues}
+                            onChange={(e) =>
+                              setNumValues(Number(e.target.value))
+                            }
+                            className="w-16"
+                            aria-label="Number of values to generate for the moral graph"
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>
+                            Number of values to generate for the moral graph
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <Button variant="outline" onClick={handleGenerateSeedGraph}>
+                      Generate graph with {numValues} values
+                    </Button>
+                  </div>
                 )}
               </AlertDescription>
             </Alert>

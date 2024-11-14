@@ -25,6 +25,7 @@ import {
   parseScenarioGenerationData,
 } from "~/services/scenario-generation"
 import { Deliberation } from "@prisma/client"
+import ValueContextInfo from "~/components/value-context-info"
 
 async function handleTopicSubmission(
   deliberationData: {
@@ -246,7 +247,7 @@ export default function NewDeliberation() {
             className="mt-2"
             id="title"
             name="title"
-            placeholder="Enter the deliberation title"
+            placeholder="eg. SF Homelessness"
             onChange={(e) => setTitle(e.target.value)}
             required
           />
@@ -287,7 +288,7 @@ export default function NewDeliberation() {
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="contexts" id="contexts-input" />
-              <Label htmlFor="contexts-input">Upload Demographics</Label>
+              <Label htmlFor="contexts-input">Upload Schema</Label>
             </div>
           </RadioGroup>
         </div>
@@ -307,7 +308,6 @@ export default function NewDeliberation() {
                 onChange={(e) => setQuestion(e.target.value)}
               />
               <p className="text-sm text-muted-foreground mt-2">
-                This is the topic that participants will deliberate about.
                 Questions will be generated based on this topic in the
                 background.
               </p>
@@ -432,8 +432,8 @@ export default function NewDeliberation() {
               </span>
             </div>
             <p className="text-sm text-muted-foreground mt-2">
-              Upload a JSON file containing your demographic information. The
-              file should follow this schema:
+              Upload a JSON file with a representative distribution of value
+              contexts. The file should follow the schema below.{" "}
             </p>
             <pre className="mt-2 p-4 bg-muted rounded-lg text-sm overflow-x-auto">
               <code>{`{
