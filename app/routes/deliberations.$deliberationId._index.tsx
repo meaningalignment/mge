@@ -271,7 +271,7 @@ export default function DeliberationDashboard() {
             <Link
               to={`/deliberations/${deliberationId}/edit`}
               prefetch="render"
-              className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700"
+              className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  "
             >
               <span>Edit Deliberation</span>
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
@@ -279,7 +279,7 @@ export default function DeliberationDashboard() {
             {/* <Link
               to={`/deliberations/${deliberationId}/merge`}
               prefetch="render"
-              className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700"
+              className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  "
             >
               <span>Merge Values</span>
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
@@ -287,7 +287,7 @@ export default function DeliberationDashboard() {
             <Link
               to={`/deliberations/${deliberationId}/links`}
               prefetch="render"
-              className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700"
+              className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  "
             >
               <span>Manage Links</span>
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
@@ -295,7 +295,7 @@ export default function DeliberationDashboard() {
             <Link
               to={`/deliberations/${deliberationId}/chats`}
               prefetch="intent"
-              className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700"
+              className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  "
             >
               <span>Manage Chats</span>
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />

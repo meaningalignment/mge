@@ -29,7 +29,7 @@ function MessageContent({ message }: { message: Message }) {
   } else
     return (
       <MemoizedReactMarkdown
-        className="prose break-words dark:prose-invert prose-p:leading-relaxed prose-pre:p-0"
+        className="prose break-words  prose-p:leading-relaxed prose-pre:p-0"
         remarkPlugins={[remarkGfm, remarkMath]}
         components={{
           p({ children }) {

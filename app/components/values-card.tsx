@@ -20,16 +20,11 @@ function DetailsList({ card }: { card: ValuesCardData }) {
   return (
     <div className="flex flex-col overflow-auto gap-y-1">
       {card.policies?.map((criterion, id) => (
-        <li
-          key={id}
-          className="text-sm text-neutral-500 dark:text-neutral-300 list-none"
-        >
+        <li key={id} className="text-sm text-neutral-500  list-none">
           {criterion.split(" ").map((word, index) => (
             <React.Fragment key={`${id}/${index}`}>
               {isAllUppercase(word) ? (
-                <strong className="font-bold text-neutral-600 dark:text-neutral-200">
-                  {word}
-                </strong>
+                <strong className="font-bold text-neutral-600 ">{word}</strong>
               ) : (
                 word
               )}
@@ -45,7 +40,7 @@ function DetailsList({ card }: { card: ValuesCardData }) {
 export default function ValuesCard({ card, header, editButton }: Props) {
   return (
     <div
-      className={`border-2 rounded-xl px-8 pt-8 pb-6 max-w-sm h-full bg-white dark:bg-black dark:text-white flex flex-col`}
+      className={`border-2 rounded-xl px-8 pt-8 pb-6 max-w-sm h-full bg-white   flex flex-col`}
     >
       {header && header}
       {editButton ? (
@@ -56,9 +51,7 @@ export default function ValuesCard({ card, header, editButton }: Props) {
       ) : (
         <p className="text-md font-bold">{card.title}</p>
       )}
-      <p className="text-md text-neutral-500 dark:text-neutral-300">
-        {card.description}
-      </p>
+      <p className="text-md text-neutral-500 ">{card.description}</p>
       <div className="px-4 py-2 -mx-4 mt-4 place-self-stretch bg-blue-100 rounded-md">
         <p className="text-xs font-bold text-neutral-500 mb-3">
           {/* <Eye className="h-4 w-4 inline-block mr-2" /> */}

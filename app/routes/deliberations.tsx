@@ -59,14 +59,14 @@ export default function Deliberations() {
     .filter((segment) => isNaN(Number(segment))) // Filter out numeric segments
 
   return (
-    <div className="h-screen w-screen bg-white dark:bg-slate-900">
+    <div className="h-screen w-screen bg-white ">
       <aside
         id="sidebar"
         className="fixed left-0 top-0 z-40 h-screen w-64 transition-transform"
         aria-label="Sidebar"
       >
-        <div className="flex h-full flex-col overflow-y-auto border-r border-slate-200 bg-white px-3 py-4 dark:border-slate-700 dark:bg-slate-900">
-          <div className="mb-10 flex items-center rounded-lg px-3 py-2 text-slate-900 dark:text-white">
+        <div className="flex h-full flex-col overflow-y-auto border-r border-slate-200 bg-white px-3 py-4  ">
+          <div className="mb-10 flex items-center rounded-lg px-3 py-2 text-slate-900 ">
             <svg
               className="h-5 w-5"
               aria-hidden="true"
@@ -83,7 +83,7 @@ export default function Deliberations() {
             <span className="ml-3 text-base font-semibold">Deliberations</span>
           </div>
           <ScrollArea className="flex-grow">
-            <div className="mb-2 px-3 text-xs font-semibold text-slate-500 dark:text-slate-400">
+            <div className="mb-2 px-3 text-xs font-semibold text-slate-500 ">
               Your Deliberations
             </div>
             <ul className="space-y-2 text-sm font-medium">
@@ -94,9 +94,9 @@ export default function Deliberations() {
                     to={`/deliberations/${delib.id}`}
                     className={({ isActive, isPending }) =>
                       cn(
-                        "flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700",
-                        isPending && "bg-slate-50 dark:bg-slate-800",
-                        isActive && "bg-slate-100 dark:bg-slate-700"
+                        "flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  ",
+                        isPending && "bg-slate-50 ",
+                        isActive && "bg-slate-100 "
                       )
                     }
                   >
@@ -122,7 +122,7 @@ export default function Deliberations() {
 
             {participatingIn.length > 0 && (
               <>
-                <div className="mt-6 mb-2 px-3 text-xs font-semibold text-slate-500 dark:text-slate-400">
+                <div className="mt-6 mb-2 px-3 text-xs font-semibold text-slate-500 ">
                   Participating In
                 </div>
                 <ul className="space-y-2 text-sm font-medium">
@@ -132,9 +132,9 @@ export default function Deliberations() {
                         to={`/deliberations/${delib.id}`}
                         className={({ isActive, isPending }) =>
                           cn(
-                            "flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100 dark:text-white dark:hover:bg-slate-700",
-                            isPending && "bg-slate-50 dark:bg-slate-800",
-                            isActive && "bg-slate-100 dark:bg-slate-700"
+                            "flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  ",
+                            isPending && "bg-slate-50 ",
+                            isActive && "bg-slate-100 "
                           )
                         }
                       >
@@ -193,26 +193,24 @@ export default function Deliberations() {
         {params.deliberationId && (
           <nav className="mb-8">
             <ol className="flex items-center text-sm">
-              <li className="font-medium text-slate-800 dark:text-slate-200">
+              <li className="font-medium text-slate-800 ">
                 <NavLink
                   prefetch="render"
                   to={`/deliberations/${params.deliberationId}`}
-                  className="hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+                  className="hover:text-slate-600  transition-colors"
                 >
                   {currentDeliberation?.title}
                 </NavLink>
               </li>
               {pathSegments.map((segment, index) => (
                 <li key={segment} className="flex items-center">
-                  <span className="mx-2 text-slate-400 dark:text-slate-500">
-                    /
-                  </span>
+                  <span className="mx-2 text-slate-400 ">/</span>
                   <NavLink
                     prefetch="intent"
                     to={`/deliberations/${params.deliberationId}/${pathSegments
                       .slice(0, index + 1)
                       .join("/")}`}
-                    className="font-medium text-slate-500 dark:text-slate-400 capitalize hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+                    className="font-medium text-slate-500  capitalize hover:text-slate-700  transition-colors"
                   >
                     {segment}
                   </NavLink>
