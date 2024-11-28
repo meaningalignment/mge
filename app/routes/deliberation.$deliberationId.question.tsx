@@ -12,7 +12,7 @@ import LoadingButton from "~/components/loading-button"
 export async function loader({ params }: LoaderFunctionArgs) {
   const { deliberationId } = params
 
-  const [questions, deliberation] = await Promise.all([
+  const [allQuestions, deliberation] = await Promise.all([
     db.question.findMany({
       where: { deliberationId: Number(deliberationId!) },
     }),
@@ -21,16 +21,22 @@ export async function loader({ params }: LoaderFunctionArgs) {
     }),
   ])
 
-  if (questions.length === 0) {
+  if (allQuestions.length === 0) {
     throw Error("No questions found.")
   }
 
   // Skip question select if there's only one question.
-  if (questions.length === 1) {
+  if (allQuestions.length === 1) {
     return redirect(
-      `/deliberation/${deliberationId}/${questions[0].id}/chat-explainer`
+      `/deliberation/${deliberationId}/${allQuestions[0].id}/chat-explainer`
     )
   }
+
+  // Get 3 random questions or all questions if less than 3.
+  const numQuestions = Math.min(3, allQuestions.length)
+  const questions = allQuestions
+    .sort(() => Math.random() - 0.5)
+    .slice(0, numQuestions)
 
   return json({
     questions,

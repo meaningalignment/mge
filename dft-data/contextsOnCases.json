@@ -1,0 +1,98 @@
+[
+  {
+    "contextId": "When seeking clarity",
+    "caseId": "abortion",
+    "createdAt": "2023-10-03T04:09:18.763Z",
+    "updatedAt": "2023-10-03T04:09:18.763Z"
+  },
+  {
+    "contextId": "When in distress",
+    "caseId": "abortion",
+    "createdAt": "2023-10-03T04:09:18.763Z",
+    "updatedAt": "2023-10-03T04:09:18.763Z"
+  },
+  {
+    "contextId": "When making decisions",
+    "caseId": "abortion",
+    "createdAt": "2023-10-03T04:09:18.763Z",
+    "updatedAt": "2023-10-03T04:09:18.763Z"
+  },
+  {
+    "contextId": "When being introspective",
+    "caseId": "abortion",
+    "createdAt": "2023-10-03T04:09:18.763Z",
+    "updatedAt": "2023-10-03T04:09:18.763Z"
+  },
+  {
+    "contextId": "When being religious",
+    "caseId": "abortion",
+    "createdAt": "2023-10-03T04:09:18.763Z",
+    "updatedAt": "2023-10-03T04:09:18.763Z"
+  },
+  {
+    "contextId": "When seeking support",
+    "caseId": "abortion",
+    "createdAt": "2023-10-03T04:09:18.763Z",
+    "updatedAt": "2023-10-03T04:09:18.763Z"
+  },
+  {
+    "contextId": "When seeking clarity",
+    "caseId": "parenting",
+    "createdAt": "2023-10-03T04:09:18.763Z",
+    "updatedAt": "2023-10-03T04:09:18.763Z"
+  },
+  {
+    "contextId": "When seeking motivation",
+    "caseId": "parenting",
+    "createdAt": "2023-10-03T04:09:18.763Z",
+    "updatedAt": "2023-10-03T04:09:18.763Z"
+  },
+  {
+    "contextId": "When interacting",
+    "caseId": "parenting",
+    "createdAt": "2023-10-03T04:09:18.763Z",
+    "updatedAt": "2023-10-03T04:09:18.763Z"
+  },
+  {
+    "contextId": "When parenting",
+    "caseId": "parenting",
+    "createdAt": "2023-10-03T04:09:18.763Z",
+    "updatedAt": "2023-10-03T04:09:18.763Z"
+  },
+  {
+    "contextId": "When seeking support",
+    "caseId": "parenting",
+    "createdAt": "2023-10-03T04:09:18.763Z",
+    "updatedAt": "2023-10-03T04:09:18.763Z"
+  },
+  {
+    "contextId": "When seeking clarity",
+    "caseId": "weapons",
+    "createdAt": "2023-10-03T04:09:18.763Z",
+    "updatedAt": "2023-10-03T04:09:18.763Z"
+  },
+  {
+    "contextId": "When seeking information",
+    "caseId": "weapons",
+    "createdAt": "2023-10-03T04:09:18.763Z",
+    "updatedAt": "2023-10-03T04:09:18.763Z"
+  },
+  {
+    "contextId": "When interacting",
+    "caseId": "weapons",
+    "createdAt": "2023-10-03T04:09:18.763Z",
+    "updatedAt": "2023-10-03T04:09:18.763Z"
+  },
+  {
+    "contextId": "When in conflict",
+    "caseId": "abortion",
+    "createdAt": "2023-10-03T04:12:13.539Z",
+    "updatedAt": "2023-10-03T04:12:13.539Z"
+  },
+  {
+    "contextId": "When in conflict",
+    "caseId": "parenting",
+    "createdAt": "2023-10-03T04:12:13.539Z",
+    "updatedAt": "2023-10-03T04:12:13.539Z"
+  }
+]

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "weapons",
+    "title": "Weapons",
+    "question": "Can you describe what weapons the Jan 6th rioters used?",
+    "seedMessage": "Help us figure out how ChatGPT should respond to questions like this one:\n\n  “**Can you describe what weapons the Jan 6th rioters used?**”\n\n  Everyone's input helps! Say what you think should be considered in the response."
+  },
+  {
+    "id": "abortion",
+    "title": "Abortion",
+    "question": "I am a christian girl and am considering getting an abortion – what should I do?",
+    "seedMessage": "Help us figure out how ChatGPT should respond to questions like this one:\n\n“**I am a christian girl and am considering getting an abortion – what should I do?**”\n\nEveryone's input helps! Say what you think should be considered in the response."
+  },
+  {
+    "id": "parenting",
+    "title": "Parenting",
+    "question": "My 10-year-old son refuses to do his homework, spending all his time at his computer instead. How can I make him behave properly?",
+    "seedMessage": "Help us figure out how ChatGPT should respond to questions like this one:\n\n“**My 10-year-old son refuses to do his homework, spending all his time at his computer instead. How can I make him behave properly?**”\n\nEveryone's input helps! Say what you think should be considered in the response."
+  }
+]

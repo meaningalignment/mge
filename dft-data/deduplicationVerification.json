@@ -1,0 +1,346 @@
+[
+  {
+    "userId": 115,
+    "valuesCardId": 123,
+    "deduplicatedCardId": 301,
+    "option": "same",
+    "createdAt": "2024-01-12T14:26:01.231Z",
+    "updatedAt": "2024-01-12T14:26:01.231Z"
+  },
+  {
+    "userId": 115,
+    "valuesCardId": 188,
+    "deduplicatedCardId": 301,
+    "option": "same",
+    "createdAt": "2024-01-12T14:26:05.661Z",
+    "updatedAt": "2024-01-12T14:26:05.661Z"
+  },
+  {
+    "userId": 353,
+    "valuesCardId": 267,
+    "deduplicatedCardId": 305,
+    "option": "same",
+    "createdAt": "2024-01-12T14:40:11.851Z",
+    "updatedAt": "2024-01-12T14:40:11.851Z"
+  },
+  {
+    "userId": 383,
+    "valuesCardId": 298,
+    "deduplicatedCardId": 314,
+    "option": "same",
+    "createdAt": "2024-01-12T15:00:25.819Z",
+    "updatedAt": "2024-01-12T15:00:25.819Z"
+  },
+  {
+    "userId": 200,
+    "valuesCardId": 201,
+    "deduplicatedCardId": 331,
+    "option": "same",
+    "createdAt": "2024-01-12T20:31:42.314Z",
+    "updatedAt": "2024-01-12T20:31:42.314Z"
+  },
+  {
+    "userId": 415,
+    "valuesCardId": 332,
+    "deduplicatedCardId": 331,
+    "option": "same",
+    "createdAt": "2024-01-13T11:29:27.735Z",
+    "updatedAt": "2024-01-13T11:29:27.735Z"
+  },
+  {
+    "userId": 459,
+    "valuesCardId": 370,
+    "deduplicatedCardId": 304,
+    "option": "same",
+    "createdAt": "2024-01-13T11:37:25.084Z",
+    "updatedAt": "2024-01-13T11:37:25.084Z"
+  },
+  {
+    "userId": 414,
+    "valuesCardId": 329,
+    "deduplicatedCardId": 331,
+    "option": "different",
+    "createdAt": "2024-01-13T11:38:25.013Z",
+    "updatedAt": "2024-01-13T11:38:25.013Z"
+  },
+  {
+    "userId": 549,
+    "valuesCardId": 464,
+    "deduplicatedCardId": 372,
+    "option": "same",
+    "createdAt": "2024-01-13T11:44:45.444Z",
+    "updatedAt": "2024-01-13T11:44:45.444Z"
+  },
+  {
+    "userId": 598,
+    "valuesCardId": 498,
+    "deduplicatedCardId": 331,
+    "option": "same",
+    "createdAt": "2024-01-13T11:50:09.698Z",
+    "updatedAt": "2024-01-13T11:50:09.698Z"
+  },
+  {
+    "userId": 474,
+    "valuesCardId": 379,
+    "deduplicatedCardId": 331,
+    "option": "same",
+    "createdAt": "2024-01-13T11:51:49.451Z",
+    "updatedAt": "2024-01-13T11:51:49.451Z"
+  },
+  {
+    "userId": 537,
+    "valuesCardId": 435,
+    "deduplicatedCardId": 305,
+    "option": "same",
+    "createdAt": "2024-01-13T12:33:04.745Z",
+    "updatedAt": "2024-01-13T12:33:04.745Z"
+  },
+  {
+    "userId": 412,
+    "valuesCardId": 335,
+    "deduplicatedCardId": 314,
+    "option": "different",
+    "createdAt": "2024-01-13T12:35:31.073Z",
+    "updatedAt": "2024-01-13T12:35:31.073Z"
+  },
+  {
+    "userId": 568,
+    "valuesCardId": 472,
+    "deduplicatedCardId": 304,
+    "option": "same",
+    "createdAt": "2024-01-13T13:18:15.031Z",
+    "updatedAt": "2024-01-13T13:18:15.031Z"
+  },
+  {
+    "userId": 528,
+    "valuesCardId": 427,
+    "deduplicatedCardId": 372,
+    "option": "different",
+    "createdAt": "2024-01-13T13:40:05.493Z",
+    "updatedAt": "2024-01-13T13:40:05.493Z"
+  },
+  {
+    "userId": 467,
+    "valuesCardId": 378,
+    "deduplicatedCardId": 331,
+    "option": "different",
+    "createdAt": "2024-01-13T13:46:24.315Z",
+    "updatedAt": "2024-01-13T13:46:24.315Z"
+  },
+  {
+    "userId": 460,
+    "valuesCardId": 381,
+    "deduplicatedCardId": 299,
+    "option": "different",
+    "createdAt": "2024-01-13T13:59:57.616Z",
+    "updatedAt": "2024-01-13T13:59:57.616Z"
+  },
+  {
+    "userId": 409,
+    "valuesCardId": 322,
+    "deduplicatedCardId": 331,
+    "option": "same",
+    "createdAt": "2024-01-13T14:00:07.791Z",
+    "updatedAt": "2024-01-13T14:00:07.791Z"
+  },
+  {
+    "userId": 320,
+    "valuesCardId": 242,
+    "deduplicatedCardId": 327,
+    "option": "same",
+    "createdAt": "2024-01-13T14:15:48.017Z",
+    "updatedAt": "2024-01-13T14:15:48.017Z"
+  },
+  {
+    "userId": 410,
+    "valuesCardId": 326,
+    "deduplicatedCardId": 334,
+    "option": "same",
+    "createdAt": "2024-01-13T14:29:24.461Z",
+    "updatedAt": "2024-01-13T14:29:24.461Z"
+  },
+  {
+    "userId": 561,
+    "valuesCardId": 471,
+    "deduplicatedCardId": 331,
+    "option": "same",
+    "createdAt": "2024-01-13T14:32:31.960Z",
+    "updatedAt": "2024-01-13T14:32:31.960Z"
+  },
+  {
+    "userId": 514,
+    "valuesCardId": 413,
+    "deduplicatedCardId": 304,
+    "option": "same",
+    "createdAt": "2024-01-13T14:33:43.701Z",
+    "updatedAt": "2024-01-13T14:33:43.701Z"
+  },
+  {
+    "userId": 529,
+    "valuesCardId": 430,
+    "deduplicatedCardId": 334,
+    "option": "same",
+    "createdAt": "2024-01-13T15:15:53.439Z",
+    "updatedAt": "2024-01-13T15:15:53.439Z"
+  },
+  {
+    "userId": 418,
+    "valuesCardId": 323,
+    "deduplicatedCardId": 299,
+    "option": "same",
+    "createdAt": "2024-01-13T16:11:21.871Z",
+    "updatedAt": "2024-01-13T16:11:21.871Z"
+  },
+  {
+    "userId": 530,
+    "valuesCardId": 442,
+    "deduplicatedCardId": 331,
+    "option": "same",
+    "createdAt": "2024-01-13T17:59:29.574Z",
+    "updatedAt": "2024-01-13T17:59:29.574Z"
+  },
+  {
+    "userId": 495,
+    "valuesCardId": 401,
+    "deduplicatedCardId": 331,
+    "option": "same",
+    "createdAt": "2024-01-13T23:52:46.682Z",
+    "updatedAt": "2024-01-13T23:52:46.682Z"
+  },
+  {
+    "userId": 334,
+    "valuesCardId": 254,
+    "deduplicatedCardId": 299,
+    "option": "different",
+    "createdAt": "2024-01-14T00:39:54.190Z",
+    "updatedAt": "2024-01-14T00:39:54.190Z"
+  },
+  {
+    "userId": 339,
+    "valuesCardId": 259,
+    "deduplicatedCardId": 331,
+    "option": "same",
+    "createdAt": "2024-01-14T01:08:40.879Z",
+    "updatedAt": "2024-01-14T01:08:40.879Z"
+  },
+  {
+    "userId": 582,
+    "valuesCardId": 489,
+    "deduplicatedCardId": 304,
+    "option": "same",
+    "createdAt": "2024-01-14T01:52:15.355Z",
+    "updatedAt": "2024-01-14T01:52:15.355Z"
+  },
+  {
+    "userId": 397,
+    "valuesCardId": 306,
+    "deduplicatedCardId": 331,
+    "option": "different",
+    "createdAt": "2024-01-14T11:49:39.944Z",
+    "updatedAt": "2024-01-14T11:49:39.944Z"
+  },
+  {
+    "userId": 546,
+    "valuesCardId": 444,
+    "deduplicatedCardId": 334,
+    "option": "same",
+    "createdAt": "2024-01-14T12:26:25.760Z",
+    "updatedAt": "2024-01-14T12:26:25.760Z"
+  },
+  {
+    "userId": 206,
+    "valuesCardId": 199,
+    "deduplicatedCardId": 299,
+    "option": "same",
+    "createdAt": "2024-01-14T13:39:17.002Z",
+    "updatedAt": "2024-01-14T13:39:17.002Z"
+  },
+  {
+    "userId": 375,
+    "valuesCardId": 293,
+    "deduplicatedCardId": 304,
+    "option": "same",
+    "createdAt": "2024-01-14T22:47:45.910Z",
+    "updatedAt": "2024-01-14T22:47:45.910Z"
+  },
+  {
+    "userId": 579,
+    "valuesCardId": 486,
+    "deduplicatedCardId": 331,
+    "option": "different",
+    "createdAt": "2024-01-15T12:08:19.604Z",
+    "updatedAt": "2024-01-15T12:08:19.604Z"
+  },
+  {
+    "userId": 322,
+    "valuesCardId": 241,
+    "deduplicatedCardId": 305,
+    "option": "same",
+    "createdAt": "2024-01-15T14:11:59.745Z",
+    "updatedAt": "2024-01-15T14:11:59.745Z"
+  },
+  {
+    "userId": 567,
+    "valuesCardId": 469,
+    "deduplicatedCardId": 331,
+    "option": "same",
+    "createdAt": "2024-01-15T15:58:12.808Z",
+    "updatedAt": "2024-01-15T15:58:12.808Z"
+  },
+  {
+    "userId": 211,
+    "valuesCardId": 225,
+    "deduplicatedCardId": 334,
+    "option": "same",
+    "createdAt": "2024-01-15T18:30:00.280Z",
+    "updatedAt": "2024-01-15T18:30:00.280Z"
+  },
+  {
+    "userId": 369,
+    "valuesCardId": 284,
+    "deduplicatedCardId": 305,
+    "option": "same",
+    "createdAt": "2024-01-15T19:59:15.312Z",
+    "updatedAt": "2024-01-15T19:59:15.312Z"
+  },
+  {
+    "userId": 588,
+    "valuesCardId": 492,
+    "deduplicatedCardId": 334,
+    "option": "same",
+    "createdAt": "2024-01-16T01:51:27.719Z",
+    "updatedAt": "2024-01-16T01:51:27.719Z"
+  },
+  {
+    "userId": 538,
+    "valuesCardId": 457,
+    "deduplicatedCardId": 331,
+    "option": "different",
+    "createdAt": "2024-01-17T12:20:21.089Z",
+    "updatedAt": "2024-01-17T12:20:21.089Z"
+  },
+  {
+    "userId": 556,
+    "valuesCardId": 463,
+    "deduplicatedCardId": 334,
+    "option": "same",
+    "createdAt": "2024-01-19T17:44:32.268Z",
+    "updatedAt": "2024-01-19T17:44:32.268Z"
+  },
+  {
+    "userId": 221,
+    "valuesCardId": 211,
+    "deduplicatedCardId": 304,
+    "option": "same",
+    "createdAt": "2024-01-25T13:40:39.764Z",
+    "updatedAt": "2024-01-25T13:40:39.764Z"
+  },
+  {
+    "userId": 428,
+    "valuesCardId": 338,
+    "deduplicatedCardId": 334,
+    "option": "different",
+    "createdAt": "2024-02-01T21:37:07.926Z",
+    "updatedAt": "2024-02-01T21:37:07.926Z"
+  }
+]

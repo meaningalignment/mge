@@ -1,0 +1,1262 @@
+[
+  {
+    "userId": 501,
+    "deduplicatedCardId": 311,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-12T14:10:12.719Z",
+    "updatedAt": "2024-01-12T14:10:15.111Z"
+  },
+  {
+    "userId": 457,
+    "deduplicatedCardId": 361,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-12T14:31:46.716Z",
+    "updatedAt": "2024-01-12T14:31:46.716Z"
+  },
+  {
+    "userId": 520,
+    "deduplicatedCardId": 343,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-12T14:33:47.159Z",
+    "updatedAt": "2024-01-12T14:33:47.159Z"
+  },
+  {
+    "userId": 507,
+    "deduplicatedCardId": 381,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-12T14:36:40.139Z",
+    "updatedAt": "2024-01-12T14:36:40.139Z"
+  },
+  {
+    "userId": 353,
+    "deduplicatedCardId": 305,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-12T14:41:03.098Z",
+    "updatedAt": "2024-01-12T14:41:04.289Z"
+  },
+  {
+    "userId": 419,
+    "deduplicatedCardId": 338,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-12T14:47:23.058Z",
+    "updatedAt": "2024-01-12T14:47:23.595Z"
+  },
+  {
+    "userId": 402,
+    "deduplicatedCardId": 338,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-12T14:51:17.505Z",
+    "updatedAt": "2024-01-12T14:51:17.505Z"
+  },
+  {
+    "userId": 413,
+    "deduplicatedCardId": 361,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-12T14:54:50.261Z",
+    "updatedAt": "2024-01-12T14:54:50.261Z"
+  },
+  {
+    "userId": 472,
+    "deduplicatedCardId": 350,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-12T15:00:57.638Z",
+    "updatedAt": "2024-01-12T15:00:57.638Z"
+  },
+  {
+    "userId": 383,
+    "deduplicatedCardId": 314,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-12T15:01:11.878Z",
+    "updatedAt": "2024-01-12T15:01:11.878Z"
+  },
+  {
+    "userId": 365,
+    "deduplicatedCardId": 361,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-12T15:01:27.543Z",
+    "updatedAt": "2024-01-12T15:01:27.543Z"
+  },
+  {
+    "userId": 379,
+    "deduplicatedCardId": 381,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-12T17:06:27.907Z",
+    "updatedAt": "2024-01-12T17:06:27.907Z"
+  },
+  {
+    "userId": 515,
+    "deduplicatedCardId": 388,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-12T18:23:17.246Z",
+    "updatedAt": "2024-01-12T18:23:17.246Z"
+  },
+  {
+    "userId": 317,
+    "deduplicatedCardId": 311,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-12T18:35:46.060Z",
+    "updatedAt": "2024-01-12T18:35:50.529Z"
+  },
+  {
+    "userId": 370,
+    "deduplicatedCardId": 294,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-12T19:14:41.572Z",
+    "updatedAt": "2024-01-12T19:14:41.572Z"
+  },
+  {
+    "userId": 200,
+    "deduplicatedCardId": 331,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-12T20:33:01.919Z",
+    "updatedAt": "2024-01-12T20:33:01.919Z"
+  },
+  {
+    "userId": 544,
+    "deduplicatedCardId": 343,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-12T20:34:13.119Z",
+    "updatedAt": "2024-01-12T20:34:13.119Z"
+  },
+  {
+    "userId": 222,
+    "deduplicatedCardId": 381,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-12T22:14:59.804Z",
+    "updatedAt": "2024-01-12T22:15:03.621Z"
+  },
+  {
+    "userId": 541,
+    "deduplicatedCardId": 419,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T21:24:35.915Z",
+    "updatedAt": "2024-01-13T21:24:35.915Z"
+  },
+  {
+    "userId": 115,
+    "deduplicatedCardId": 301,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-12T14:26:27.247Z",
+    "updatedAt": "2024-01-13T11:15:20.169Z"
+  },
+  {
+    "userId": 548,
+    "deduplicatedCardId": 303,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:18:49.608Z",
+    "updatedAt": "2024-01-13T11:18:49.608Z"
+  },
+  {
+    "userId": 344,
+    "deduplicatedCardId": 392,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:22:00.724Z",
+    "updatedAt": "2024-01-13T11:22:00.724Z"
+  },
+  {
+    "userId": 422,
+    "deduplicatedCardId": 298,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:25:52.849Z",
+    "updatedAt": "2024-01-13T11:25:52.849Z"
+  },
+  {
+    "userId": 415,
+    "deduplicatedCardId": 331,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:30:06.994Z",
+    "updatedAt": "2024-01-13T11:30:06.994Z"
+  },
+  {
+    "userId": 340,
+    "deduplicatedCardId": 317,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:31:05.954Z",
+    "updatedAt": "2024-01-13T11:31:05.954Z"
+  },
+  {
+    "userId": 591,
+    "deduplicatedCardId": 338,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T22:03:20.496Z",
+    "updatedAt": "2024-01-13T22:03:20.496Z"
+  },
+  {
+    "userId": 220,
+    "deduplicatedCardId": 313,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:36:38.666Z",
+    "updatedAt": "2024-01-13T11:36:42.847Z"
+  },
+  {
+    "userId": 459,
+    "deduplicatedCardId": 304,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:37:58.771Z",
+    "updatedAt": "2024-01-13T11:37:58.771Z"
+  },
+  {
+    "userId": 341,
+    "deduplicatedCardId": 381,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:38:19.836Z",
+    "updatedAt": "2024-01-13T11:38:21.450Z"
+  },
+  {
+    "userId": 414,
+    "deduplicatedCardId": 331,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:38:43.612Z",
+    "updatedAt": "2024-01-13T11:38:43.612Z"
+  },
+  {
+    "userId": 427,
+    "deduplicatedCardId": 311,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:44:27.249Z",
+    "updatedAt": "2024-01-13T11:44:27.249Z"
+  },
+  {
+    "userId": 465,
+    "deduplicatedCardId": 338,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:44:36.262Z",
+    "updatedAt": "2024-01-13T11:44:36.262Z"
+  },
+  {
+    "userId": 458,
+    "deduplicatedCardId": 315,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:44:38.796Z",
+    "updatedAt": "2024-01-13T11:44:38.796Z"
+  },
+  {
+    "userId": 549,
+    "deduplicatedCardId": 372,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:46:33.101Z",
+    "updatedAt": "2024-01-13T11:46:33.101Z"
+  },
+  {
+    "userId": 524,
+    "deduplicatedCardId": 311,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:48:56.642Z",
+    "updatedAt": "2024-01-13T11:49:00.728Z"
+  },
+  {
+    "userId": 390,
+    "deduplicatedCardId": 300,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:49:35.066Z",
+    "updatedAt": "2024-01-13T11:49:35.066Z"
+  },
+  {
+    "userId": 238,
+    "deduplicatedCardId": 295,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:50:42.506Z",
+    "updatedAt": "2024-01-13T11:50:42.506Z"
+  },
+  {
+    "userId": 598,
+    "deduplicatedCardId": 331,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-13T11:51:01.583Z",
+    "updatedAt": "2024-01-13T11:51:01.583Z"
+  },
+  {
+    "userId": 474,
+    "deduplicatedCardId": 331,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T11:52:40.792Z",
+    "updatedAt": "2024-01-13T11:52:41.992Z"
+  },
+  {
+    "userId": 420,
+    "deduplicatedCardId": 324,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T12:07:06.068Z",
+    "updatedAt": "2024-01-13T12:07:06.068Z"
+  },
+  {
+    "userId": 488,
+    "deduplicatedCardId": 413,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T12:18:45.830Z",
+    "updatedAt": "2024-01-13T12:18:45.830Z"
+  },
+  {
+    "userId": 382,
+    "deduplicatedCardId": 397,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T12:19:00.802Z",
+    "updatedAt": "2024-01-13T12:19:00.802Z"
+  },
+  {
+    "userId": 572,
+    "deduplicatedCardId": 351,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T12:21:47.329Z",
+    "updatedAt": "2024-01-13T12:21:47.329Z"
+  },
+  {
+    "userId": 356,
+    "deduplicatedCardId": 322,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T12:29:13.869Z",
+    "updatedAt": "2024-01-13T12:29:13.869Z"
+  },
+  {
+    "userId": 537,
+    "deduplicatedCardId": 305,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T12:33:32.832Z",
+    "updatedAt": "2024-01-13T12:33:32.832Z"
+  },
+  {
+    "userId": 464,
+    "deduplicatedCardId": 351,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T12:33:34.562Z",
+    "updatedAt": "2024-01-13T12:33:34.562Z"
+  },
+  {
+    "userId": 412,
+    "deduplicatedCardId": 314,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-13T12:35:56.423Z",
+    "updatedAt": "2024-01-13T12:35:56.423Z"
+  },
+  {
+    "userId": 605,
+    "deduplicatedCardId": 388,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T12:40:58.944Z",
+    "updatedAt": "2024-01-13T12:40:58.944Z"
+  },
+  {
+    "userId": 484,
+    "deduplicatedCardId": 366,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T12:47:29.263Z",
+    "updatedAt": "2024-01-13T12:47:29.263Z"
+  },
+  {
+    "userId": 533,
+    "deduplicatedCardId": 323,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T12:48:42.845Z",
+    "updatedAt": "2024-01-13T12:48:42.845Z"
+  },
+  {
+    "userId": 482,
+    "deduplicatedCardId": 378,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T12:52:01.616Z",
+    "updatedAt": "2024-01-13T12:52:01.616Z"
+  },
+  {
+    "userId": 449,
+    "deduplicatedCardId": 338,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T12:52:57.822Z",
+    "updatedAt": "2024-01-13T12:52:57.822Z"
+  },
+  {
+    "userId": 417,
+    "deduplicatedCardId": 302,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T12:58:15.535Z",
+    "updatedAt": "2024-01-13T12:58:15.535Z"
+  },
+  {
+    "userId": 499,
+    "deduplicatedCardId": 351,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T13:01:30.802Z",
+    "updatedAt": "2024-01-13T13:01:30.802Z"
+  },
+  {
+    "userId": 545,
+    "deduplicatedCardId": 366,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T13:02:09.381Z",
+    "updatedAt": "2024-01-13T13:02:09.381Z"
+  },
+  {
+    "userId": 494,
+    "deduplicatedCardId": 309,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T13:05:38.447Z",
+    "updatedAt": "2024-01-13T13:05:38.447Z"
+  },
+  {
+    "userId": 439,
+    "deduplicatedCardId": 311,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T13:07:52.017Z",
+    "updatedAt": "2024-01-13T13:07:52.017Z"
+  },
+  {
+    "userId": 448,
+    "deduplicatedCardId": 350,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T13:11:05.257Z",
+    "updatedAt": "2024-01-13T13:11:05.257Z"
+  },
+  {
+    "userId": 526,
+    "deduplicatedCardId": 351,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T13:17:48.819Z",
+    "updatedAt": "2024-01-13T13:17:48.819Z"
+  },
+  {
+    "userId": 568,
+    "deduplicatedCardId": 304,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-13T13:18:31.639Z",
+    "updatedAt": "2024-01-13T13:18:31.639Z"
+  },
+  {
+    "userId": 443,
+    "deduplicatedCardId": 311,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T13:20:25.417Z",
+    "updatedAt": "2024-01-13T13:20:25.417Z"
+  },
+  {
+    "userId": 498,
+    "deduplicatedCardId": 414,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-13T13:31:40.934Z",
+    "updatedAt": "2024-01-13T13:31:40.934Z"
+  },
+  {
+    "userId": 483,
+    "deduplicatedCardId": 412,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-13T13:32:33.021Z",
+    "updatedAt": "2024-01-13T13:32:37.567Z"
+  },
+  {
+    "userId": 429,
+    "deduplicatedCardId": 343,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T13:38:56.685Z",
+    "updatedAt": "2024-01-13T13:38:59.522Z"
+  },
+  {
+    "userId": 528,
+    "deduplicatedCardId": 372,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T13:40:38.877Z",
+    "updatedAt": "2024-01-13T13:40:38.877Z"
+  },
+  {
+    "userId": 467,
+    "deduplicatedCardId": 331,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T13:46:43.166Z",
+    "updatedAt": "2024-01-13T13:46:43.166Z"
+  },
+  {
+    "userId": 388,
+    "deduplicatedCardId": 361,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T13:48:35.046Z",
+    "updatedAt": "2024-01-13T13:48:35.046Z"
+  },
+  {
+    "userId": 391,
+    "deduplicatedCardId": 388,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T13:52:35.464Z",
+    "updatedAt": "2024-01-13T13:52:35.464Z"
+  },
+  {
+    "userId": 408,
+    "deduplicatedCardId": 404,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-13T22:50:23.145Z",
+    "updatedAt": "2024-01-13T22:50:25.092Z"
+  },
+  {
+    "userId": 503,
+    "deduplicatedCardId": 338,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T13:53:03.037Z",
+    "updatedAt": "2024-01-13T13:54:32.724Z"
+  },
+  {
+    "userId": 378,
+    "deduplicatedCardId": 311,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T14:00:00.699Z",
+    "updatedAt": "2024-01-13T14:00:00.699Z"
+  },
+  {
+    "userId": 409,
+    "deduplicatedCardId": 331,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T14:00:20.777Z",
+    "updatedAt": "2024-01-13T14:00:20.777Z"
+  },
+  {
+    "userId": 460,
+    "deduplicatedCardId": 299,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-13T14:01:26.254Z",
+    "updatedAt": "2024-01-13T14:01:26.254Z"
+  },
+  {
+    "userId": 495,
+    "deduplicatedCardId": 331,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T23:53:32.985Z",
+    "updatedAt": "2024-01-13T23:53:32.985Z"
+  },
+  {
+    "userId": 334,
+    "deduplicatedCardId": 299,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-14T00:40:26.729Z",
+    "updatedAt": "2024-01-14T00:40:26.729Z"
+  },
+  {
+    "userId": 411,
+    "deduplicatedCardId": 405,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-13T14:01:50.141Z",
+    "updatedAt": "2024-01-13T14:01:55.370Z"
+  },
+  {
+    "userId": 485,
+    "deduplicatedCardId": 294,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T14:07:35.161Z",
+    "updatedAt": "2024-01-13T14:07:36.963Z"
+  },
+  {
+    "userId": 612,
+    "deduplicatedCardId": 388,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T14:12:52.732Z",
+    "updatedAt": "2024-01-13T14:12:52.732Z"
+  },
+  {
+    "userId": 562,
+    "deduplicatedCardId": 361,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T14:13:04.277Z",
+    "updatedAt": "2024-01-13T14:13:04.277Z"
+  },
+  {
+    "userId": 513,
+    "deduplicatedCardId": 377,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T14:20:54.062Z",
+    "updatedAt": "2024-01-13T14:20:54.062Z"
+  },
+  {
+    "userId": 510,
+    "deduplicatedCardId": 317,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T14:23:38.088Z",
+    "updatedAt": "2024-01-13T14:23:38.088Z"
+  },
+  {
+    "userId": 319,
+    "deduplicatedCardId": 381,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T14:24:31.143Z",
+    "updatedAt": "2024-01-13T14:24:32.308Z"
+  },
+  {
+    "userId": 519,
+    "deduplicatedCardId": 366,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T14:32:18.263Z",
+    "updatedAt": "2024-01-13T14:32:22.320Z"
+  },
+  {
+    "userId": 410,
+    "deduplicatedCardId": 334,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-13T14:32:37.783Z",
+    "updatedAt": "2024-01-13T14:32:37.783Z"
+  },
+  {
+    "userId": 561,
+    "deduplicatedCardId": 331,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T14:33:38.630Z",
+    "updatedAt": "2024-01-13T14:33:38.630Z"
+  },
+  {
+    "userId": 604,
+    "deduplicatedCardId": 350,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T14:34:09.929Z",
+    "updatedAt": "2024-01-13T14:34:09.929Z"
+  },
+  {
+    "userId": 514,
+    "deduplicatedCardId": 304,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T14:34:24.389Z",
+    "updatedAt": "2024-01-13T14:34:24.389Z"
+  },
+  {
+    "userId": 407,
+    "deduplicatedCardId": 294,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T14:41:39.380Z",
+    "updatedAt": "2024-01-13T14:41:39.380Z"
+  },
+  {
+    "userId": 208,
+    "deduplicatedCardId": 317,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T14:49:30.419Z",
+    "updatedAt": "2024-01-13T14:49:31.730Z"
+  },
+  {
+    "userId": 395,
+    "deduplicatedCardId": 361,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T14:58:11.097Z",
+    "updatedAt": "2024-01-13T14:58:11.097Z"
+  },
+  {
+    "userId": 564,
+    "deduplicatedCardId": 352,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T15:08:16.946Z",
+    "updatedAt": "2024-01-13T15:08:16.946Z"
+  },
+  {
+    "userId": 239,
+    "deduplicatedCardId": 381,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T15:08:13.174Z",
+    "updatedAt": "2024-01-13T15:08:17.507Z"
+  },
+  {
+    "userId": 441,
+    "deduplicatedCardId": 311,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T15:11:14.028Z",
+    "updatedAt": "2024-01-13T15:11:14.028Z"
+  },
+  {
+    "userId": 489,
+    "deduplicatedCardId": 310,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T15:15:44.982Z",
+    "updatedAt": "2024-01-13T15:15:44.982Z"
+  },
+  {
+    "userId": 529,
+    "deduplicatedCardId": 334,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T15:16:32.827Z",
+    "updatedAt": "2024-01-13T15:16:32.827Z"
+  },
+  {
+    "userId": 339,
+    "deduplicatedCardId": 331,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-14T01:09:15.942Z",
+    "updatedAt": "2024-01-14T01:09:15.942Z"
+  },
+  {
+    "userId": 582,
+    "deduplicatedCardId": 304,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-14T01:53:28.998Z",
+    "updatedAt": "2024-01-14T01:53:28.998Z"
+  },
+  {
+    "userId": 398,
+    "deduplicatedCardId": 403,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T15:17:18.005Z",
+    "updatedAt": "2024-01-13T15:18:10.178Z"
+  },
+  {
+    "userId": 470,
+    "deduplicatedCardId": 328,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T15:20:45.541Z",
+    "updatedAt": "2024-01-13T15:20:45.541Z"
+  },
+  {
+    "userId": 223,
+    "deduplicatedCardId": 385,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T15:27:46.975Z",
+    "updatedAt": "2024-01-13T15:27:46.975Z"
+  },
+  {
+    "userId": 215,
+    "deduplicatedCardId": 295,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T15:35:56.294Z",
+    "updatedAt": "2024-01-13T15:35:56.294Z"
+  },
+  {
+    "userId": 534,
+    "deduplicatedCardId": 341,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T15:37:11.217Z",
+    "updatedAt": "2024-01-13T15:37:11.217Z"
+  },
+  {
+    "userId": 355,
+    "deduplicatedCardId": 324,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T15:45:23.652Z",
+    "updatedAt": "2024-01-13T15:45:23.652Z"
+  },
+  {
+    "userId": 401,
+    "deduplicatedCardId": 323,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T15:48:50.882Z",
+    "updatedAt": "2024-01-13T15:48:50.882Z"
+  },
+  {
+    "userId": 525,
+    "deduplicatedCardId": 416,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T15:55:06.473Z",
+    "updatedAt": "2024-01-13T15:55:07.780Z"
+  },
+  {
+    "userId": 232,
+    "deduplicatedCardId": 298,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T16:00:40.895Z",
+    "updatedAt": "2024-01-13T16:00:40.895Z"
+  },
+  {
+    "userId": 506,
+    "deduplicatedCardId": 343,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T16:09:19.111Z",
+    "updatedAt": "2024-01-13T16:09:19.111Z"
+  },
+  {
+    "userId": 418,
+    "deduplicatedCardId": 299,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T16:11:39.094Z",
+    "updatedAt": "2024-01-13T16:11:39.094Z"
+  },
+  {
+    "userId": 374,
+    "deduplicatedCardId": 343,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T16:27:26.924Z",
+    "updatedAt": "2024-01-13T16:27:26.924Z"
+  },
+  {
+    "userId": 571,
+    "deduplicatedCardId": 366,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T16:52:08.421Z",
+    "updatedAt": "2024-01-13T16:52:09.461Z"
+  },
+  {
+    "userId": 343,
+    "deduplicatedCardId": 391,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T16:57:48.841Z",
+    "updatedAt": "2024-01-13T16:57:48.841Z"
+  },
+  {
+    "userId": 555,
+    "deduplicatedCardId": 338,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T17:22:15.550Z",
+    "updatedAt": "2024-01-13T17:22:15.550Z"
+  },
+  {
+    "userId": 329,
+    "deduplicatedCardId": 352,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T17:31:49.975Z",
+    "updatedAt": "2024-01-13T17:31:49.975Z"
+  },
+  {
+    "userId": 531,
+    "deduplicatedCardId": 351,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T17:33:14.340Z",
+    "updatedAt": "2024-01-13T17:33:14.340Z"
+  },
+  {
+    "userId": 530,
+    "deduplicatedCardId": 331,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T18:00:10.413Z",
+    "updatedAt": "2024-01-13T18:00:10.413Z"
+  },
+  {
+    "userId": 471,
+    "deduplicatedCardId": 343,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T18:27:33.825Z",
+    "updatedAt": "2024-01-13T18:27:33.825Z"
+  },
+  {
+    "userId": 580,
+    "deduplicatedCardId": 328,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T18:29:34.404Z",
+    "updatedAt": "2024-01-13T18:29:34.404Z"
+  },
+  {
+    "userId": 436,
+    "deduplicatedCardId": 415,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T18:34:04.128Z",
+    "updatedAt": "2024-01-13T18:34:04.128Z"
+  },
+  {
+    "userId": 373,
+    "deduplicatedCardId": 310,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T18:37:30.071Z",
+    "updatedAt": "2024-01-13T18:37:30.071Z"
+  },
+  {
+    "userId": 450,
+    "deduplicatedCardId": 338,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-13T19:46:47.153Z",
+    "updatedAt": "2024-01-13T19:46:47.153Z"
+  },
+  {
+    "userId": 440,
+    "deduplicatedCardId": 348,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-14T05:58:32.455Z",
+    "updatedAt": "2024-01-14T05:58:32.455Z"
+  },
+  {
+    "userId": 511,
+    "deduplicatedCardId": 351,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-14T05:59:54.136Z",
+    "updatedAt": "2024-01-14T05:59:54.136Z"
+  },
+  {
+    "userId": 576,
+    "deduplicatedCardId": 343,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-14T07:38:45.692Z",
+    "updatedAt": "2024-01-14T07:38:45.692Z"
+  },
+  {
+    "userId": 587,
+    "deduplicatedCardId": 381,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-14T08:59:09.718Z",
+    "updatedAt": "2024-01-14T08:59:09.718Z"
+  },
+  {
+    "userId": 397,
+    "deduplicatedCardId": 331,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-14T11:50:12.424Z",
+    "updatedAt": "2024-01-14T11:50:12.424Z"
+  },
+  {
+    "userId": 546,
+    "deduplicatedCardId": 334,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-14T12:26:47.695Z",
+    "updatedAt": "2024-01-14T12:26:47.695Z"
+  },
+  {
+    "userId": 206,
+    "deduplicatedCardId": 299,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-14T13:41:04.944Z",
+    "updatedAt": "2024-01-14T13:41:04.944Z"
+  },
+  {
+    "userId": 468,
+    "deduplicatedCardId": 350,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-14T14:13:59.406Z",
+    "updatedAt": "2024-01-14T14:14:01.216Z"
+  },
+  {
+    "userId": 217,
+    "deduplicatedCardId": 310,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-14T19:02:33.419Z",
+    "updatedAt": "2024-01-14T19:02:33.419Z"
+  },
+  {
+    "userId": 509,
+    "deduplicatedCardId": 302,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-14T19:06:41.429Z",
+    "updatedAt": "2024-01-14T19:06:44.976Z"
+  },
+  {
+    "userId": 400,
+    "deduplicatedCardId": 311,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-14T20:00:57.388Z",
+    "updatedAt": "2024-01-14T20:00:57.388Z"
+  },
+  {
+    "userId": 516,
+    "deduplicatedCardId": 343,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-14T21:29:12.581Z",
+    "updatedAt": "2024-01-14T21:29:12.581Z"
+  },
+  {
+    "userId": 375,
+    "deduplicatedCardId": 304,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-14T22:48:43.450Z",
+    "updatedAt": "2024-01-14T22:48:45.541Z"
+  },
+  {
+    "userId": 553,
+    "deduplicatedCardId": 315,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-15T00:23:36.809Z",
+    "updatedAt": "2024-01-15T00:23:36.809Z"
+  },
+  {
+    "userId": 224,
+    "deduplicatedCardId": 388,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-15T02:07:29.366Z",
+    "updatedAt": "2024-01-15T02:07:29.366Z"
+  },
+  {
+    "userId": 497,
+    "deduplicatedCardId": 294,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-15T06:50:01.358Z",
+    "updatedAt": "2024-01-15T06:50:06.785Z"
+  },
+  {
+    "userId": 325,
+    "deduplicatedCardId": 336,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-15T06:57:36.545Z",
+    "updatedAt": "2024-01-15T06:57:36.545Z"
+  },
+  {
+    "userId": 554,
+    "deduplicatedCardId": 345,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-15T10:32:50.201Z",
+    "updatedAt": "2024-01-15T10:32:50.201Z"
+  },
+  {
+    "userId": 579,
+    "deduplicatedCardId": 331,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-15T12:09:34.697Z",
+    "updatedAt": "2024-01-15T12:09:34.697Z"
+  },
+  {
+    "userId": 367,
+    "deduplicatedCardId": 396,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-15T12:53:30.780Z",
+    "updatedAt": "2024-01-15T12:53:32.704Z"
+  },
+  {
+    "userId": 432,
+    "deduplicatedCardId": 309,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-15T13:19:25.944Z",
+    "updatedAt": "2024-01-15T13:19:25.944Z"
+  },
+  {
+    "userId": 322,
+    "deduplicatedCardId": 305,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-15T14:12:10.429Z",
+    "updatedAt": "2024-01-15T14:12:10.429Z"
+  },
+  {
+    "userId": 573,
+    "deduplicatedCardId": 381,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-15T15:12:51.126Z",
+    "updatedAt": "2024-01-15T15:12:51.126Z"
+  },
+  {
+    "userId": 227,
+    "deduplicatedCardId": 302,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-15T15:13:52.746Z",
+    "updatedAt": "2024-01-15T15:13:52.746Z"
+  },
+  {
+    "userId": 567,
+    "deduplicatedCardId": 331,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-15T15:58:30.941Z",
+    "updatedAt": "2024-01-15T15:58:30.941Z"
+  },
+  {
+    "userId": 504,
+    "deduplicatedCardId": 351,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-15T16:23:56.208Z",
+    "updatedAt": "2024-01-15T16:23:57.517Z"
+  },
+  {
+    "userId": 435,
+    "deduplicatedCardId": 303,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-15T17:22:30.173Z",
+    "updatedAt": "2024-01-15T17:22:33.350Z"
+  },
+  {
+    "userId": 608,
+    "deduplicatedCardId": 388,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-15T18:17:10.588Z",
+    "updatedAt": "2024-01-15T18:17:10.588Z"
+  },
+  {
+    "userId": 211,
+    "deduplicatedCardId": 334,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-15T18:30:21.928Z",
+    "updatedAt": "2024-01-15T18:30:21.928Z"
+  },
+  {
+    "userId": 369,
+    "deduplicatedCardId": 305,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-15T19:59:32.418Z",
+    "updatedAt": "2024-01-15T19:59:32.418Z"
+  },
+  {
+    "userId": 338,
+    "deduplicatedCardId": 311,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-15T22:08:00.212Z",
+    "updatedAt": "2024-01-15T22:08:00.212Z"
+  },
+  {
+    "userId": 539,
+    "deduplicatedCardId": 421,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-16T01:36:16.515Z",
+    "updatedAt": "2024-01-16T01:36:16.515Z"
+  },
+  {
+    "userId": 588,
+    "deduplicatedCardId": 334,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-16T01:52:44.194Z",
+    "updatedAt": "2024-01-16T01:52:44.194Z"
+  },
+  {
+    "userId": 575,
+    "deduplicatedCardId": 324,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-16T19:40:51.954Z",
+    "updatedAt": "2024-01-16T19:40:51.954Z"
+  },
+  {
+    "userId": 212,
+    "deduplicatedCardId": 351,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-16T22:22:07.320Z",
+    "updatedAt": "2024-01-16T22:22:07.320Z"
+  },
+  {
+    "userId": 433,
+    "deduplicatedCardId": 303,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-17T02:12:33.422Z",
+    "updatedAt": "2024-01-17T02:12:33.422Z"
+  },
+  {
+    "userId": 487,
+    "deduplicatedCardId": 344,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-17T22:49:54.471Z",
+    "updatedAt": "2024-01-17T22:49:54.471Z"
+  },
+  {
+    "userId": 491,
+    "deduplicatedCardId": 389,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-18T12:45:31.239Z",
+    "updatedAt": "2024-01-18T12:45:31.239Z"
+  },
+  {
+    "userId": 193,
+    "deduplicatedCardId": 351,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-18T14:21:01.307Z",
+    "updatedAt": "2024-01-18T14:21:03.166Z"
+  },
+  {
+    "userId": 354,
+    "deduplicatedCardId": 400,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-19T00:53:17.738Z",
+    "updatedAt": "2024-01-19T00:53:19.567Z"
+  },
+  {
+    "userId": 331,
+    "deduplicatedCardId": 311,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-19T01:31:52.836Z",
+    "updatedAt": "2024-01-19T01:31:52.836Z"
+  },
+  {
+    "userId": 318,
+    "deduplicatedCardId": 388,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-19T02:16:34.708Z",
+    "updatedAt": "2024-01-19T02:16:34.708Z"
+  },
+  {
+    "userId": 347,
+    "deduplicatedCardId": 311,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-19T07:26:58.187Z",
+    "updatedAt": "2024-01-19T07:26:58.187Z"
+  },
+  {
+    "userId": 446,
+    "deduplicatedCardId": 388,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-19T14:03:29.062Z",
+    "updatedAt": "2024-01-19T14:03:31.391Z"
+  },
+  {
+    "userId": 205,
+    "deduplicatedCardId": 328,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-19T21:11:16.786Z",
+    "updatedAt": "2024-01-19T21:11:16.786Z"
+  },
+  {
+    "userId": 557,
+    "deduplicatedCardId": 388,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-21T01:07:53.629Z",
+    "updatedAt": "2024-01-21T01:07:53.629Z"
+  },
+  {
+    "userId": 424,
+    "deduplicatedCardId": 350,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-21T04:18:54.024Z",
+    "updatedAt": "2024-01-21T04:18:54.024Z"
+  },
+  {
+    "userId": 405,
+    "deduplicatedCardId": 377,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-22T10:13:07.565Z",
+    "updatedAt": "2024-01-22T10:13:12.255Z"
+  },
+  {
+    "userId": 592,
+    "deduplicatedCardId": 313,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-23T03:41:32.350Z",
+    "updatedAt": "2024-01-23T03:41:32.350Z"
+  },
+  {
+    "userId": 221,
+    "deduplicatedCardId": 304,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-25T13:41:12.782Z",
+    "updatedAt": "2024-01-25T13:41:12.782Z"
+  },
+  {
+    "userId": 362,
+    "deduplicatedCardId": 366,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-25T16:28:25.095Z",
+    "updatedAt": "2024-01-25T16:28:25.095Z"
+  },
+  {
+    "userId": 197,
+    "deduplicatedCardId": 296,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-27T06:34:54.841Z",
+    "updatedAt": "2024-01-27T06:34:54.841Z"
+  },
+  {
+    "userId": 332,
+    "deduplicatedCardId": 388,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-01-28T20:57:58.264Z",
+    "updatedAt": "2024-01-28T20:57:58.264Z"
+  },
+  {
+    "userId": 479,
+    "deduplicatedCardId": 388,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-01-29T13:28:51.357Z",
+    "updatedAt": "2024-01-29T13:28:51.357Z"
+  },
+  {
+    "userId": 447,
+    "deduplicatedCardId": 388,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-02-01T07:30:09.870Z",
+    "updatedAt": "2024-02-01T07:30:09.870Z"
+  },
+  {
+    "userId": 428,
+    "deduplicatedCardId": 334,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-02-01T21:37:33.459Z",
+    "updatedAt": "2024-02-01T21:37:37.572Z"
+  },
+  {
+    "userId": 421,
+    "deduplicatedCardId": 350,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-02-02T09:29:25.171Z",
+    "updatedAt": "2024-02-02T09:29:25.171Z"
+  },
+  {
+    "userId": 209,
+    "deduplicatedCardId": 345,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-02-02T15:11:16.161Z",
+    "updatedAt": "2024-02-02T15:11:16.161Z"
+  },
+  {
+    "userId": 599,
+    "deduplicatedCardId": 388,
+    "isSatisfiedWithPosition": true,
+    "createdAt": "2024-02-04T18:52:08.580Z",
+    "updatedAt": "2024-02-04T18:52:10.302Z"
+  },
+  {
+    "userId": 389,
+    "deduplicatedCardId": 351,
+    "isSatisfiedWithPosition": false,
+    "createdAt": "2024-02-06T14:11:46.576Z",
+    "updatedAt": "2024-02-06T14:11:46.576Z"
+  }
+]

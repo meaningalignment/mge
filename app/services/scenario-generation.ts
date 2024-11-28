@@ -53,7 +53,9 @@ export function allContexts(data: ScenarioGenerationSchema): string[] {
   ]
 }
 
-function representativeContexts(data: ScenarioGenerationSchema): string[] {
+export function getRepresentativeContexts(
+  data: ScenarioGenerationSchema
+): string[] {
   const selected: string[] = []
 
   for (const category of Object.values(data.categories)) {
@@ -105,10 +107,8 @@ export async function generateScenario(
   schema: ScenarioGenerationSchema,
   selectedContexts?: string[]
 ): Promise<{ story: string; title: string; contexts: string[] }> {
-  const contexts = selectedContexts ?? representativeContexts(schema)
+  const contexts = selectedContexts ?? getRepresentativeContexts(schema)
   const topic = schema.topic
-
-  console.log("Contexts:", contexts)
 
   const result = await genObj({
     prompt: `You will be given a few strings that provide context about a particular situation. Your task is to generate a relatable and touching story depicting someone in that situation, ending in a question about the topic you were given. Make sure the situation you describe is realistic, hint at all the contexts you were given, but make it fairly short. Despite being short, include some detail so it remains vivid and relatable`,
