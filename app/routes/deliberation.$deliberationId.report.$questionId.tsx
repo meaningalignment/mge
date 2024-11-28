@@ -43,6 +43,40 @@ type Link = MoralGraphEdge & {
   color: string
 }
 
+function categorizeSupportLevel(
+  pageRankValues: number[]
+): "broadly supported" | "some support" | "contested" {
+  if (pageRankValues.length < 2) {
+    throw new Error("Need at least 2 values to categorize support level")
+  }
+
+  // Sort values in descending order
+  const sortedValues = [...pageRankValues].sort((a, b) => b - a)
+  const winner = sortedValues[0]
+  const runnerUp = sortedValues[1]
+
+  // Calculate statistical measures
+  const mean =
+    sortedValues.reduce((sum, val) => sum + val, 0) / sortedValues.length
+  const variance =
+    sortedValues.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) /
+    sortedValues.length
+  const stdDev = Math.sqrt(variance)
+
+  // Calculate key metrics
+  const standardDeviations = stdDev === 0 ? 0 : (winner - mean) / stdDev
+  const gapRatio = runnerUp === 0 ? Infinity : winner / runnerUp
+
+  // Determine category based on stricter metrics
+  if (standardDeviations > 2.5 && gapRatio > 2.0) {
+    return "broadly supported"
+  } else if (standardDeviations > 1.5 || gapRatio > 1.5) {
+    return "some support"
+  } else {
+    return "contested"
+  }
+}
+
 function convertMoralGraphToForceGraph(moralGraph: MoralGraph) {
   const maxPageRank = Math.max(...moralGraph.values.map((v) => v.pageRank || 0))
   const minPageRank = Math.min(...moralGraph.values.map((v) => v.pageRank || 0))
@@ -291,8 +325,8 @@ export default function ReportView() {
     <div className="container mx-auto px-8 py-8">
       <div className="flex justify-center mb-8">
         <h1 className="text-2xl font-bold">
-          What should be done about abortion policy in the US, considering
-          christian girls thinking about having an abortion?
+          How could US abortion policy support christian girls considering
+          abortion?
         </h1>
       </div>
 
@@ -344,7 +378,28 @@ export default function ReportView() {
                   <p>{intervention.text}</p>
                 </CardContent>
                 <CardFooter>
-                  <Badge variant={"default"}>{"TODO"}</Badge>
+                  {(() => {
+                    const supportLevel = categorizeSupportLevel(
+                      (intervention.graph as unknown as MoralGraph).values.map(
+                        (v) => v.pageRank!
+                      )
+                    )
+
+                    const variants = {
+                      "broadly supported": "default",
+                      "some support": "secondary",
+                      contested: "outline",
+                    } as const
+
+                    return (
+                      <Badge
+                        variant={variants[supportLevel]}
+                        className="capitalize"
+                      >
+                        {supportLevel}
+                      </Badge>
+                    )
+                  })()}
                 </CardFooter>
               </Card>
             </div>
