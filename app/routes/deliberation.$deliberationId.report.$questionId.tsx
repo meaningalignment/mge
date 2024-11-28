@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo, useCallback } from "react"
 import { Card, CardContent, CardFooter } from "~/components/ui/card"
 import { Separator } from "~/components/ui/separator"
 import { Badge } from "~/components/ui/badge"
@@ -21,6 +21,8 @@ import {
 } from "~/components/ui/dialog"
 import { MoralGraphEdge, MoralGraphValue } from "values-tools/src/types"
 import { Intervention } from "@prisma/client"
+import React from "react"
+import { isAllUppercase } from "~/lib/utils"
 
 const N_VALUES = 6
 
@@ -146,9 +148,13 @@ function ForceGraphWrapper({ graphData }: { graphData: MoralGraph }) {
   const [ForceGraph, setForceGraph] = useState<any>(null)
   const [selectedValue, setSelectedValue] = useState<Node | null>(null)
   const [selectedLink, setSelectedLink] = useState<Link | null>(null)
-
-  console.log(selectedLink)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+
+  // Memoize the converted graph data
+  const forceGraphData = useMemo(
+    () => convertMoralGraphToForceGraph(graphData),
+    [graphData]
+  )
 
   useEffect(() => {
     import("react-force-graph-2d").then((module) => {
@@ -156,11 +162,26 @@ function ForceGraphWrapper({ graphData }: { graphData: MoralGraph }) {
     })
   }, [])
 
+  // Memoize the node canvas object function
+  const nodeCanvasObject = useCallback(
+    (node: Node, ctx: CanvasRenderingContext2D, globalScale: number) => {
+      const label = node.title
+      const fontSize = 12 / globalScale
+      ctx.font = `${node.isWinningValue ? "bold" : ""} ${fontSize}px Sans-Serif`
+      ctx.textAlign = "center"
+      ctx.textBaseline = "middle"
+      ctx.fillStyle = node.isWinningValue
+        ? `rgb(0, 0, 0)`
+        : `rgb(128, 128, 128)`
+
+      ctx.fillText(String(label), node.x, node.y)
+    },
+    []
+  )
+
   if (!ForceGraph) {
     return <div className="h-[200px] bg-muted rounded-lg" />
   }
-
-  const forceGraphData = convertMoralGraphToForceGraph(graphData)
 
   return (
     <>
@@ -183,28 +204,12 @@ function ForceGraphWrapper({ graphData }: { graphData: MoralGraph }) {
                     : 0.005
                 }}
                 linkDirectionalParticleWidth={2}
-                d3Force={(d3Force: any) => {
-                  d3Force("charge").strength(-200)
-                  d3Force("link").distance(100)
-                }}
-                nodeCanvasObject={(
-                  node: Node,
-                  ctx: CanvasRenderingContext2D,
-                  globalScale: number
-                ) => {
-                  const label = node.title
-                  const fontSize = 12 / globalScale
-                  ctx.font = `${
-                    node.isWinningValue ? "bold" : ""
-                  } ${fontSize}px Sans-Serif`
-                  ctx.textAlign = "center"
-                  ctx.textBaseline = "middle"
-                  ctx.fillStyle = node.isWinningValue
-                    ? `rgb(0, 0, 0)`
-                    : `rgb(128, 128, 128)`
-
-                  ctx.fillText(String(label), node.x, node.y)
-                }}
+                nodeCanvasObject={nodeCanvasObject}
+                linkDistance={100}
+                d3VelocityDecay={0.3}
+                d3AlphaDecay={0.02}
+                d3Force="charge"
+                d3ForceStrength={-1000}
                 width={500}
                 height={300}
                 enableZoomInteraction={!isDialogOpen}
@@ -233,7 +238,7 @@ function ForceGraphWrapper({ graphData }: { graphData: MoralGraph }) {
         open={!!selectedValue}
         onOpenChange={() => setSelectedValue(null)}
       >
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-md">
           {selectedValue && (
             <div key={selectedValue.id} className="space-y-4">
               <div className="flex items-center gap-2 mb-2">
@@ -252,6 +257,34 @@ function ForceGraphWrapper({ graphData }: { graphData: MoralGraph }) {
               <p className="text-md text-neutral-500 mb-4">
                 {selectedValue.description}
               </p>
+
+              {selectedValue.policies && selectedValue.policies.length > 0 && (
+                <div className="bg-blue-50 rounded-md p-2 mt-2">
+                  <p className="text-xs font-semibold text-neutral-500 mb-1">
+                    WHERE MY ATTENTION GOES
+                  </p>
+                  <div className="space-y-0.5">
+                    {selectedValue.policies.map((policy, idx) => (
+                      <p key={idx} className="text-xs text-neutral-500">
+                        {policy.split(" ").map((word, wordIdx) => (
+                          <React.Fragment key={wordIdx}>
+                            {isAllUppercase(word) ? (
+                              <strong className="font-semibold text-neutral-600">
+                                {word}
+                              </strong>
+                            ) : (
+                              word
+                            )}
+                            {wordIdx < policy.split(" ").length - 1
+                              ? " "
+                              : null}
+                          </React.Fragment>
+                        ))}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </DialogContent>
