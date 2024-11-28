@@ -36,6 +36,42 @@ const idMaps = {
   chats: new Map<string, string>(),
 }
 
+async function importDemographics() {
+  const demographics = await loadJsonFile("demographic.json")
+
+  // Fetch all existing demographics at once
+  const existingDemographics = await prisma.demographic.findMany({
+    select: { userId: true },
+  })
+  const existingUserIds = new Set(existingDemographics.map((d) => d.userId))
+
+  for (const demographic of demographics) {
+    const mappedUserId = idMaps.users.get(demographic.userId)
+    if (!mappedUserId) {
+      console.log(
+        "No mapped user found for demographic userId:",
+        demographic.userId
+      )
+      continue
+    }
+
+    if (existingUserIds.has(mappedUserId)) {
+      console.log("Demographic already exists for user:", mappedUserId)
+      continue
+    }
+
+    console.log("Creating demographic for user:", mappedUserId)
+    await prisma.demographic.create({
+      data: {
+        userId: mappedUserId,
+        age: demographic.age,
+        sex: demographic.sex,
+        usPoliticalAffiliation: demographic.usPoliticalAffiliation,
+      },
+    })
+  }
+}
+
 async function importUsers() {
   const users = await loadJsonFile("user.json")
 
@@ -418,6 +454,9 @@ async function main() {
     // Import users first
     await importUsers()
     console.log("Imported users")
+
+    await importDemographics()
+    console.log("Imported demographics")
 
     // // Create the deliberation with the first user
     // const deliberation = await createDeliberation(1)

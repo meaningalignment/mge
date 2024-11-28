@@ -1,12 +1,5 @@
 import { useEffect, useState } from "react"
-import { User, ChevronDown } from "lucide-react"
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from "~/components/ui/card"
+import { Card, CardContent, CardFooter } from "~/components/ui/card"
 import { Separator } from "~/components/ui/separator"
 import { Badge } from "~/components/ui/badge"
 import { Button } from "~/components/ui/button"
@@ -28,6 +21,8 @@ import {
 } from "~/components/ui/dialog"
 import { MoralGraphEdge, MoralGraphValue } from "values-tools/src/types"
 import { Intervention } from "@prisma/client"
+
+const N_VALUES = 6
 
 type Node = MoralGraphValue & {
   x: number
@@ -81,7 +76,13 @@ function convertMoralGraphToForceGraph(moralGraph: MoralGraph) {
   const maxPageRank = Math.max(...moralGraph.values.map((v) => v.pageRank || 0))
   const minPageRank = Math.min(...moralGraph.values.map((v) => v.pageRank || 0))
 
-  const nodes: Node[] = moralGraph.values.map((value) => ({
+  // Sort values by pageRank and take top 6
+  const topValues = [...moralGraph.values]
+    .sort((a, b) => (b.pageRank || 0) - (a.pageRank || 0))
+    .slice(0, N_VALUES)
+  const topValueIds = new Set(topValues.map((v) => v.id))
+
+  const nodes: Node[] = topValues.map((value) => ({
     ...value,
     x: 0,
     y: 0,
@@ -93,21 +94,37 @@ function convertMoralGraphToForceGraph(moralGraph: MoralGraph) {
         : ((value.pageRank || 0) - minPageRank) / (maxPageRank - minPageRank),
   }))
 
-  const links: Link[] = moralGraph.edges.map((edge) => {
-    const sourceValue = nodes.find((n) => n.id === edge.sourceValueId)
-    const targetValue = nodes.find((n) => n.id === edge.wiserValueId)
+  // Only include edges between top values
+  const links: Link[] = moralGraph.edges
+    .filter(
+      (edge) =>
+        topValueIds.has(edge.sourceValueId) &&
+        topValueIds.has(edge.wiserValueId)
+    )
+    .map((edge) => {
+      const sourceValue = nodes.find((n) => n.id === edge.sourceValueId)
+      const targetValue = nodes.find((n) => n.id === edge.wiserValueId)
 
-    if (!sourceValue || !targetValue) {
-      throw new Error("Invalid edge references")
-    }
+      if (!sourceValue || !targetValue) {
+        throw new Error("Invalid edge references")
+      }
 
-    return {
-      ...edge,
-      source: sourceValue,
-      target: targetValue,
-      color: edge.summary.wiserLikelihood > 0.5 ? "blue" : "red",
-    }
-  })
+      let color = "gray" // default color
+
+      const dominantAffiliation = edge.summary.dominantPoliticalAffiliation
+      if (dominantAffiliation === "Republican") {
+        color = "red"
+      } else if (dominantAffiliation === "Democrat") {
+        color = "blue"
+      }
+
+      return {
+        ...edge,
+        source: sourceValue,
+        target: targetValue,
+        color,
+      }
+    })
 
   return { nodes, links }
 }
@@ -166,6 +183,10 @@ function ForceGraphWrapper({ graphData }: { graphData: MoralGraph }) {
                     : 0.005
                 }}
                 linkDirectionalParticleWidth={2}
+                d3Force={(d3Force: any) => {
+                  d3Force("charge").strength(-200)
+                  d3Force("link").distance(100)
+                }}
                 nodeCanvasObject={(
                   node: Node,
                   ctx: CanvasRenderingContext2D,
@@ -391,13 +412,30 @@ export default function ReportView() {
                       contested: "outline",
                     } as const
 
+                    const tooltipText = {
+                      "broadly supported":
+                        "One value is clearly the most important by a large margin",
+                      "some support":
+                        "One value is leading, but not by a huge margin",
+                      contested: "Multiple values are competing for importance",
+                    }
+
                     return (
-                      <Badge
-                        variant={variants[supportLevel]}
-                        className="capitalize"
-                      >
-                        {supportLevel}
-                      </Badge>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Badge
+                              variant={variants[supportLevel]}
+                              className="capitalize"
+                            >
+                              {supportLevel}
+                            </Badge>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{tooltipText[supportLevel]}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     )
                   })()}
                 </CardFooter>

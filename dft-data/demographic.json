@@ -3,9 +3,7 @@
     "id": 1,
     "userId": 213,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 64,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -20,9 +18,7 @@
     "id": 4,
     "userId": 232,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 65,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -37,10 +33,7 @@
     "id": 7,
     "userId": 238,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English",
-      "German"
-    ],
+    "fluentLanguages": ["English", "German"],
     "age": 82,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -55,9 +48,7 @@
     "id": 8,
     "userId": 362,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 58,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -72,9 +63,7 @@
     "id": 9,
     "userId": 390,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 58,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -89,9 +78,7 @@
     "id": 10,
     "userId": 410,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 62,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -106,9 +93,7 @@
     "id": 11,
     "userId": 412,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 58,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -123,10 +108,7 @@
     "id": 12,
     "userId": 451,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "Dutch",
-      "English"
-    ],
+    "fluentLanguages": ["Dutch", "English"],
     "age": 64,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -141,9 +123,7 @@
     "id": 13,
     "userId": 481,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 59,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -158,9 +138,7 @@
     "id": 14,
     "userId": 520,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 58,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -175,9 +153,7 @@
     "id": 15,
     "userId": 524,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 68,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -192,9 +168,7 @@
     "id": 16,
     "userId": 530,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 65,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -209,9 +183,7 @@
     "id": 17,
     "userId": 553,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 63,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -226,9 +198,7 @@
     "id": 18,
     "userId": 558,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 69,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -243,9 +213,7 @@
     "id": 19,
     "userId": 561,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 85,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -260,9 +228,7 @@
     "id": 20,
     "userId": 562,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 70,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -277,9 +243,7 @@
     "id": 21,
     "userId": 564,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 62,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -294,9 +258,7 @@
     "id": 22,
     "userId": 565,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 72,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -311,9 +273,7 @@
     "id": 23,
     "userId": 568,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 59,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -328,9 +288,7 @@
     "id": 24,
     "userId": 569,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 62,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -345,9 +303,7 @@
     "id": 25,
     "userId": 596,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 78,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -362,9 +318,7 @@
     "id": 26,
     "userId": 211,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 61,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -379,9 +333,7 @@
     "id": 27,
     "userId": 221,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 66,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -396,9 +348,7 @@
     "id": 28,
     "userId": 278,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 58,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -413,9 +363,7 @@
     "id": 29,
     "userId": 310,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 69,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -430,10 +378,7 @@
     "id": 30,
     "userId": 341,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English",
-      "French"
-    ],
+    "fluentLanguages": ["English", "French"],
     "age": 60,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -448,9 +393,7 @@
     "id": 31,
     "userId": 397,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 65,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -465,9 +408,7 @@
     "id": 32,
     "userId": 420,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 62,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -482,9 +423,7 @@
     "id": 33,
     "userId": 434,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 60,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -499,9 +438,7 @@
     "id": 34,
     "userId": 463,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 58,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -516,9 +453,7 @@
     "id": 35,
     "userId": 483,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 61,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -533,9 +468,7 @@
     "id": 36,
     "userId": 504,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 69,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -550,10 +483,7 @@
     "id": 37,
     "userId": 507,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "Tagalog-Filipino",
-      "English"
-    ],
+    "fluentLanguages": ["Tagalog-Filipino", "English"],
     "age": 59,
     "sex": "Female",
     "ethnicitySimplified": "Asian",
@@ -568,9 +498,7 @@
     "id": 38,
     "userId": 517,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 71,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -585,9 +513,7 @@
     "id": 39,
     "userId": 533,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 66,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -602,9 +528,7 @@
     "id": 40,
     "userId": 536,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 61,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -619,9 +543,7 @@
     "id": 41,
     "userId": 545,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 69,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -636,9 +558,7 @@
     "id": 42,
     "userId": 544,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 60,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -653,9 +573,7 @@
     "id": 43,
     "userId": 548,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 62,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -670,9 +588,7 @@
     "id": 44,
     "userId": 563,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 59,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -687,9 +603,7 @@
     "id": 45,
     "userId": 566,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 65,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -704,9 +618,7 @@
     "id": 46,
     "userId": 602,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 66,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -721,9 +633,7 @@
     "id": 47,
     "userId": 605,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 65,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -738,9 +648,7 @@
     "id": 48,
     "userId": 197,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 38,
     "sex": "Male",
     "ethnicitySimplified": "Mixed",
@@ -755,9 +663,7 @@
     "id": 49,
     "userId": 224,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 39,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -772,9 +678,7 @@
     "id": 50,
     "userId": 311,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 44,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -789,9 +693,7 @@
     "id": 51,
     "userId": 360,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 43,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -806,9 +708,7 @@
     "id": 52,
     "userId": 369,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 41,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -823,9 +723,7 @@
     "id": 53,
     "userId": 380,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 47,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -840,10 +738,7 @@
     "id": 54,
     "userId": 393,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English",
-      "Spanish"
-    ],
+    "fluentLanguages": ["English", "Spanish"],
     "age": 41,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -858,10 +753,7 @@
     "id": 55,
     "userId": 414,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English",
-      "Spanish"
-    ],
+    "fluentLanguages": ["English", "Spanish"],
     "age": 43,
     "sex": "Male",
     "ethnicitySimplified": "Mixed",
@@ -876,9 +768,7 @@
     "id": 56,
     "userId": 448,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 38,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -893,9 +783,7 @@
     "id": 57,
     "userId": 453,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 38,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -910,9 +798,7 @@
     "id": 58,
     "userId": 588,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 38,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -927,10 +813,7 @@
     "id": 59,
     "userId": 592,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English",
-      "Spanish"
-    ],
+    "fluentLanguages": ["English", "Spanish"],
     "age": 39,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -945,9 +828,7 @@
     "id": 60,
     "userId": 280,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 38,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -962,9 +843,7 @@
     "id": 61,
     "userId": 283,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 46,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -979,9 +858,7 @@
     "id": 62,
     "userId": 317,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 44,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -996,9 +873,7 @@
     "id": 63,
     "userId": 370,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 47,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1013,9 +888,7 @@
     "id": 64,
     "userId": 379,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 39,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1030,9 +903,7 @@
     "id": 65,
     "userId": 402,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 45,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1047,9 +918,7 @@
     "id": 66,
     "userId": 421,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 44,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1064,9 +933,7 @@
     "id": 67,
     "userId": 425,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 43,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1081,9 +948,7 @@
     "id": 68,
     "userId": 462,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 43,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1098,9 +963,7 @@
     "id": 69,
     "userId": 575,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 38,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1115,9 +978,7 @@
     "id": 70,
     "userId": 580,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 43,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1132,9 +993,7 @@
     "id": 71,
     "userId": 389,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 23,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -1149,9 +1008,7 @@
     "id": 72,
     "userId": 511,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 23,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -1166,10 +1023,7 @@
     "id": 73,
     "userId": 491,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English",
-      "Spanish"
-    ],
+    "fluentLanguages": ["English", "Spanish"],
     "age": 23,
     "sex": "Male",
     "ethnicitySimplified": "Other",
@@ -1184,9 +1038,7 @@
     "id": 74,
     "userId": 501,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 23,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -1201,9 +1053,7 @@
     "id": 75,
     "userId": 515,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 26,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -1218,9 +1068,7 @@
     "id": 76,
     "userId": 528,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 24,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -1235,10 +1083,7 @@
     "id": 77,
     "userId": 540,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English",
-      "Tagalog-Filipino"
-    ],
+    "fluentLanguages": ["English", "Tagalog-Filipino"],
     "age": 25,
     "sex": "Male",
     "ethnicitySimplified": "Asian",
@@ -1253,9 +1098,7 @@
     "id": 78,
     "userId": 541,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 26,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -1270,10 +1113,7 @@
     "id": 79,
     "userId": 550,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English",
-      "Other"
-    ],
+    "fluentLanguages": ["English", "Other"],
     "age": 18,
     "sex": "Male",
     "ethnicitySimplified": "Asian",
@@ -1288,9 +1128,7 @@
     "id": 80,
     "userId": 556,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 25,
     "sex": "Male",
     "ethnicitySimplified": "Asian",
@@ -1305,9 +1143,7 @@
     "id": 81,
     "userId": 559,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 22,
     "sex": "Male",
     "ethnicitySimplified": "Mixed",
@@ -1322,9 +1158,7 @@
     "id": 82,
     "userId": 579,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 27,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -1339,9 +1173,7 @@
     "id": 83,
     "userId": 589,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 22,
     "sex": "Male",
     "ethnicitySimplified": "Asian",
@@ -1356,9 +1188,7 @@
     "id": 84,
     "userId": 193,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 27,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1373,9 +1203,7 @@
     "id": 85,
     "userId": 216,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 26,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1390,9 +1218,7 @@
     "id": 86,
     "userId": 325,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 27,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1407,9 +1233,7 @@
     "id": 87,
     "userId": 330,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 27,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1424,9 +1248,7 @@
     "id": 88,
     "userId": 475,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 20,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1441,11 +1263,7 @@
     "id": 89,
     "userId": 466,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English",
-      "Portuguese",
-      "Spanish"
-    ],
+    "fluentLanguages": ["English", "Portuguese", "Spanish"],
     "age": 26,
     "sex": "Female",
     "ethnicitySimplified": "Mixed",
@@ -1460,9 +1278,7 @@
     "id": 90,
     "userId": 479,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 27,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1477,9 +1293,7 @@
     "id": 91,
     "userId": 486,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 20,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1494,9 +1308,7 @@
     "id": 92,
     "userId": 518,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 27,
     "sex": "Female",
     "ethnicitySimplified": "Mixed",
@@ -1511,9 +1323,7 @@
     "id": 93,
     "userId": 521,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 24,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1528,9 +1338,7 @@
     "id": 94,
     "userId": 543,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 26,
     "sex": "Female",
     "ethnicitySimplified": "Black",
@@ -1545,10 +1353,7 @@
     "id": 95,
     "userId": 599,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English",
-      "Japanese"
-    ],
+    "fluentLanguages": ["English", "Japanese"],
     "age": 23,
     "sex": "Female",
     "ethnicitySimplified": "Mixed",
@@ -1563,9 +1368,7 @@
     "id": 96,
     "userId": 595,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 25,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1580,9 +1383,7 @@
     "id": 97,
     "userId": 279,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 31,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -1597,9 +1398,7 @@
     "id": 98,
     "userId": 326,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 34,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -1614,9 +1413,7 @@
     "id": 99,
     "userId": 365,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 34,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -1631,9 +1428,7 @@
     "id": 100,
     "userId": 372,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 35,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -1648,9 +1443,7 @@
     "id": 101,
     "userId": 432,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 33,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -1665,9 +1458,7 @@
     "id": 102,
     "userId": 447,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 32,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -1682,9 +1473,7 @@
     "id": 103,
     "userId": 476,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 32,
     "sex": "Male",
     "ethnicitySimplified": "Asian",
@@ -1699,9 +1488,7 @@
     "id": 104,
     "userId": 492,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 35,
     "sex": "Male",
     "ethnicitySimplified": "Mixed",
@@ -1716,9 +1503,7 @@
     "id": 105,
     "userId": 488,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 28,
     "sex": "Male",
     "ethnicitySimplified": "Asian",
@@ -1733,9 +1518,7 @@
     "id": 106,
     "userId": 510,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 36,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -1750,9 +1533,7 @@
     "id": 107,
     "userId": 514,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 32,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -1767,10 +1548,7 @@
     "id": 108,
     "userId": 585,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English",
-      "Spanish"
-    ],
+    "fluentLanguages": ["English", "Spanish"],
     "age": 35,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -1785,9 +1563,7 @@
     "id": 109,
     "userId": 600,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 37,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -1802,9 +1578,7 @@
     "id": 110,
     "userId": 217,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 29,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1819,9 +1593,7 @@
     "id": 111,
     "userId": 228,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 33,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1836,9 +1608,7 @@
     "id": 112,
     "userId": 239,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 33,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1853,9 +1623,7 @@
     "id": 113,
     "userId": 256,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 35,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1870,9 +1638,7 @@
     "id": 114,
     "userId": 306,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 37,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1887,9 +1653,7 @@
     "id": 115,
     "userId": 321,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 28,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1904,9 +1668,7 @@
     "id": 116,
     "userId": 339,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 30,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1921,9 +1683,7 @@
     "id": 117,
     "userId": 361,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 32,
     "sex": "Female",
     "ethnicitySimplified": "Mixed",
@@ -1938,9 +1698,7 @@
     "id": 118,
     "userId": 415,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 33,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1955,9 +1713,7 @@
     "id": 119,
     "userId": 452,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 36,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1972,9 +1728,7 @@
     "id": 120,
     "userId": 474,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 28,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -1989,9 +1743,7 @@
     "id": 121,
     "userId": 597,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 28,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2006,9 +1758,7 @@
     "id": 122,
     "userId": 601,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 32,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2023,9 +1773,7 @@
     "id": 123,
     "userId": 234,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 55,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2040,9 +1788,7 @@
     "id": 124,
     "userId": 276,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 49,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2057,9 +1803,7 @@
     "id": 125,
     "userId": 293,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 48,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2074,9 +1818,7 @@
     "id": 126,
     "userId": 400,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 56,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2091,9 +1833,7 @@
     "id": 127,
     "userId": 431,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 52,
     "sex": "Male",
     "ethnicitySimplified": "Asian",
@@ -2108,9 +1848,7 @@
     "id": 128,
     "userId": 457,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 56,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2125,9 +1863,7 @@
     "id": 129,
     "userId": 473,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 56,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2142,9 +1878,7 @@
     "id": 130,
     "userId": 519,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 51,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2159,9 +1893,7 @@
     "id": 131,
     "userId": 542,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 54,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2176,9 +1908,7 @@
     "id": 132,
     "userId": 549,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 57,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2193,9 +1923,7 @@
     "id": 133,
     "userId": 560,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 49,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -2210,9 +1938,7 @@
     "id": 134,
     "userId": 581,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 52,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2227,9 +1953,7 @@
     "id": 135,
     "userId": 205,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 56,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2244,9 +1968,7 @@
     "id": 136,
     "userId": 275,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 48,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2261,9 +1983,7 @@
     "id": 137,
     "userId": 277,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 50,
     "sex": "Female",
     "ethnicitySimplified": "Mixed",
@@ -2278,9 +1998,7 @@
     "id": 138,
     "userId": 375,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 50,
     "sex": "Female",
     "ethnicitySimplified": "Other",
@@ -2295,9 +2013,7 @@
     "id": 139,
     "userId": 411,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 50,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2312,9 +2028,7 @@
     "id": 140,
     "userId": 438,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 52,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2329,9 +2043,7 @@
     "id": 141,
     "userId": 449,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 49,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2346,9 +2058,7 @@
     "id": 142,
     "userId": 471,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 48,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2363,9 +2073,7 @@
     "id": 143,
     "userId": 487,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 50,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2380,9 +2088,7 @@
     "id": 144,
     "userId": 506,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 50,
     "sex": "Female",
     "ethnicitySimplified": "Black",
@@ -2397,9 +2103,7 @@
     "id": 145,
     "userId": 509,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 51,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2414,9 +2118,7 @@
     "id": 146,
     "userId": 608,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 53,
     "sex": "Female",
     "ethnicitySimplified": "Mixed",
@@ -2431,9 +2133,7 @@
     "id": 147,
     "userId": 220,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 71,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2448,9 +2148,7 @@
     "id": 148,
     "userId": 340,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 60,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2465,9 +2163,7 @@
     "id": 149,
     "userId": 364,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 70,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2482,11 +2178,7 @@
     "id": 150,
     "userId": 409,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English",
-      "German",
-      "French"
-    ],
+    "fluentLanguages": ["English", "German", "French"],
     "age": 73,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2501,9 +2193,7 @@
     "id": 151,
     "userId": 467,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 64,
     "sex": "Male",
     "ethnicitySimplified": "Asian",
@@ -2518,9 +2208,7 @@
     "id": 152,
     "userId": 490,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 69,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2535,9 +2223,7 @@
     "id": 153,
     "userId": 503,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 58,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2552,9 +2238,7 @@
     "id": 154,
     "userId": 512,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 62,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2569,9 +2253,7 @@
     "id": 155,
     "userId": 525,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 59,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2586,9 +2268,7 @@
     "id": 156,
     "userId": 531,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 61,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2603,9 +2283,7 @@
     "id": 157,
     "userId": 534,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 64,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2620,9 +2298,7 @@
     "id": 158,
     "userId": 539,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 58,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2637,11 +2313,7 @@
     "id": 159,
     "userId": 607,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English",
-      "French",
-      "Spanish"
-    ],
+    "fluentLanguages": ["English", "French", "Spanish"],
     "age": 69,
     "sex": "Male",
     "ethnicitySimplified": "Mixed",
@@ -2656,9 +2328,7 @@
     "id": 160,
     "userId": 612,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 86,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2673,9 +2343,7 @@
     "id": 161,
     "userId": 259,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 67,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2690,9 +2358,7 @@
     "id": 162,
     "userId": 329,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 61,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2707,9 +2373,7 @@
     "id": 163,
     "userId": 344,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 62,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2724,9 +2388,7 @@
     "id": 164,
     "userId": 388,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 68,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2741,9 +2403,7 @@
     "id": 165,
     "userId": 439,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 69,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2758,9 +2418,7 @@
     "id": 166,
     "userId": 458,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 60,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2775,9 +2433,7 @@
     "id": 167,
     "userId": 460,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 79,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2792,9 +2448,7 @@
     "id": 168,
     "userId": 489,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 61,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2809,9 +2463,7 @@
     "id": 169,
     "userId": 498,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 63,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2826,9 +2478,7 @@
     "id": 170,
     "userId": 502,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 58,
     "sex": "Female",
     "ethnicitySimplified": "Mixed",
@@ -2843,9 +2493,7 @@
     "id": 171,
     "userId": 513,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 61,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2860,9 +2508,7 @@
     "id": 172,
     "userId": 523,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 62,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2877,9 +2523,7 @@
     "id": 173,
     "userId": 578,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 59,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2894,9 +2538,7 @@
     "id": 174,
     "userId": 598,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 63,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -2911,9 +2553,7 @@
     "id": 175,
     "userId": 342,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 62,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2928,9 +2568,7 @@
     "id": 176,
     "userId": 382,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 66,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2945,9 +2583,7 @@
     "id": 177,
     "userId": 454,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 64,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2962,9 +2598,7 @@
     "id": 178,
     "userId": 484,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 59,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -2979,9 +2613,7 @@
     "id": 179,
     "userId": 494,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 71,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -2996,9 +2628,7 @@
     "id": 180,
     "userId": 497,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 66,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -3013,9 +2643,7 @@
     "id": 181,
     "userId": 526,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 68,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3030,9 +2658,7 @@
     "id": 182,
     "userId": 527,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 61,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3047,9 +2673,7 @@
     "id": 183,
     "userId": 532,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 61,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -3064,9 +2688,7 @@
     "id": 184,
     "userId": 529,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 67,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3081,10 +2703,7 @@
     "id": 185,
     "userId": 546,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English",
-      "Estonian"
-    ],
+    "fluentLanguages": ["English", "Estonian"],
     "age": 62,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3099,9 +2718,7 @@
     "id": 186,
     "userId": 552,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 70,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3116,9 +2733,7 @@
     "id": 187,
     "userId": 547,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 61,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -3133,10 +2748,7 @@
     "id": 188,
     "userId": 554,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English",
-      "French"
-    ],
+    "fluentLanguages": ["English", "French"],
     "age": 60,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -3151,9 +2763,7 @@
     "id": 189,
     "userId": 555,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 66,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3168,9 +2778,7 @@
     "id": 190,
     "userId": 584,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 62,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3185,9 +2793,7 @@
     "id": 191,
     "userId": 611,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 69,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3202,9 +2808,7 @@
     "id": 192,
     "userId": 196,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 80,
     "sex": "Female",
     "ethnicitySimplified": "Black",
@@ -3219,9 +2823,7 @@
     "id": 193,
     "userId": 198,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 63,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3236,9 +2838,7 @@
     "id": 194,
     "userId": 226,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 60,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3253,10 +2853,7 @@
     "id": 195,
     "userId": 251,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English",
-      "French"
-    ],
+    "fluentLanguages": ["English", "French"],
     "age": 67,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3271,9 +2868,7 @@
     "id": 196,
     "userId": 281,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 68,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3288,9 +2883,7 @@
     "id": 197,
     "userId": 323,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 58,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3305,9 +2898,7 @@
     "id": 198,
     "userId": 353,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 64,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3322,9 +2913,7 @@
     "id": 199,
     "userId": 356,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 60,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3339,9 +2928,7 @@
     "id": 200,
     "userId": 373,
     "usPoliticalAffiliation": "DATA_EXPIRED",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 69,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3356,9 +2943,7 @@
     "id": 201,
     "userId": 374,
     "usPoliticalAffiliation": "DATA_EXPIRED",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 78,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3373,9 +2958,7 @@
     "id": 202,
     "userId": 416,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 60,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3390,9 +2973,7 @@
     "id": 203,
     "userId": 441,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 64,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3407,9 +2988,7 @@
     "id": 204,
     "userId": 459,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 71,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3424,10 +3003,7 @@
     "id": 205,
     "userId": 465,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English",
-      "Spanish"
-    ],
+    "fluentLanguages": ["English", "Spanish"],
     "age": 61,
     "sex": "Female",
     "ethnicitySimplified": "Black",
@@ -3442,9 +3018,7 @@
     "id": 206,
     "userId": 482,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 79,
     "sex": "Female",
     "ethnicitySimplified": "Black",
@@ -3459,9 +3033,7 @@
     "id": 207,
     "userId": 576,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 58,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3476,9 +3048,7 @@
     "id": 208,
     "userId": 603,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 59,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3493,9 +3063,7 @@
     "id": 209,
     "userId": 209,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 42,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3510,9 +3078,7 @@
     "id": 210,
     "userId": 328,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 44,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3527,9 +3093,7 @@
     "id": 211,
     "userId": 395,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 46,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -3544,9 +3108,7 @@
     "id": 212,
     "userId": 428,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 47,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3561,9 +3123,7 @@
     "id": 213,
     "userId": 440,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 42,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3578,9 +3138,7 @@
     "id": 214,
     "userId": 464,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 41,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3595,9 +3153,7 @@
     "id": 215,
     "userId": 470,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 46,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3612,9 +3168,7 @@
     "id": 216,
     "userId": 200,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 43,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3629,9 +3183,7 @@
     "id": 217,
     "userId": 346,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 44,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3646,10 +3198,7 @@
     "id": 218,
     "userId": 424,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English",
-      "Spanish"
-    ],
+    "fluentLanguages": ["English", "Spanish"],
     "age": 41,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3664,9 +3213,7 @@
     "id": 219,
     "userId": 443,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 38,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3681,9 +3228,7 @@
     "id": 220,
     "userId": 472,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 46,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3698,9 +3243,7 @@
     "id": 221,
     "userId": 485,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 45,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3715,9 +3258,7 @@
     "id": 222,
     "userId": 495,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 46,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3732,9 +3273,7 @@
     "id": 223,
     "userId": 403,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 23,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3749,9 +3288,7 @@
     "id": 224,
     "userId": 430,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 20,
     "sex": "Male",
     "ethnicitySimplified": "Asian",
@@ -3766,9 +3303,7 @@
     "id": 225,
     "userId": 478,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 25,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3783,9 +3318,7 @@
     "id": 226,
     "userId": 500,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 22,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3800,10 +3333,7 @@
     "id": 227,
     "userId": 516,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English",
-      "Spanish"
-    ],
+    "fluentLanguages": ["English", "Spanish"],
     "age": 24,
     "sex": "Male",
     "ethnicitySimplified": "Mixed",
@@ -3818,9 +3348,7 @@
     "id": 228,
     "userId": 538,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 24,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3835,10 +3363,7 @@
     "id": 229,
     "userId": 537,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English",
-      "Arabic"
-    ],
+    "fluentLanguages": ["English", "Arabic"],
     "age": 26,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3853,9 +3378,7 @@
     "id": 230,
     "userId": 418,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 21,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3870,9 +3393,7 @@
     "id": 231,
     "userId": 419,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 27,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3887,9 +3408,7 @@
     "id": 232,
     "userId": 557,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 21,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3904,9 +3423,7 @@
     "id": 233,
     "userId": 567,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 27,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3921,9 +3438,7 @@
     "id": 234,
     "userId": 570,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 19,
     "sex": "Female",
     "ethnicitySimplified": "Mixed",
@@ -3938,9 +3453,7 @@
     "id": 235,
     "userId": 571,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 24,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -3955,10 +3468,7 @@
     "id": 236,
     "userId": 572,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English",
-      "Japanese"
-    ],
+    "fluentLanguages": ["English", "Japanese"],
     "age": 26,
     "sex": "Female",
     "ethnicitySimplified": "Mixed",
@@ -3973,9 +3483,7 @@
     "id": 237,
     "userId": 334,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 30,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -3990,9 +3498,7 @@
     "id": 238,
     "userId": 394,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 31,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -4007,9 +3513,7 @@
     "id": 239,
     "userId": 399,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 28,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4024,9 +3528,7 @@
     "id": 240,
     "userId": 450,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 34,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4041,9 +3543,7 @@
     "id": 241,
     "userId": 468,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 33,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4058,9 +3558,7 @@
     "id": 242,
     "userId": 493,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 33,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4075,9 +3573,7 @@
     "id": 243,
     "userId": 496,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 36,
     "sex": "Male",
     "ethnicitySimplified": "Asian",
@@ -4092,9 +3588,7 @@
     "id": 244,
     "userId": 194,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 32,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4109,9 +3603,7 @@
     "id": 245,
     "userId": 206,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 36,
     "sex": "Female",
     "ethnicitySimplified": "Mixed",
@@ -4126,9 +3618,7 @@
     "id": 246,
     "userId": 331,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 37,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4143,9 +3633,7 @@
     "id": 247,
     "userId": 338,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 29,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4160,9 +3648,7 @@
     "id": 248,
     "userId": 343,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 37,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4177,9 +3663,7 @@
     "id": 249,
     "userId": 384,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 35,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4194,10 +3678,7 @@
     "id": 250,
     "userId": 406,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English",
-      "Spanish"
-    ],
+    "fluentLanguages": ["English", "Spanish"],
     "age": 28,
     "sex": "Female",
     "ethnicitySimplified": "Other",
@@ -4212,9 +3693,7 @@
     "id": 251,
     "userId": 203,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 56,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4229,9 +3708,7 @@
     "id": 252,
     "userId": 270,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 49,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4246,9 +3723,7 @@
     "id": 253,
     "userId": 347,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 51,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4263,10 +3738,7 @@
     "id": 254,
     "userId": 378,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English",
-      "French"
-    ],
+    "fluentLanguages": ["English", "French"],
     "age": 50,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -4281,9 +3753,7 @@
     "id": 255,
     "userId": 383,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 53,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4298,9 +3768,7 @@
     "id": 256,
     "userId": 422,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 50,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4315,9 +3783,7 @@
     "id": 257,
     "userId": 444,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 55,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4332,9 +3798,7 @@
     "id": 258,
     "userId": 227,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 49,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4349,9 +3813,7 @@
     "id": 259,
     "userId": 300,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 48,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4366,9 +3828,7 @@
     "id": 260,
     "userId": 363,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 56,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4383,9 +3843,7 @@
     "id": 261,
     "userId": 405,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 49,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4400,9 +3858,7 @@
     "id": 262,
     "userId": 435,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 48,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4417,9 +3873,7 @@
     "id": 263,
     "userId": 433,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 50,
     "sex": "Female",
     "ethnicitySimplified": "Black",
@@ -4434,9 +3888,7 @@
     "id": 264,
     "userId": 469,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 48,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4451,10 +3903,7 @@
     "id": 265,
     "userId": 282,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "Bengali",
-      "English"
-    ],
+    "fluentLanguages": ["Bengali", "English"],
     "age": 26,
     "sex": "Male",
     "ethnicitySimplified": "Asian",
@@ -4469,9 +3918,7 @@
     "id": 266,
     "userId": 366,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 22,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -4486,9 +3933,7 @@
     "id": 267,
     "userId": 371,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 21,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -4503,9 +3948,7 @@
     "id": 268,
     "userId": 398,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 21,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4520,9 +3963,7 @@
     "id": 269,
     "userId": 401,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 23,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4537,9 +3978,7 @@
     "id": 270,
     "userId": 429,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 25,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -4554,9 +3993,7 @@
     "id": 271,
     "userId": 437,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 20,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4571,9 +4008,7 @@
     "id": 272,
     "userId": 477,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 24,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4588,9 +4023,7 @@
     "id": 273,
     "userId": 609,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 26,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4605,9 +4038,7 @@
     "id": 274,
     "userId": 208,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 25,
     "sex": "Female",
     "ethnicitySimplified": "Mixed",
@@ -4622,9 +4053,7 @@
     "id": 275,
     "userId": 268,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 20,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4639,9 +4068,7 @@
     "id": 276,
     "userId": 298,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 21,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4656,9 +4083,7 @@
     "id": 277,
     "userId": 320,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 22,
     "sex": "Female",
     "ethnicitySimplified": "Black",
@@ -4673,9 +4098,7 @@
     "id": 278,
     "userId": 351,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 27,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4690,10 +4113,7 @@
     "id": 279,
     "userId": 352,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English",
-      "Spanish"
-    ],
+    "fluentLanguages": ["English", "Spanish"],
     "age": 22,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4708,9 +4128,7 @@
     "id": 280,
     "userId": 386,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 26,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4725,9 +4143,7 @@
     "id": 281,
     "userId": 446,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 23,
     "sex": "Female",
     "ethnicitySimplified": "Mixed",
@@ -4742,9 +4158,7 @@
     "id": 282,
     "userId": 591,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 21,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4759,9 +4173,7 @@
     "id": 283,
     "userId": 207,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 34,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4776,10 +4188,7 @@
     "id": 284,
     "userId": 218,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English",
-      "Twi"
-    ],
+    "fluentLanguages": ["English", "Twi"],
     "age": 30,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -4794,9 +4203,7 @@
     "id": 285,
     "userId": 210,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 30,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4811,9 +4218,7 @@
     "id": 286,
     "userId": 236,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 29,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4828,10 +4233,7 @@
     "id": 287,
     "userId": 253,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "Armenian",
-      "English"
-    ],
+    "fluentLanguages": ["Armenian", "English"],
     "age": 31,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4846,9 +4248,7 @@
     "id": 288,
     "userId": 272,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 32,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4863,9 +4263,7 @@
     "id": 289,
     "userId": 332,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 33,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4880,9 +4278,7 @@
     "id": 290,
     "userId": 357,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 34,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -4897,9 +4293,7 @@
     "id": 291,
     "userId": 573,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 30,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -4914,9 +4308,7 @@
     "id": 292,
     "userId": 215,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 28,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4931,9 +4323,7 @@
     "id": 293,
     "userId": 219,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 36,
     "sex": "Female",
     "ethnicitySimplified": "Black",
@@ -4948,9 +4338,7 @@
     "id": 294,
     "userId": 223,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 35,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4965,9 +4353,7 @@
     "id": 295,
     "userId": 229,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 37,
     "sex": "Female",
     "ethnicitySimplified": "Black",
@@ -4982,9 +4368,7 @@
     "id": 296,
     "userId": 237,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 29,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -4999,10 +4383,7 @@
     "id": 297,
     "userId": 265,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English",
-      "Spanish"
-    ],
+    "fluentLanguages": ["English", "Spanish"],
     "age": 28,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5017,9 +4398,7 @@
     "id": 298,
     "userId": 301,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 35,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5034,9 +4413,7 @@
     "id": 299,
     "userId": 322,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 32,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5051,9 +4428,7 @@
     "id": 300,
     "userId": 574,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 29,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5068,9 +4443,7 @@
     "id": 301,
     "userId": 212,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 43,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5085,9 +4458,7 @@
     "id": 302,
     "userId": 222,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 39,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5102,9 +4473,7 @@
     "id": 303,
     "userId": 359,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 39,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5119,9 +4488,7 @@
     "id": 304,
     "userId": 391,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 43,
     "sex": "Male",
     "ethnicitySimplified": "Asian",
@@ -5136,9 +4503,7 @@
     "id": 305,
     "userId": 413,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 40,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5153,9 +4518,7 @@
     "id": 306,
     "userId": 427,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 47,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5170,9 +4533,7 @@
     "id": 307,
     "userId": 426,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 44,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5187,9 +4548,7 @@
     "id": 308,
     "userId": 442,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 40,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5204,9 +4563,7 @@
     "id": 309,
     "userId": 587,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 45,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -5221,9 +4578,7 @@
     "id": 310,
     "userId": 199,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 44,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5238,9 +4593,7 @@
     "id": 311,
     "userId": 248,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 41,
     "sex": "Female",
     "ethnicitySimplified": "Black",
@@ -5255,9 +4608,7 @@
     "id": 312,
     "userId": 255,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 42,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5272,9 +4623,7 @@
     "id": 313,
     "userId": 294,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 45,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5289,9 +4638,7 @@
     "id": 314,
     "userId": 318,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 46,
     "sex": "Female",
     "ethnicitySimplified": "Black",
@@ -5306,9 +4653,7 @@
     "id": 315,
     "userId": 319,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 39,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5323,9 +4668,7 @@
     "id": 316,
     "userId": 355,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 42,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5340,9 +4683,7 @@
     "id": 317,
     "userId": 387,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 40,
     "sex": "Female",
     "ethnicitySimplified": "Other",
@@ -5357,9 +4698,7 @@
     "id": 318,
     "userId": 582,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 44,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5374,9 +4713,7 @@
     "id": 319,
     "userId": 295,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 50,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5391,9 +4728,7 @@
     "id": 320,
     "userId": 302,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 49,
     "sex": "Male",
     "ethnicitySimplified": "Black",
@@ -5408,9 +4743,7 @@
     "id": 321,
     "userId": 345,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 51,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5425,9 +4758,7 @@
     "id": 322,
     "userId": 368,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 51,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5442,9 +4773,7 @@
     "id": 323,
     "userId": 381,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 48,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5459,9 +4788,7 @@
     "id": 324,
     "userId": 408,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 48,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5476,10 +4803,7 @@
     "id": 325,
     "userId": 436,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English",
-      "Tagalog-Filipino"
-    ],
+    "fluentLanguages": ["English", "Tagalog-Filipino"],
     "age": 51,
     "sex": "Male",
     "ethnicitySimplified": "Asian",
@@ -5494,9 +4818,7 @@
     "id": 326,
     "userId": 499,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 53,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5511,9 +4833,7 @@
     "id": 327,
     "userId": 604,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 55,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5528,9 +4848,7 @@
     "id": 328,
     "userId": 230,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 57,
     "sex": "Female",
     "ethnicitySimplified": "Black",
@@ -5545,9 +4863,7 @@
     "id": 329,
     "userId": 262,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 54,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5562,9 +4878,7 @@
     "id": 330,
     "userId": 292,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 48,
     "sex": "Female",
     "ethnicitySimplified": "Mixed",
@@ -5579,9 +4893,7 @@
     "id": 331,
     "userId": 333,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 57,
     "sex": "Female",
     "ethnicitySimplified": "Black",
@@ -5596,9 +4908,7 @@
     "id": 332,
     "userId": 350,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 52,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5613,9 +4923,7 @@
     "id": 333,
     "userId": 367,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 55,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5630,9 +4938,7 @@
     "id": 334,
     "userId": 407,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 55,
     "sex": "Female",
     "ethnicitySimplified": "Black",
@@ -5647,9 +4953,7 @@
     "id": 335,
     "userId": 417,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 55,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5664,9 +4968,7 @@
     "id": 336,
     "userId": 577,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 57,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5681,9 +4983,7 @@
     "id": 337,
     "userId": 240,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 44,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5698,9 +4998,7 @@
     "id": 338,
     "userId": 246,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 58,
     "sex": "Female",
     "ethnicitySimplified": "Black",
@@ -5715,9 +5013,7 @@
     "id": 339,
     "userId": 260,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 26,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5732,9 +5028,7 @@
     "id": 340,
     "userId": 273,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 54,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5749,9 +5043,7 @@
     "id": 341,
     "userId": 288,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 28,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5766,9 +5058,7 @@
     "id": 342,
     "userId": 349,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 49,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5783,9 +5073,7 @@
     "id": 343,
     "userId": 354,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 43,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5800,9 +5088,7 @@
     "id": 344,
     "userId": 392,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 76,
     "sex": "Female",
     "ethnicitySimplified": "Black",
@@ -5817,10 +5103,7 @@
     "id": 345,
     "userId": 404,
     "usPoliticalAffiliation": "Republican",
-    "fluentLanguages": [
-      "English",
-      "Spanish"
-    ],
+    "fluentLanguages": ["English", "Spanish"],
     "age": 66,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5835,9 +5118,7 @@
     "id": 346,
     "userId": 423,
     "usPoliticalAffiliation": "Democrat",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 51,
     "sex": "Male",
     "ethnicitySimplified": "White",
@@ -5852,9 +5133,7 @@
     "id": 347,
     "userId": 535,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 59,
     "sex": "Female",
     "ethnicitySimplified": "White",
@@ -5869,9 +5148,7 @@
     "id": 348,
     "userId": 583,
     "usPoliticalAffiliation": "Independent",
-    "fluentLanguages": [
-      "English"
-    ],
+    "fluentLanguages": ["English"],
     "age": 50,
     "sex": "Female",
     "ethnicitySimplified": "White",

@@ -54,6 +54,13 @@ async function getEdgesForContext(
         },
       },
     },
+    include: {
+      user: {
+        select: {
+          Demographic: true,
+        },
+      },
+    },
   })
 }
 
@@ -178,20 +185,36 @@ async function analyzeDeliberation(deliberationId: number, questionId: number) {
     console.log(`\n=== Processing Context: ${context.id} ===\n`)
 
     const values = await getValuesForDeliberation(deliberationId, questionId)
-    const edges = await getEdgesForContext(
-      deliberationId,
-      questionId,
-      context.id
-    )
+
+    const edges = (
+      await getEdgesForContext(deliberationId, questionId, context.id)
+    ).map((edge) => {
+      const demographics = edge.user.Demographic?.usPoliticalAffiliation
+        ? {
+            usPoliticalAffiliation:
+              edge.user.Demographic.usPoliticalAffiliation,
+          }
+        : undefined
+
+      return {
+        ...edge,
+        demographics,
+      }
+    })
 
     console.log(`Found ${values.length} values and ${edges.length} edges`)
 
-    const graph = await summarizeGraph(values, edges, { includePageRank: true })
+    const graph = await summarizeGraph(values, edges, {
+      includePageRank: true,
+      includeDemographics: true,
+    })
     console.log(
       `Graph processed with ${graph.values.length} values and ${graph.edges.length} edges`
     )
 
     if (graph.values?.length > 0) {
+      console.log(graph.edges.map((edge) => edge.summary))
+      continue
       const sortedValues = [...graph.values].sort(
         (a, b) => (b.pageRank ?? -Infinity) - (a.pageRank ?? -Infinity)
       )

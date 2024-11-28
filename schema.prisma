@@ -22,6 +22,17 @@ model User {
   chats        Chat[]
   edges        Edge[]
   Deliberation Deliberation[]
+  Demographic  Demographic?
+}
+
+model Demographic {
+  userId                 Int
+  age                    Int?
+  sex                    String?
+  usPoliticalAffiliation String?
+  user                   User    @relation(fields: [userId], references: [id])
+
+  @@id([userId])
 }
 
 enum DeliberationSetupStatus {
