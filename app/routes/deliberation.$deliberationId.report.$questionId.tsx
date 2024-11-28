@@ -24,8 +24,6 @@ import { Intervention } from "@prisma/client"
 import React from "react"
 import { isAllUppercase } from "~/lib/utils"
 
-const N_VALUES = 6
-
 type Node = MoralGraphValue & {
   x: number
   y: number
@@ -81,10 +79,48 @@ function convertMoralGraphToForceGraph(moralGraph: MoralGraph) {
   // Sort values by pageRank and take top 6
   const topValues = [...moralGraph.values]
     .sort((a, b) => (b.pageRank || 0) - (a.pageRank || 0))
-    .slice(0, N_VALUES)
-  const topValueIds = new Set(topValues.map((v) => v.id))
+    .slice(0, 6)
 
-  const nodes: Node[] = topValues.map((value) => ({
+  // Find the winning value
+  const winningValue = topValues[0]
+
+  // Helper function to find all connected nodes
+  function findConnectedNodes(
+    valueId: string,
+    visited = new Set<string>()
+  ): Set<string> {
+    if (visited.has(valueId)) return visited
+    visited.add(valueId)
+
+    // Find all edges connected to this value
+    moralGraph.edges
+      .filter(
+        (edge) =>
+          (String(edge.sourceValueId) === valueId ||
+            String(edge.wiserValueId) === valueId) &&
+          topValues.some((v) => v.id === edge.sourceValueId) &&
+          topValues.some((v) => v.id === edge.wiserValueId)
+      )
+      .forEach((edge) => {
+        const nextNodeId =
+          String(edge.sourceValueId) === valueId
+            ? edge.wiserValueId
+            : edge.sourceValueId
+        findConnectedNodes(String(nextNodeId), visited)
+      })
+
+    return visited
+  }
+
+  // Get all nodes connected to winning value
+  const connectedNodeIds = findConnectedNodes(String(winningValue.id))
+
+  // Filter top values to only include connected nodes
+  const connectedValues = topValues.filter((value) =>
+    connectedNodeIds.has(String(value.id))
+  )
+
+  const nodes: Node[] = connectedValues.map((value) => ({
     ...value,
     x: 0,
     y: 0,
@@ -96,12 +132,12 @@ function convertMoralGraphToForceGraph(moralGraph: MoralGraph) {
         : ((value.pageRank || 0) - minPageRank) / (maxPageRank - minPageRank),
   }))
 
-  // Only include edges between top values
+  // Only include edges between connected values
   const links: Link[] = moralGraph.edges
     .filter(
       (edge) =>
-        topValueIds.has(edge.sourceValueId) &&
-        topValueIds.has(edge.wiserValueId)
+        connectedNodeIds.has(String(edge.sourceValueId)) &&
+        connectedNodeIds.has(String(edge.wiserValueId))
     )
     .map((edge) => {
       const sourceValue = nodes.find((n) => n.id === edge.sourceValueId)
