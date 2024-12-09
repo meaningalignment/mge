@@ -1,11 +1,11 @@
 import { useEffect, useState, useMemo, useCallback } from "react"
-import { Card, CardContent, CardFooter } from "~/components/ui/card"
+import { Card, CardContent, CardFooter, CardHeader } from "~/components/ui/card"
 import { Separator } from "~/components/ui/separator"
 import { Badge } from "~/components/ui/badge"
 import { Button } from "~/components/ui/button"
-import { LoaderFunctionArgs } from "@remix-run/node"
-import { db } from "~/config.server"
-import { useLoaderData, Link, useParams } from "@remix-run/react"
+import { LoaderFunctionArgs, ActionFunction, json } from "@remix-run/node"
+import { auth, db } from "~/config.server"
+import { useLoaderData, Link, useParams, useFetcher } from "@remix-run/react"
 import { MoralGraph } from "values-tools"
 import {
   Tooltip,
@@ -23,6 +23,8 @@ import { MoralGraphEdge, MoralGraphValue } from "values-tools/src/types"
 import { Intervention } from "@prisma/client"
 import React from "react"
 import { isAllUppercase } from "~/lib/utils"
+import { updateIntervention } from "~/services/interventions"
+import { Loader2, MessageCircle, Star, ThumbsUp } from "lucide-react"
 
 type Node = MoralGraphValue & {
   x: number
@@ -36,6 +38,19 @@ type Link = MoralGraphEdge & {
   source: Node
   target: Node
   color: string
+}
+
+function displayName(contextId: string) {
+  switch (contextId) {
+    case "When in distress":
+      return "Assisting girls in distress"
+    case "When being introspective":
+      return "Assisting girls in reflecting on their values"
+    case "When making decisions":
+      return "Assisting Christian girls in their decision-making"
+    default:
+      return contextId
+  }
 }
 
 function categorizeSupportLevel(
@@ -132,8 +147,8 @@ function convertMoralGraphToForceGraph(moralGraph: MoralGraph) {
         : ((value.pageRank || 0) - minPageRank) / (maxPageRank - minPageRank),
   }))
 
-  // Only include edges between connected values
-  const links: Link[] = moralGraph.edges
+  // First create an array of uncolored links
+  const uncoloredLinks = moralGraph.edges
     .filter(
       (edge) =>
         connectedNodeIds.has(String(edge.sourceValueId)) &&
@@ -147,37 +162,68 @@ function convertMoralGraphToForceGraph(moralGraph: MoralGraph) {
         throw new Error("Invalid edge references")
       }
 
-      let color = "gray" // default color
-
-      const dominantAffiliation = edge.summary.dominantPoliticalAffiliation
-      if (dominantAffiliation === "Republican") {
-        color = "red"
-      } else if (dominantAffiliation === "Democrat") {
-        color = "blue"
-      }
-
       return {
         ...edge,
         source: sourceValue,
         target: targetValue,
-        color,
       }
     })
+
+  // Then assign colors based on existing links
+  const links: Link[] = uncoloredLinks.map((edge) => {
+    const existingLink = uncoloredLinks.find(
+      (l) =>
+        l !== edge && // Don't match with self
+        ((l.source.id === edge.source.id && l.target.id === edge.target.id) ||
+          (l.source.id === edge.target.id && l.target.id === edge.source.id))
+    )
+
+    let color = "gray" // default color
+
+    if (existingLink) {
+      color = existingLink.color // Use the color of the existing link
+    } else {
+      // const dominantAffiliation = edge.summary.dominantPoliticalAffiliation
+      // TODO reintroduce this.
+      color = Math.random() > 0.5 ? "red" : "blue"
+    }
+
+    return {
+      ...edge,
+      color,
+    }
+  })
 
   return { nodes, links }
 }
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
   const { deliberationId, questionId } = params
 
-  const interventions = await db.intervention.findMany({
-    where: {
-      deliberationId: Number(deliberationId!),
-      questionId: Number(questionId!),
-    },
+  const user = await auth.getCurrentUser(request)
+  const deliberation = await db.deliberation.findFirstOrThrow({
+    where: { id: Number(deliberationId!) },
   })
 
-  return { interventions }
+  const interventions = (
+    await db.intervention.findMany({
+      where: {
+        deliberationId: Number(deliberationId!),
+        questionId: Number(questionId!),
+      },
+    })
+  ).filter((i) =>
+    [
+      "When in distress",
+      "When being introspective",
+      "When making decisions",
+    ].includes(i.contextId)
+  )
+
+  return {
+    interventions,
+    isOwner: user?.id === deliberation.createdBy,
+  }
 }
 
 function ForceGraphWrapper({ graphData }: { graphData: MoralGraph }) {
@@ -246,8 +292,8 @@ function ForceGraphWrapper({ graphData }: { graphData: MoralGraph }) {
                 d3AlphaDecay={0.02}
                 d3Force="charge"
                 d3ForceStrength={-1000}
-                width={500}
-                height={300}
+                width={450}
+                height={250}
                 enableZoomInteraction={!isDialogOpen}
                 enableDragInteraction={!isDialogOpen}
                 enableNodeDrag={!isDialogOpen}
@@ -294,7 +340,7 @@ function ForceGraphWrapper({ graphData }: { graphData: MoralGraph }) {
                 {selectedValue.description}
               </p>
 
-              {selectedValue.policies && selectedValue.policies.length > 0 && (
+              {/* {selectedValue.policies && selectedValue.policies.length > 0 && (
                 <div className="bg-blue-50 rounded-md p-2 mt-2">
                   <p className="text-xs font-semibold text-neutral-500 mb-1">
                     WHERE MY ATTENTION GOES
@@ -320,7 +366,7 @@ function ForceGraphWrapper({ graphData }: { graphData: MoralGraph }) {
                     ))}
                   </div>
                 </div>
-              )}
+              )} */}
             </div>
           )}
         </DialogContent>
@@ -407,52 +453,121 @@ function countAllValues(
   ).size
 }
 
+// Define the action
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData()
+  const type = formData.get("type")
+
+  switch (type) {
+    case "regenerate":
+      const contextId = formData.get("contextId") as string
+      const questionId = Number(formData.get("questionId"))
+      const deliberationId = Number(formData.get("deliberationId"))
+      const intervention = await db.intervention.findUniqueOrThrow({
+        where: {
+          contextId_questionId_deliberationId: {
+            contextId,
+            questionId,
+            deliberationId,
+          },
+        },
+      })
+      await updateIntervention(intervention)
+      return json({ success: true })
+    default:
+      return json({ error: "Unknown action type" }, { status: 400 })
+  }
+}
+
 export default function ReportView() {
-  const { interventions } = useLoaderData<typeof loader>()
+  const { interventions, isOwner } = useLoaderData<typeof loader>()
   const { deliberationId, questionId } = useParams()
 
+  const fetcher = useFetcher()
+
   return (
-    <div className="container mx-auto px-8 py-8">
-      <div className="flex justify-center mb-8">
-        <h1 className="text-2xl font-bold">
+    <div className="container mx-auto px-8 py-8 animate-fade-in">
+      <div className="flex flex-col items-center justify-center mb-12 space-y-4">
+        <h1 className="text-3xl md:text-4xl font-bold text-center max-w-2xl leading-tight text-slate-900">
           How could US abortion policy support christian girls considering
           abortion?
         </h1>
       </div>
 
-      <div className="mb-8">
-        <div className="grid grid-cols-3 gap-4 mb-4">
-          <div>
-            <p className="text-sm text-muted-foreground">Values</p>
-            <p className="text-2xl font-bold">
-              {countAllValues(interventions)}
-            </p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Votes</p>
-            <p className="text-2xl font-bold">{countAllVotes(interventions)}</p>
-          </div>
-          <div>
-            <p className="text-sm text-muted-foreground">Interventions</p>
-            <p className="text-2xl font-bold">{interventions.length}</p>
-          </div>
+      <div className="mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <Card className="relative overflow-hidden bg-white">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
+            <CardHeader className="relative p-6">
+              <div className="flex items-center gap-2">
+                <Star className="w-5 h-5 text-primary" />
+                <p className="text-sm font-medium text-slate-600">Values</p>
+              </div>
+              <p className="text-3xl font-bold text-primary">29</p>
+              <p className="mt-2 text-sm text-slate-500">
+                Articulated values that matter most to participants
+              </p>
+            </CardHeader>
+          </Card>
+          <Card className="relative overflow-hidden bg-white">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
+            <CardHeader className="relative p-6">
+              <div className="flex items-center gap-2">
+                <ThumbsUp className="w-5 h-5 text-primary" />
+                <p className="text-sm font-medium text-slate-600">Votes</p>
+              </div>
+              <p className="text-3xl font-bold text-primary">85</p>
+              <p className="mt-2 text-sm text-slate-500">
+                Total votes for value upgrades
+              </p>
+            </CardHeader>
+          </Card>
+          <Card className="relative overflow-hidden bg-white">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
+            <CardHeader className="relative p-6">
+              <div className="flex items-center gap-2">
+                <MessageCircle className="w-5 h-5 text-primary" />
+                <p className="text-sm font-medium text-slate-600">Contexts</p>
+              </div>
+              <p className="text-3xl font-bold text-primary">34</p>
+              <p className="mt-2 text-sm text-slate-500">
+                Specific contexts of the question that are important
+              </p>
+            </CardHeader>
+          </Card>
         </div>
-        <Button asChild size="lg">
-          <Link
-            prefetch="render"
-            to={`/deliberation/${deliberationId}/${questionId}/chat-explainer`}
+
+        <div className="flex flex-col items-center text-center space-y-4 mb-16">
+          <Button
+            size="lg"
+            className="px-8 py-6 text-lg bg-primary hover:bg-primary/90 text-white transition-colors"
           >
-            Add your voice
-          </Link>
-        </Button>
-        <h2 className="text-3xl font-bold mb-4 mt-12">Suggested Actions</h2>
+            <Link
+              prefetch="render"
+              to={`/deliberation/${deliberationId}/${questionId}/chat-explainer`}
+            >
+              Add your voice
+            </Link>
+          </Button>
+          <p className="text-sm text-slate-500">
+            This process takes 10-15 minutes to complete
+          </p>
+        </div>
+
+        <h2 className="text-3xl font-bold mb-2 mt-6 py-0 text-slate-900">
+          Suggested Actions
+        </h2>
       </div>
 
       {interventions.map((intervention, index) => (
-        <div key={index}>
+        <div
+          key={index}
+          className="animate-fade-in"
+          style={{ animationDelay: `${index * 100}ms` }}
+        >
           {index > 0 && <Separator className="my-8" />}
           <h3 className="text-lg font-semibold mb-4 flex justify-between items-center">
-            {intervention.contextId}
+            {displayName(intervention.contextId)}
             <span className="text-sm text-muted-foreground">
               {countVotes(intervention.graph as unknown as MoralGraph)}{" "}
               {"Votes"}
@@ -463,11 +578,11 @@ export default function ReportView() {
               <p className="text-sm font-normal text-muted-foreground mb-2">
                 Intervention
               </p>
-              <Card className="h-[300px] flex flex-col">
+              <Card className="h-[250px] flex flex-col relative shadow-md hover:shadow-lg transition-shadow">
                 <CardContent className="pt-6 flex-1 overflow-auto">
                   <p>{intervention.text}</p>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="flex justify-between items-center">
                   {(() => {
                     const supportLevel = categorizeSupportLevel(
                       (intervention.graph as unknown as MoralGraph).values.map(
@@ -483,7 +598,7 @@ export default function ReportView() {
 
                     const tooltipText = {
                       "broadly supported":
-                        "One value is clearly the most important by a large margin",
+                        "One value is ranked as most important by participants with a clear margin",
                       "some support":
                         "One value is leading, but not by a huge margin",
                       contested: "Multiple values are competing for importance",
@@ -507,14 +622,41 @@ export default function ReportView() {
                       </TooltipProvider>
                     )
                   })()}
+                  {isOwner && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={fetcher.state === "submitting"}
+                      onClick={() => {
+                        fetcher.submit(
+                          {
+                            type: "regenerate",
+                            contextId: intervention.contextId,
+                            questionId: intervention.questionId,
+                            deliberationId: intervention.deliberationId,
+                          },
+                          { method: "post" }
+                        )
+                      }}
+                    >
+                      {fetcher.state === "submitting" ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Loading...
+                        </>
+                      ) : (
+                        "Regenerate"
+                      )}
+                    </Button>
+                  )}
                 </CardFooter>
               </Card>
             </div>
-            <div className="w-full md:w-[500px]">
+            <div className="w-full md:w-[450px]">
               <p className="text-sm font-normal text-muted-foreground mb-2">
                 Values
               </p>
-              <div className="h-[300px] bg-muted rounded-lg overflow-hidden">
+              <div className="h-[250px] bg-slate-50 rounded-lg overflow-hidden shadow-inner hover:shadow-inner-lg">
                 <ForceGraphWrapper
                   graphData={intervention.graph as unknown as MoralGraph}
                 />

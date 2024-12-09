@@ -1,8 +1,8 @@
-import { CanonicalValuesCard } from "@prisma/client"
+import { CanonicalValuesCard, Intervention } from "@prisma/client"
 import { genObj, summarizeGraph } from "values-tools"
 import { db } from "~/config.server"
 import { z } from "zod"
-import { MoralGraphValue } from "values-tools/src/types"
+import { MoralGraph, MoralGraphValue, Value } from "values-tools/src/types"
 
 async function getContextsForDeliberation(
   deliberationId: number,
@@ -67,7 +67,7 @@ function printTopValues(values: any[], count = 5) {
   })
 }
 
-async function generateIntervention(context: string, value: MoralGraphValue) {
+async function generateIntervention(context: string, value: Value) {
   const question = `What should be done in the US about abortion policy, specifically when considering christian girls thinking about having an abortion, who are ${context.replace(
     "When ",
     ""
@@ -99,7 +99,7 @@ Each attention policy centers on something precise that can be attended to, not 
     },
     schema: z.object({
       interventionIdeas: z.array(
-        z.string().describe(`An intervention idea. A short sentence.`)
+        z.string().describe(`An intervention idea in a short sentence.`)
       ),
       bestInterventionIdea: z.object({
         interventionIdea: z
@@ -114,7 +114,7 @@ Each attention policy centers on something precise that can be attended to, not 
       intervention: z
         .string()
         .describe(
-          `An expansion of the best intervention idea. This should be a 2-3 sentences long description of how to concretely implement the intervention. Should not have any special formatting or markdown.`
+          `An expansion of the best intervention idea. This should be a short (1-2 sentences long) description of how to concretely implement the intervention. Should not have any special formatting or markdown.`
         ),
     }),
   })
@@ -125,44 +125,67 @@ Each attention policy centers on something precise that can be attended to, not 
     .then((response) => response.intervention)
 }
 
-async function analyzeDeliberation(deliberationId: number, questionId: number) {
-  const contexts = await getContextsForDeliberation(deliberationId, questionId)
-
-  for (const context of contexts) {
-    console.log(`\n=== Processing Context: ${context.id} ===\n`)
-
-    const values = await getValuesForDeliberation(deliberationId, questionId)
-    const edges = await getEdgesForContext(
-      deliberationId,
-      questionId,
-      context.id
-    )
-
-    console.log(`Found ${values.length} values and ${edges.length} edges`)
-
-    const graph = await summarizeGraph(values, edges, { includePageRank: true })
-    console.log(
-      `Graph processed with ${graph.values.length} values and ${graph.edges.length} edges`
-    )
-
-    if (graph.values?.length > 0) {
-      const sortedValues = [...graph.values].sort(
-        (a, b) => (b.pageRank ?? -Infinity) - (a.pageRank ?? -Infinity)
-      )
-
-      printTopValues(sortedValues)
-
-      const winningValue = sortedValues[0]
-      console.log("\nHighest ranked value details:", winningValue)
-
-      const intervention = await generateIntervention(context.id, winningValue)
-
-      console.log(`\nSuggested Intervention: ${intervention}`)
-    } else {
-      console.log("No values available in the graph.")
-    }
-  }
+function winningValue(graph: MoralGraph): Value {
+  const sortedValues = [...graph.values].sort(
+    (a, b) => (b.pageRank ?? -Infinity) - (a.pageRank ?? -Infinity)
+  )
+  return sortedValues[0]
 }
 
-// Example usage
-analyzeDeliberation(33, 60)
+export async function updateIntervention(intervention: Intervention) {
+  const value = winningValue(intervention.graph as unknown as MoralGraph)
+  const newText = await generateIntervention(intervention.contextId, value)
+
+  await db.intervention.update({
+    where: {
+      contextId_questionId_deliberationId: {
+        contextId: intervention.contextId,
+        questionId: intervention.questionId,
+        deliberationId: intervention.deliberationId,
+      },
+    },
+    data: { text: newText },
+  })
+}
+
+// async function analyzeDeliberation(deliberationId: number, questionId: number) {
+//   const contexts = await getContextsForDeliberation(deliberationId, questionId)
+
+//   for (const context of contexts) {
+//     console.log(`\n=== Processing Context: ${context.id} ===\n`)
+
+//     const values = await getValuesForDeliberation(deliberationId, questionId)
+//     const edges = await getEdgesForContext(
+//       deliberationId,
+//       questionId,
+//       context.id
+//     )
+
+//     console.log(`Found ${values.length} values and ${edges.length} edges`)
+
+//     const graph = await summarizeGraph(values, edges, { includePageRank: true })
+//     console.log(
+//       `Graph processed with ${graph.values.length} values and ${graph.edges.length} edges`
+//     )
+
+//     if (graph.values?.length > 0) {
+//       const sortedValues = [...graph.values].sort(
+//         (a, b) => (b.pageRank ?? -Infinity) - (a.pageRank ?? -Infinity)
+//       )
+
+//       printTopValues(sortedValues)
+
+//       const winningValue = sortedValues[0]
+//       console.log("\nHighest ranked value details:", winningValue)
+
+//       const intervention = await generateIntervention(context.id, winningValue)
+
+//       console.log(`\nSuggested Intervention: ${intervention}`)
+//     } else {
+//       console.log("No values available in the graph.")
+//     }
+//   }
+// }
+
+// // Example usage
+// analyzeDeliberation(33, 60)

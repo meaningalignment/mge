@@ -5,6 +5,7 @@ import tsconfigPaths from "vite-tsconfig-paths"
 import { vercelPreset } from "@vercel/remix/vite"
 import tailwindcss from "@tailwindcss/vite"
 
+
 installGlobals()
 
 export default defineConfig({
