@@ -1,7 +1,4 @@
-import {
-  CanonicalValuesCard,
-  ValuesCard,
-} from "@prisma/client"
+import { CanonicalValuesCard, ValuesCard } from "@prisma/client"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -141,4 +138,17 @@ export function getPartyAffiliation(counts: {
   }
 
   return null
+}
+
+export function contextDisplayName(contextId: string) {
+  switch (contextId) {
+    case "When in distress":
+      return "Assisting girls in distress"
+    case "When being introspective":
+      return "Assisting girls in reflecting on their values"
+    case "When making decisions":
+      return "Assisting Christian girls in their decision-making about abortion"
+    default:
+      return contextId
+  }
 }

@@ -18,13 +18,26 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "~/components/ui/dialog"
 import { MoralGraphEdge, MoralGraphValue } from "values-tools/src/types"
 import { Intervention } from "@prisma/client"
 import React from "react"
-import { isAllUppercase } from "~/lib/utils"
+import { contextDisplayName, isAllUppercase } from "~/lib/utils"
 import { updateIntervention } from "~/services/interventions"
-import { Loader2, MessageCircle, Star, ThumbsUp } from "lucide-react"
+import {
+  Loader2,
+  MessageCircle,
+  Heart,
+  ThumbsUp,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react"
+import { ScrollingBadges } from "~/components/badge-carousel"
+import ValuesCardDialog from "~/components/values-card-dialog"
+import VoteCardDialog from "~/components/vote-card-dialog"
+import { Value } from "@radix-ui/react-select"
+import ContextDialog from "~/components/context-dialog"
 
 type Node = MoralGraphValue & {
   x: number
@@ -34,23 +47,10 @@ type Node = MoralGraphValue & {
   isWinningValue: boolean
 }
 
-type Link = MoralGraphEdge & {
+type Edge = MoralGraphEdge & {
   source: Node
   target: Node
   color: string
-}
-
-function displayName(contextId: string) {
-  switch (contextId) {
-    case "When in distress":
-      return "Assisting girls in distress"
-    case "When being introspective":
-      return "Assisting girls in reflecting on their values"
-    case "When making decisions":
-      return "Assisting Christian girls in their decision-making"
-    default:
-      return contextId
-  }
 }
 
 function categorizeSupportLevel(
@@ -147,8 +147,8 @@ function convertMoralGraphToForceGraph(moralGraph: MoralGraph) {
         : ((value.pageRank || 0) - minPageRank) / (maxPageRank - minPageRank),
   }))
 
-  // First create an array of uncolored links
-  const uncoloredLinks = moralGraph.edges
+  // Create links with random red/blue colors
+  const links: Edge[] = moralGraph.edges
     .filter(
       (edge) =>
         connectedNodeIds.has(String(edge.sourceValueId)) &&
@@ -166,33 +166,9 @@ function convertMoralGraphToForceGraph(moralGraph: MoralGraph) {
         ...edge,
         source: sourceValue,
         target: targetValue,
+        color: Math.random() > 0.5 ? "red" : "blue",
       }
     })
-
-  // Then assign colors based on existing links
-  const links: Link[] = uncoloredLinks.map((edge) => {
-    const existingLink = uncoloredLinks.find(
-      (l) =>
-        l !== edge && // Don't match with self
-        ((l.source.id === edge.source.id && l.target.id === edge.target.id) ||
-          (l.source.id === edge.target.id && l.target.id === edge.source.id))
-    )
-
-    let color = "gray" // default color
-
-    if (existingLink) {
-      color = existingLink.color // Use the color of the existing link
-    } else {
-      // const dominantAffiliation = edge.summary.dominantPoliticalAffiliation
-      // TODO reintroduce this.
-      color = Math.random() > 0.5 ? "red" : "blue"
-    }
-
-    return {
-      ...edge,
-      color,
-    }
-  })
 
   return { nodes, links }
 }
@@ -226,11 +202,21 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   }
 }
 
-function ForceGraphWrapper({ graphData }: { graphData: MoralGraph }) {
+function ForceGraphWrapper({
+  graphData,
+  selectedValue,
+  selectedLink,
+  setSelectedValue,
+  setSelectedLink,
+}: {
+  graphData: MoralGraph
+  selectedValue: Node | null
+  selectedLink: Edge | null
+  setSelectedValue: (value: Node | null) => void
+  setSelectedLink: (link: Edge | null) => void
+}) {
   const [ForceGraph, setForceGraph] = useState<any>(null)
-  const [selectedValue, setSelectedValue] = useState<Node | null>(null)
-  const [selectedLink, setSelectedLink] = useState<Link | null>(null)
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const isDialogOpen = selectedValue || selectedLink
 
   // Memoize the converted graph data
   const forceGraphData = useMemo(
@@ -294,15 +280,15 @@ function ForceGraphWrapper({ graphData }: { graphData: MoralGraph }) {
                 d3ForceStrength={-1000}
                 width={450}
                 height={250}
-                enableZoomInteraction={!isDialogOpen}
-                enableDragInteraction={!isDialogOpen}
-                enableNodeDrag={!isDialogOpen}
+                enableZoomInteraction={!selectedLink && !selectedValue}
+                enableDragInteraction={!selectedLink && !selectedValue}
+                enableNodeDrag={!selectedLink && !selectedValue}
                 onNodeClick={(node: Node) => {
-                  if (!isDialogOpen) {
+                  if (!selectedLink && !selectedValue) {
                     setSelectedValue(node)
                   }
                 }}
-                onLinkClick={(link: Link) => {
+                onLinkClick={(link: Edge) => {
                   if (!isDialogOpen) {
                     setSelectedLink(link)
                   }
@@ -315,109 +301,6 @@ function ForceGraphWrapper({ graphData }: { graphData: MoralGraph }) {
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-
-      <Dialog
-        open={!!selectedValue}
-        onOpenChange={() => setSelectedValue(null)}
-      >
-        <DialogContent className="max-w-md">
-          {selectedValue && (
-            <div key={selectedValue.id} className="space-y-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Badge
-                  variant={
-                    selectedValue.isWinningValue ? "default" : "secondary"
-                  }
-                >
-                  Score: {selectedValue.pageRank?.toFixed(3)}
-                </Badge>
-              </div>
-
-              <h3 className="text-md font-bold mb-2 mt-8">
-                {selectedValue.title}
-              </h3>
-              <p className="text-md text-neutral-500 mb-4">
-                {selectedValue.description}
-              </p>
-
-              {/* {selectedValue.policies && selectedValue.policies.length > 0 && (
-                <div className="bg-blue-50 rounded-md p-2 mt-2">
-                  <p className="text-xs font-semibold text-neutral-500 mb-1">
-                    WHERE MY ATTENTION GOES
-                  </p>
-                  <div className="space-y-0.5">
-                    {selectedValue.policies.map((policy, idx) => (
-                      <p key={idx} className="text-xs text-neutral-500">
-                        {policy.split(" ").map((word, wordIdx) => (
-                          <React.Fragment key={wordIdx}>
-                            {isAllUppercase(word) ? (
-                              <strong className="font-semibold text-neutral-600">
-                                {word}
-                              </strong>
-                            ) : (
-                              word
-                            )}
-                            {wordIdx < policy.split(" ").length - 1
-                              ? " "
-                              : null}
-                          </React.Fragment>
-                        ))}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-              )} */}
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={!!selectedLink} onOpenChange={() => setSelectedLink(null)}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="text-sm font-semibold text-muted-foreground">
-              {graphData?.edges[0]?.contexts[0] || "Context Information"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-base mb-6">
-              Is it wiser to follow{" "}
-              <em className="font-semibold">{selectedLink?.target.title}</em>{" "}
-              rather than{" "}
-              <em className="font-semibold">{selectedLink?.source.title}</em>?
-            </p>
-
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <p className="font-bold">Wiser</p>
-                <p className="text-muted-foreground">
-                  {selectedLink?.counts?.markedWiser ?? 0} participants
-                </p>
-              </div>
-              <div className="flex justify-between">
-                <p className="font-bold">Not Wiser</p>
-                <p className="text-muted-foreground">
-                  {selectedLink?.counts?.markedNotWiser ?? 0} participants
-                </p>
-              </div>
-              {(selectedLink?.counts?.markedLessWise ?? 0) > 0 && (
-                <div className="flex justify-between">
-                  <p className="font-bold">Less Wise</p>
-                  <p className="text-muted-foreground">
-                    {selectedLink?.counts?.markedLessWise ?? 0} participants
-                  </p>
-                </div>
-              )}
-              <div className="flex justify-between">
-                <p className="font-bold">Unsure</p>
-                <p className="text-muted-foreground">
-                  {selectedLink?.counts?.markedUnsure ?? 0} participants
-                </p>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </>
   )
 }
@@ -479,11 +362,24 @@ export const action: ActionFunction = async ({ request }) => {
   }
 }
 
+// Add this helper function
+function findNodeById(interventions: any[], nodeId: number) {
+  return interventions
+    .flatMap((i) => (i.graph as unknown as MoralGraph).values)
+    .find((v) => v.id === nodeId)
+}
+
 export default function ReportView() {
   const { interventions, isOwner } = useLoaderData<typeof loader>()
   const { deliberationId, questionId } = useParams()
-
   const fetcher = useFetcher()
+
+  // Add state for dialogs
+  const [selectedValue, setSelectedValue] = useState<Node | null>(null)
+  const [selectedLink, setSelectedLink] = useState<Edge | null>(null)
+
+  // Add state for context dialog
+  const [selectedContext, setSelectedContext] = useState<string | null>(null)
 
   return (
     <div className="container mx-auto px-8 py-8 animate-fade-in">
@@ -498,41 +394,124 @@ export default function ReportView() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <Card className="relative overflow-hidden bg-white">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
-            <CardHeader className="relative p-6">
-              <div className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-primary" />
-                <p className="text-sm font-medium text-slate-600">Values</p>
+            <CardHeader className="relative p-6 flex flex-col h-full justify-between">
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center gap-2">
+                  <Heart className="w-5 h-5 text-primary" />
+                  <p className="text-sm font-medium text-slate-600">Values</p>
+                </div>
+                <p className="text-3xl font-bold text-primary">
+                  {countAllValues(interventions)}
+                </p>
+                <p className="text-sm text-slate-500">
+                  Articulated values that matter most to participants
+                </p>
               </div>
-              <p className="text-3xl font-bold text-primary">29</p>
-              <p className="mt-2 text-sm text-slate-500">
-                Articulated values that matter most to participants
-              </p>
+              <ScrollingBadges
+                items={
+                  interventions
+                    .flatMap((i) => (i.graph as unknown as MoralGraph).values)
+                    .map((v) => v.title)
+                    .filter((v, i, arr) => arr.indexOf(v) === i) as any[]
+                }
+                onItemClick={(item) => {
+                  const value = interventions
+                    .flatMap((i) => (i.graph as unknown as MoralGraph).values)
+                    .find((v) => v.title === item)
+                  if (value) setSelectedValue(value as any)
+                }}
+              />
             </CardHeader>
           </Card>
           <Card className="relative overflow-hidden bg-white">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
-            <CardHeader className="relative p-6">
-              <div className="flex items-center gap-2">
-                <ThumbsUp className="w-5 h-5 text-primary" />
-                <p className="text-sm font-medium text-slate-600">Votes</p>
+            <CardHeader className="relative p-6 flex flex-col h-full justify-between">
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center gap-2">
+                  <ThumbsUp className="w-5 h-5 text-primary" />
+                  <p className="text-sm font-medium text-slate-600">Votes</p>
+                </div>
+                <p className="text-3xl font-bold text-primary">
+                  {countAllVotes(interventions)}
+                </p>
+                <p className="text-sm text-slate-500">
+                  Total votes for value upgrades
+                </p>
               </div>
-              <p className="text-3xl font-bold text-primary">85</p>
-              <p className="mt-2 text-sm text-slate-500">
-                Total votes for value upgrades
-              </p>
+              <ScrollingBadges
+                items={interventions
+                  .flatMap((i) => (i.graph as unknown as MoralGraph).edges)
+                  .map((e) => {
+                    const sourceNode = findNodeById(
+                      interventions,
+                      e.sourceValueId
+                    )
+                    const targetNode = findNodeById(
+                      interventions,
+                      e.wiserValueId
+                    )
+                    return `${sourceNode?.title} → ${targetNode?.title}`
+                  })}
+                onItemClick={(item) => {
+                  const [sourceTitle, targetTitle] = item.split(" → ")
+                  const edge = interventions
+                    .flatMap((i) => (i.graph as unknown as MoralGraph).edges)
+                    .find((e) => {
+                      const sourceNode = findNodeById(
+                        interventions,
+                        e.sourceValueId
+                      )
+                      const targetNode = findNodeById(
+                        interventions,
+                        e.wiserValueId
+                      )
+                      return (
+                        sourceNode?.title === sourceTitle &&
+                        targetNode?.title === targetTitle
+                      )
+                    })
+
+                  if (edge) {
+                    const sourceNode = findNodeById(
+                      interventions,
+                      edge.sourceValueId
+                    )
+                    const targetNode = findNodeById(
+                      interventions,
+                      edge.wiserValueId
+                    )
+
+                    setSelectedLink({
+                      ...edge,
+                      source: sourceNode,
+                      target: targetNode,
+                    } as any)
+                  }
+                }}
+              />
             </CardHeader>
           </Card>
           <Card className="relative overflow-hidden bg-white">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
-            <CardHeader className="relative p-6">
-              <div className="flex items-center gap-2">
-                <MessageCircle className="w-5 h-5 text-primary" />
-                <p className="text-sm font-medium text-slate-600">Contexts</p>
+            <CardHeader className="relative p-6 flex flex-col h-full justify-between">
+              <div className="space-y-4 mb-6">
+                <div className="flex items-center gap-2">
+                  <MessageCircle className="w-5 h-5 text-primary" />
+                  <p className="text-sm font-medium text-slate-600">Contexts</p>
+                </div>
+                <p className="text-3xl font-bold text-primary">
+                  {interventions.length}
+                </p>
+                <p className="text-sm text-slate-500">
+                  Specific contexts of the question that are important
+                </p>
               </div>
-              <p className="text-3xl font-bold text-primary">34</p>
-              <p className="mt-2 text-sm text-slate-500">
-                Specific contexts of the question that are important
-              </p>
+              <ScrollingBadges
+                items={interventions.map((i) =>
+                  contextDisplayName(i.contextId)
+                )}
+                onItemClick={(item) => setSelectedContext(item)}
+              />
             </CardHeader>
           </Card>
         </div>
@@ -565,9 +544,9 @@ export default function ReportView() {
           className="animate-fade-in"
           style={{ animationDelay: `${index * 100}ms` }}
         >
-          {index > 0 && <Separator className="my-8" />}
+          {index > 0 && <Separator className="my-16" />}
           <h3 className="text-lg font-semibold mb-4 flex justify-between items-center">
-            {displayName(intervention.contextId)}
+            {contextDisplayName(intervention.contextId)}
             <span className="text-sm text-muted-foreground">
               {countVotes(intervention.graph as unknown as MoralGraph)}{" "}
               {"Votes"}
@@ -605,21 +584,45 @@ export default function ReportView() {
                     }
 
                     return (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Badge
-                              variant={variants[supportLevel]}
-                              className="capitalize"
-                            >
-                              {supportLevel}
-                            </Badge>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{tooltipText[supportLevel]}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <div className="flex gap-2">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Badge
+                                variant={variants[supportLevel]}
+                                className="capitalize"
+                              >
+                                {supportLevel}
+                              </Badge>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{tooltipText[supportLevel]}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        {supportLevel === "broadly supported" && (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Badge
+                                  variant="secondary"
+                                  className="border-0 bg-[linear-gradient(45deg,theme(colors.red.200),theme(colors.purple.100),theme(colors.blue.200))] [background-clip:padding-box] relative before:absolute before:inset-0 before:p-[1px] before:[background:linear-gradient(45deg,theme(colors.red.600),theme(colors.purple.400),theme(colors.blue.600))] before:rounded-full before:-z-10 before:content-['']"
+                                >
+                                  <span className="bg-gradient-to-r from-red-500 to-blue-500 text-transparent bg-clip-text">
+                                    Cross-partisan support
+                                  </span>
+                                </Badge>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>
+                                  This value is supported across political
+                                  affiliations
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        )}
+                      </div>
                     )
                   })()}
                   {isOwner && (
@@ -658,6 +661,10 @@ export default function ReportView() {
               </p>
               <div className="h-[250px] bg-slate-50 rounded-lg overflow-hidden shadow-inner hover:shadow-inner-lg">
                 <ForceGraphWrapper
+                  selectedValue={selectedValue}
+                  selectedLink={selectedLink}
+                  setSelectedValue={setSelectedValue}
+                  setSelectedLink={setSelectedLink}
                   graphData={intervention.graph as unknown as MoralGraph}
                 />
               </div>
@@ -665,6 +672,49 @@ export default function ReportView() {
           </div>
         </div>
       ))}
+
+      <ValuesCardDialog
+        open={!!selectedValue}
+        value={selectedValue}
+        onClose={() => setSelectedValue(null)}
+        onLinkClicked={(link) => setSelectedContext(link.contexts[0])}
+        links={
+          selectedValue
+            ? interventions
+                .flatMap((i) => (i.graph as unknown as MoralGraph).edges)
+                .filter((edge) => edge.wiserValueId === selectedValue.id)
+                .map((edge) => ({
+                  ...edge,
+                  source: findNodeById(interventions, edge.sourceValueId),
+                  target: findNodeById(interventions, edge.wiserValueId),
+                }))
+            : []
+        }
+      />
+
+      <VoteCardDialog
+        open={!!selectedLink}
+        link={selectedLink}
+        onClickValue={(value) => {
+          if (selectedValue) {
+            setSelectedLink(null)
+          }
+          setSelectedValue(value)
+        }}
+        onClickContext={(contextId) => {
+          setSelectedContext(contextId)
+        }}
+        graphData={interventions[0]?.graph} // Pass the first graph as context
+        onClose={() => setSelectedLink(null)}
+      />
+
+      {/* Add Context Dialog */}
+      <ContextDialog
+        open={!!selectedContext}
+        onClose={() => setSelectedContext(null)}
+        question="How could US abortion policy support christian girls considering abortion?"
+        contextId={selectedContext || ""}
+      />
     </div>
   )
 }
