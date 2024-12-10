@@ -1,6 +1,6 @@
 import { CanonicalValuesCard, Intervention } from "@prisma/client"
 import { genObj, summarizeGraph } from "values-tools"
-import { db } from "~/config.server"
+import { db, perplexity } from "~/config.server"
 import { z } from "zod"
 import { MoralGraph, MoralGraphValue, Value } from "values-tools/src/types"
 
@@ -146,6 +146,56 @@ export async function updateIntervention(intervention: Intervention) {
     },
     data: { text: newText },
   })
+}
+
+export function getLastBracketNumber(text: string): number | null {
+  const matches = text.match(/\[(\d+)\]/g)
+  if (!matches) return null
+
+  const lastMatch = matches[matches.length - 1]
+  const number = parseInt(lastMatch.replace(/[\[\]]/g, ""))
+
+  return number
+}
+
+export async function findPrecedence(question: string, intervention: string) {
+  const prompt =
+    `Search for real-world examples of policies, programs, or interventions similar to the one described below. Focus on government policies or established organizations in other countries. 
+
+1. List specific programs/policies and reference the official sources or reputable news articles. 
+2. Include the country, year implemented (if available), and a brief description of how it's similar. The description should always be 1-2 sentences long.
+3. Determine which policy is most similar to the intervention described below.
+4. For that policy, write out the description again, this time enclosed in <description></description> tags. Include a reference to the source article again.
+
+# Question
+${question}
+    
+# Intervention
+${intervention}`.trim()
+
+  console.log(prompt)
+
+  const messages = [
+    {
+      role: "user" as const,
+      content: prompt,
+    },
+  ]
+
+  const res = await perplexity.chat.completions.create({
+    model: "llama-3.1-sonar-large-128k-online",
+    messages: messages,
+    max_tokens: 1024,
+    temperature: 0.2,
+  })
+  const text = res.choices[0].message.content!
+  const descriptionMatch = text.match(/<description>(.*?)<\/description>/)
+  const description = descriptionMatch ? descriptionMatch[1] : null
+  const citations = (res as any).citations as string[]
+  const citeIndex = getLastBracketNumber(text)
+  const citation = citeIndex ? citations[citeIndex] : undefined
+  if (!citation || !description) return null
+  return { description, citation }
 }
 
 // async function analyzeDeliberation(deliberationId: number, questionId: number) {

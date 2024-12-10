@@ -13,30 +13,19 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "~/components/ui/tooltip"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "~/components/ui/dialog"
 import { MoralGraphEdge, MoralGraphValue } from "values-tools/src/types"
-import { Intervention } from "@prisma/client"
-import React from "react"
-import { contextDisplayName, isAllUppercase } from "~/lib/utils"
+import { Intervention, InterventionPrecedence } from "@prisma/client"
+import { contextDisplayName, getFavicon } from "~/lib/utils"
 import { updateIntervention } from "~/services/interventions"
-import {
-  Loader2,
-  MessageCircle,
-  Heart,
-  ThumbsUp,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react"
+import { Loader2, MessageCircle, Heart, ThumbsUp } from "lucide-react"
 import { ScrollingBadges } from "~/components/badge-carousel"
 import ValuesCardDialog from "~/components/values-card-dialog"
 import VoteCardDialog from "~/components/vote-card-dialog"
 import ContextDialog from "~/components/context-dialog"
+
+type InterventionWithPrecedence = Intervention & {
+  InterventionPrecedence: InterventionPrecedence[]
+}
 
 type Node = MoralGraphValue & {
   x: number
@@ -186,6 +175,9 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
         deliberationId: Number(deliberationId!),
         questionId: Number(questionId!),
       },
+      include: {
+        InterventionPrecedence: true,
+      },
     })
   ).filter((i) =>
     [
@@ -201,18 +193,25 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   }
 }
 
+// Define a function to determine height
+function getGraphHeight(intervention: InterventionWithPrecedence): number {
+  return intervention.InterventionPrecedence.length > 0 ? 300 : 250
+}
+
 function ForceGraphWrapper({
   graphData,
   selectedValue,
   selectedLink,
   setSelectedValue,
   setSelectedLink,
+  intervention,
 }: {
   graphData: MoralGraph
   selectedValue: Node | null
   selectedLink: Edge | null
   setSelectedValue: (value: Node | null) => void
   setSelectedLink: (link: Edge | null) => void
+  intervention: InterventionWithPrecedence
 }) {
   const [ForceGraph, setForceGraph] = useState<any>(null)
   const isDialogOpen = selectedValue || selectedLink
@@ -246,6 +245,8 @@ function ForceGraphWrapper({
     []
   )
 
+  const graphHeight = getGraphHeight(intervention)
+
   if (!ForceGraph) {
     return <div className="h-[200px] bg-muted rounded-lg" />
   }
@@ -278,7 +279,7 @@ function ForceGraphWrapper({
                 d3Force="charge"
                 d3ForceStrength={-1000}
                 width={450}
-                height={250}
+                height={graphHeight}
                 enableZoomInteraction={!selectedLink && !selectedValue}
                 enableDragInteraction={!selectedLink && !selectedValue}
                 enableNodeDrag={!selectedLink && !selectedValue}
@@ -368,16 +369,152 @@ function findNodeById(interventions: any[], nodeId: number) {
     .find((v) => v.id === nodeId)
 }
 
+function InterventionCard({
+  intervention,
+  isOwner,
+  fetcher,
+}: {
+  intervention: InterventionWithPrecedence
+  isOwner: boolean
+  fetcher: any
+}) {
+  const supportLevel = categorizeSupportLevel(
+    (intervention.graph as unknown as MoralGraph).values.map((v) => v.pageRank!)
+  )
+
+  const variants = {
+    "broadly supported": "default",
+    "some support": "secondary",
+    contested: "outline",
+  } as const
+
+  const tooltipText = {
+    "broadly supported":
+      "One value is ranked as most important by participants with a clear margin",
+    "some support": "One value is leading, but not by a huge margin",
+    contested: "Multiple values are competing for importance",
+  }
+
+  const cardHeight = getGraphHeight(intervention)
+
+  return (
+    <Card
+      className="flex flex-col relative shadow-md hover:shadow-lg transition-shadow"
+      style={{ height: `${cardHeight}px` }}
+    >
+      <CardContent className="pt-6 flex-1 overflow-auto grow">
+        <p>{intervention.text}</p>
+
+        {intervention.InterventionPrecedence.length > 0 && (
+          <div className="mt-4">
+            <h4 className="text-sm font-medium text-muted-foreground mb-2">
+              Existing interventions
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {intervention.InterventionPrecedence.map((precedence) => (
+                <TooltipProvider key={precedence.id}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a
+                        href={precedence.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center"
+                      >
+                        <Badge
+                          variant="secondary"
+                          className="gap-2 hover:bg-secondary/80"
+                        >
+                          <img
+                            src={getFavicon(precedence.link)}
+                            alt=""
+                            className="w-4 h-4"
+                          />
+                          {new URL(precedence.link).hostname.replace(
+                            "www.",
+                            ""
+                          )}
+                        </Badge>
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="max-w-[300px] whitespace-pre-wrap">
+                        {precedence.description || "View source"}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ))}
+            </div>
+          </div>
+        )}
+      </CardContent>
+      <CardFooter className="flex justify-between items-center">
+        <div className="flex gap-2">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <Badge variant={variants[supportLevel]} className="capitalize">
+                  {supportLevel}
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{tooltipText[supportLevel]}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          {supportLevel === "broadly supported" && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Badge variant="default">Cross-partisan support</Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>This value is supported across political affiliations</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+        </div>
+        {isOwner && (
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={fetcher.state === "submitting"}
+            onClick={() => {
+              fetcher.submit(
+                {
+                  type: "regenerate",
+                  contextId: intervention.contextId,
+                  questionId: intervention.questionId,
+                  deliberationId: intervention.deliberationId,
+                },
+                { method: "post" }
+              )
+            }}
+          >
+            {fetcher.state === "submitting" ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              "Regenerate"
+            )}
+          </Button>
+        )}
+      </CardFooter>
+    </Card>
+  )
+}
+
 export default function ReportView() {
   const { interventions, isOwner } = useLoaderData<typeof loader>()
   const { deliberationId, questionId } = useParams()
   const fetcher = useFetcher()
 
-  // Add state for dialogs
   const [selectedValue, setSelectedValue] = useState<Node | null>(null)
   const [selectedLink, setSelectedLink] = useState<Edge | null>(null)
-
-  // Add state for context dialog
   const [selectedContext, setSelectedContext] = useState<string | null>(null)
 
   return (
@@ -551,115 +688,38 @@ export default function ReportView() {
               {"Votes"}
             </span>
           </h3>
+
           <div className="flex flex-col md:flex-row gap-8">
             <div className="flex-1">
               <p className="text-sm font-normal text-muted-foreground mb-2">
                 Intervention
               </p>
-              <Card className="h-[250px] flex flex-col relative shadow-md hover:shadow-lg transition-shadow">
-                <CardContent className="pt-6 flex-1 overflow-auto">
-                  <p>{intervention.text}</p>
-                </CardContent>
-                <CardFooter className="flex justify-between items-center">
-                  {(() => {
-                    const supportLevel = categorizeSupportLevel(
-                      (intervention.graph as unknown as MoralGraph).values.map(
-                        (v) => v.pageRank!
-                      )
-                    )
-
-                    const variants = {
-                      "broadly supported": "default",
-                      "some support": "secondary",
-                      contested: "outline",
-                    } as const
-
-                    const tooltipText = {
-                      "broadly supported":
-                        "One value is ranked as most important by participants with a clear margin",
-                      "some support":
-                        "One value is leading, but not by a huge margin",
-                      contested: "Multiple values are competing for importance",
-                    }
-
-                    return (
-                      <div className="flex gap-2">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <Badge
-                                variant={variants[supportLevel]}
-                                className="capitalize"
-                              >
-                                {supportLevel}
-                              </Badge>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{tooltipText[supportLevel]}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                        {supportLevel === "broadly supported" && (
-                          <TooltipProvider>
-                            <Tooltip>
-                              <TooltipTrigger>
-                                <Badge variant="default">
-                                  Cross-partisan support
-                                </Badge>
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>
-                                  This value is supported across political
-                                  affiliations
-                                </p>
-                              </TooltipContent>
-                            </Tooltip>
-                          </TooltipProvider>
-                        )}
-                      </div>
-                    )
-                  })()}
-                  {isOwner && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={fetcher.state === "submitting"}
-                      onClick={() => {
-                        fetcher.submit(
-                          {
-                            type: "regenerate",
-                            contextId: intervention.contextId,
-                            questionId: intervention.questionId,
-                            deliberationId: intervention.deliberationId,
-                          },
-                          { method: "post" }
-                        )
-                      }}
-                    >
-                      {fetcher.state === "submitting" ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Loading...
-                        </>
-                      ) : (
-                        "Regenerate"
-                      )}
-                    </Button>
-                  )}
-                </CardFooter>
-              </Card>
+              <InterventionCard
+                intervention={
+                  intervention as unknown as InterventionWithPrecedence
+                }
+                isOwner={isOwner}
+                fetcher={fetcher}
+              />
             </div>
             <div className="w-full md:w-[450px]">
               <p className="text-sm font-normal text-muted-foreground mb-2">
                 Values
               </p>
-              <div className="h-[250px] bg-slate-50 rounded-lg overflow-hidden shadow-inner hover:shadow-inner-lg">
+              <div
+                className={`h-[${getGraphHeight(
+                  intervention as unknown as InterventionWithPrecedence
+                )}px] bg-slate-50 rounded-lg overflow-hidden shadow-inner hover:shadow-inner-lg`}
+              >
                 <ForceGraphWrapper
                   selectedValue={selectedValue}
                   selectedLink={selectedLink}
                   setSelectedValue={setSelectedValue}
                   setSelectedLink={setSelectedLink}
                   graphData={intervention.graph as unknown as MoralGraph}
+                  intervention={
+                    intervention as unknown as InterventionWithPrecedence
+                  }
                 />
               </div>
             </div>
@@ -698,11 +758,10 @@ export default function ReportView() {
         onClickContext={(contextId) => {
           setSelectedContext(contextId)
         }}
-        graphData={interventions[0]?.graph} // Pass the first graph as context
+        graphData={interventions[0]?.graph}
         onClose={() => setSelectedLink(null)}
       />
 
-      {/* Add Context Dialog */}
       <ContextDialog
         open={!!selectedContext}
         onClose={() => setSelectedContext(null)}

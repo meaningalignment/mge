@@ -11,7 +11,6 @@ import { ChevronUp, ChevronDown } from "lucide-react"
 import React from "react"
 import { contextDisplayName, isAllUppercase } from "~/lib/utils"
 import { Button } from "./ui/button"
-import { Value } from "values-tools/src/types"
 
 export default function ValuesCardDialog({
   open,
@@ -69,7 +68,7 @@ export default function ValuesCardDialog({
             <p className="text-md text-neutral-500 mb-4">{value.description}</p>
 
             {value.policies && value.policies.length > 0 && (
-              <div className="mt-4">
+              <div className="mt-4 hidden sm:block">
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"

@@ -200,17 +200,30 @@ model Question {
   Intervention         Intervention[]
 }
 
-model Intervention {
-  text           String
-  graph          Json
+model InterventionPrecedence {
+  id             Int          @id @default(autoincrement())
+  description    String?
+  link           String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
   contextId      String
   questionId     Int
   deliberationId Int
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  context        Context      @relation(fields: [contextId, deliberationId], references: [id, deliberationId], onDelete: Cascade)
-  question       Question     @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  deliberation   Deliberation @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+  intervention   Intervention @relation(fields: [contextId, questionId, deliberationId], references: [contextId, questionId, deliberationId], onDelete: Cascade)
+}
+
+model Intervention {
+  text                   String
+  graph                  Json
+  contextId              String
+  questionId             Int
+  deliberationId         Int
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  context                Context                  @relation(fields: [contextId, deliberationId], references: [id, deliberationId], onDelete: Cascade)
+  question               Question                 @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  deliberation           Deliberation             @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+  InterventionPrecedence InterventionPrecedence[]
 
   @@id([contextId, questionId, deliberationId])
 }
