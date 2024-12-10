@@ -36,7 +36,6 @@ import {
 import { ScrollingBadges } from "~/components/badge-carousel"
 import ValuesCardDialog from "~/components/values-card-dialog"
 import VoteCardDialog from "~/components/vote-card-dialog"
-import { Value } from "@radix-ui/react-select"
 import ContextDialog from "~/components/context-dialog"
 
 type Node = MoralGraphValue & {
@@ -404,7 +403,7 @@ export default function ReportView() {
                   {countAllValues(interventions)}
                 </p>
                 <p className="text-sm text-slate-500">
-                  Articulated values that matter most to participants
+                  Values about what's important to participants
                 </p>
               </div>
               <ScrollingBadges
@@ -435,7 +434,7 @@ export default function ReportView() {
                   {countAllVotes(interventions)}
                 </p>
                 <p className="text-sm text-slate-500">
-                  Total votes for value upgrades
+                  Votes about which values are wiser than others
                 </p>
               </div>
               <ScrollingBadges
@@ -503,7 +502,7 @@ export default function ReportView() {
                   {interventions.length}
                 </p>
                 <p className="text-sm text-slate-500">
-                  Specific contexts of the question that are important
+                  Aspects of the question that demand different values
                 </p>
               </div>
               <ScrollingBadges
@@ -604,13 +603,8 @@ export default function ReportView() {
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger>
-                                <Badge
-                                  variant="secondary"
-                                  className="border-0 bg-[linear-gradient(45deg,theme(colors.red.200),theme(colors.purple.100),theme(colors.blue.200))] [background-clip:padding-box] relative before:absolute before:inset-0 before:p-[1px] before:[background:linear-gradient(45deg,theme(colors.red.600),theme(colors.purple.400),theme(colors.blue.600))] before:rounded-full before:-z-10 before:content-['']"
-                                >
-                                  <span className="bg-gradient-to-r from-red-500 to-blue-500 text-transparent bg-clip-text">
-                                    Cross-partisan support
-                                  </span>
+                                <Badge variant="default">
+                                  Cross-partisan support
                                 </Badge>
                               </TooltipTrigger>
                               <TooltipContent>

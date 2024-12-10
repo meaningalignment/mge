@@ -51,7 +51,7 @@ export default function ValuesCardDialog({
                     <Badge
                       key={index}
                       variant="outline"
-                      className="cursor-pointer hover:bg-slate-100"
+                      className="cursor-pointer hover:bg-slate-100 rounded-sm"
                       onClick={() =>
                         onLinkClicked?.(
                           links.find((link) => link.contexts[0] === context)
