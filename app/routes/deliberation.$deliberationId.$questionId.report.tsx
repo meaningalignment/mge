@@ -135,7 +135,7 @@ function convertMoralGraphToForceGraph(moralGraph: MoralGraph) {
         : ((value.pageRank || 0) - minPageRank) / (maxPageRank - minPageRank),
   }))
 
-  // Create links with random red/blue colors
+  // Create links with colors based on political affiliation
   const links: Edge[] = moralGraph.edges
     .filter(
       (edge) =>
@@ -150,11 +150,23 @@ function convertMoralGraphToForceGraph(moralGraph: MoralGraph) {
         throw new Error("Invalid edge references")
       }
 
+      // Set color based on dominant political affiliation
+      let color = "gray" // default color
+      if (
+        (edge.summary as any)?.dominantPoliticalAffiliation === "Republican"
+      ) {
+        color = "red"
+      } else if (
+        (edge.summary as any)?.dominantPoliticalAffiliation === "Democrat"
+      ) {
+        color = "blue"
+      }
+
       return {
         ...edge,
         source: sourceValue,
         target: targetValue,
-        color: Math.random() > 0.5 ? "red" : "blue",
+        color,
       }
     })
 
@@ -408,7 +420,7 @@ function InterventionCard({
         {intervention.InterventionPrecedence.length > 0 && (
           <div className="mt-4">
             <h4 className="text-sm font-medium text-muted-foreground mb-2">
-              Existing interventions
+              Similar existing interventions
             </h4>
             <div className="flex flex-wrap gap-2">
               {intervention.InterventionPrecedence.map((precedence) => (

@@ -240,7 +240,3 @@ model ContextsForQuestions {
 
   @@id([contextId, questionId, deliberationId])
 }
-
-// How to do several dedupes during training?
-// we could do it by migrating all edges etc.
-// this is how it'd have to be done. Which is ok, migration shouldn't be too tricky.
