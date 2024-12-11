@@ -395,7 +395,7 @@ function InterventionCard({
   )
 
   const variants = {
-    "broadly supported": "default",
+    "broadly supported": "success",
     "some support": "secondary",
     contested: "outline",
   } as const
@@ -479,7 +479,12 @@ function InterventionCard({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <Badge variant="default">Cross-partisan support</Badge>
+                  <Badge
+                    variant="outline"
+                    className="bg-[length:120%_100%] bg-[position:-1px_0] bg-gradient-to-r from-blue-600 to-red-600 text-white border-transparent"
+                  >
+                    Cross-partisan
+                  </Badge>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>This value is supported across political affiliations</p>
