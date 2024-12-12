@@ -153,11 +153,13 @@ function convertMoralGraphToForceGraph(moralGraph: MoralGraph) {
       // Set color based on dominant political affiliation
       let color = "gray" // default color
       if (
-        (edge.summary as any)?.dominantPoliticalAffiliation === "Republican"
+        (edge.summary as any)?.demographics?.mainUsPoliticalAffiliation ===
+        "Republican"
       ) {
         color = "red"
       } else if (
-        (edge.summary as any)?.dominantPoliticalAffiliation === "Democrat"
+        (edge.summary as any)?.demographics?.mainUsPoliticalAffiliation ===
+        "Democrat"
       ) {
         color = "blue"
       }
@@ -186,6 +188,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
       where: {
         deliberationId: Number(deliberationId!),
         questionId: Number(questionId!),
+        shouldDisplay: true,
       },
       include: {
         InterventionPrecedence: true,
