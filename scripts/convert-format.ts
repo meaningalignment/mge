@@ -115,7 +115,7 @@ async function convertDescriptions() {
       data: {
         description: application,
         metadata: {
-          relevcantToAbortion: true,
+          relevantToAbortion: true,
           oldDescription: value.description,
         },
       },

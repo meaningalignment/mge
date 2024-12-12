@@ -16,7 +16,7 @@ import {
 import { MoralGraphEdge, MoralGraphValue } from "values-tools/src/types"
 import { Intervention, InterventionPrecedence } from "@prisma/client"
 import { contextDisplayName, getFavicon } from "~/lib/utils"
-import { updateIntervention } from "~/services/interventions"
+import { updateInterventionText } from "~/services/interventions"
 import { Loader2, MessageCircle, Heart, ThumbsUp } from "lucide-react"
 import { ScrollingBadges } from "~/components/badge-carousel"
 import ValuesCardDialog from "~/components/values-card-dialog"
@@ -359,7 +359,7 @@ export const action: ActionFunction = async ({ request }) => {
       const intervention = await db.intervention.findUniqueOrThrow({
         where: { id },
       })
-      await updateIntervention(intervention)
+      await updateInterventionText(intervention)
       return json({ success: true })
     default:
       return json({ error: "Unknown action type" }, { status: 400 })

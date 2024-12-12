@@ -98,7 +98,7 @@ export async function getDraw(
   })
 }
 
-export async function upsertHypothesizedUpgrades(
+export async function createHypothesizedUpgrades(
   upgrades: Upgrade[],
   hypothesisRunId: string,
   condition: string,
@@ -106,14 +106,8 @@ export async function upsertHypothesizedUpgrades(
 ): Promise<void> {
   await Promise.all(
     upgrades.map((t) =>
-      db.edgeHypothesis.upsert({
-        where: {
-          fromId_toId: {
-            fromId: t.a_id,
-            toId: t.b_id,
-          },
-        },
-        create: {
+      db.edgeHypothesis.create({
+        data: {
           from: { connect: { id: t.a_id } },
           to: { connect: { id: t.b_id } },
           context: {
@@ -128,7 +122,6 @@ export async function upsertHypothesizedUpgrades(
           story: t.story,
           hypothesisRunId,
         },
-        update: {},
       })
     )
   )
@@ -285,7 +278,7 @@ export const hypothesize = inngest.createFunction(
       await step.run(
         `Add transitions for context ${contextId} to database`,
         async () =>
-          upsertHypothesizedUpgrades(upgrades, runId, contextId, deliberationId)
+          createHypothesizedUpgrades(upgrades, runId, contextId, deliberationId)
       )
     }
 

@@ -1,8 +1,15 @@
-import { CanonicalValuesCard, Intervention } from "@prisma/client"
+import {
+  CanonicalValuesCard,
+  Demographic,
+  Edge,
+  Intervention,
+  User,
+} from "@prisma/client"
 import { genObj, summarizeGraph } from "values-tools"
 import { db, perplexity } from "~/config.server"
 import { z } from "zod"
 import { MoralGraph, MoralGraphValue, Value } from "values-tools/src/types"
+import { usPoliticalAffiliationSummarizer } from "values-tools/src/services/moral-graph"
 
 async function getContextsForDeliberation(
   deliberationId: number,
@@ -14,7 +21,6 @@ async function getContextsForDeliberation(
       ContextsForQuestions: {
         some: { questionId },
       },
-      id: "When in distress",
     },
   })
 }
@@ -38,9 +44,10 @@ async function getValuesForDeliberation(
 async function getEdgesForContext(
   deliberationId: number,
   questionId: number,
-  contextId: string
+  contextId: string,
+  excludeUsersWithoutDemographics = false
 ) {
-  return db.edge.findMany({
+  const edges = await db.edge.findMany({
     where: {
       deliberationId,
       contextId,
@@ -55,7 +62,28 @@ async function getEdgesForContext(
         },
       },
     },
+    include: {
+      user: {
+        select: {
+          Demographic: true,
+        },
+      },
+    },
   })
+
+  return edges
+    .map((edge: Edge & { user: { Demographic: Demographic | null } }) => {
+      // Only include demographics instances where usPoliticalAffiliation is present
+      const demographics = edge.user.Demographic?.usPoliticalAffiliation
+        ? edge.user.Demographic
+        : undefined
+
+      return {
+        ...edge,
+        demographics,
+      }
+    })
+    .filter((edge) => !excludeUsersWithoutDemographics || edge.demographics)
 }
 
 function printTopValues(values: any[], count = 5) {
@@ -67,7 +95,7 @@ function printTopValues(values: any[], count = 5) {
   })
 }
 
-async function generateIntervention(context: string, value: Value) {
+async function generateInterventionText(context: string, value: Value) {
   const question = `What should be done in the US about abortion policy, specifically when considering christian girls thinking about having an abortion, who are ${context.replace(
     "When ",
     ""
@@ -125,24 +153,20 @@ Each attention policy centers on something precise that can be attended to, not 
     .then((response) => response.intervention)
 }
 
-function winningValue(graph: MoralGraph): Value {
+function getWinningValue(graph: MoralGraph): Value {
   const sortedValues = [...graph.values].sort(
     (a, b) => (b.pageRank ?? -Infinity) - (a.pageRank ?? -Infinity)
   )
   return sortedValues[0]
 }
 
-export async function updateIntervention(intervention: Intervention) {
-  const value = winningValue(intervention.graph as unknown as MoralGraph)
-  const newText = await generateIntervention(intervention.contextId, value)
+export async function updateInterventionText(intervention: Intervention) {
+  const value = getWinningValue(intervention.graph as unknown as MoralGraph)
+  const newText = await generateInterventionText(intervention.contextId, value)
 
   await db.intervention.update({
     where: {
-      contextId_questionId_deliberationId: {
-        contextId: intervention.contextId,
-        questionId: intervention.questionId,
-        deliberationId: intervention.deliberationId,
-      },
+      id: intervention.id,
     },
     data: { text: newText },
   })
@@ -198,44 +222,72 @@ ${intervention}`.trim()
   return { description, citation }
 }
 
-// async function analyzeDeliberation(deliberationId: number, questionId: number) {
-//   const contexts = await getContextsForDeliberation(deliberationId, questionId)
+export async function generateInterventions(
+  deliberationId: number,
+  questionId: number,
+  excludeUsersWithoutDemographics = false
+) {
+  const contexts = await getContextsForDeliberation(deliberationId, questionId)
 
-//   for (const context of contexts) {
-//     console.log(`\n=== Processing Context: ${context.id} ===\n`)
+  console.log("Processing contexts:", contexts)
 
-//     const values = await getValuesForDeliberation(deliberationId, questionId)
-//     const edges = await getEdgesForContext(
-//       deliberationId,
-//       questionId,
-//       context.id
-//     )
+  for (const context of contexts) {
+    console.log(`\n=== Processing Context: ${context.id} ===\n`)
 
-//     console.log(`Found ${values.length} values and ${edges.length} edges`)
+    const values = (
+      await getValuesForDeliberation(deliberationId, questionId)
+    ).filter((v) => {
+      if (v.metadata) {
+        return (v.metadata as any).relevantToAbortion
+      }
+    })
+    const edges = await getEdgesForContext(
+      deliberationId,
+      questionId,
+      context.id,
+      excludeUsersWithoutDemographics
+    )
 
-//     const graph = await summarizeGraph(values, edges, { includePageRank: true })
-//     console.log(
-//       `Graph processed with ${graph.values.length} values and ${graph.edges.length} edges`
-//     )
+    console.log(`Found ${values.length} values and ${edges.length} edges`)
 
-//     if (graph.values?.length > 0) {
-//       const sortedValues = [...graph.values].sort(
-//         (a, b) => (b.pageRank ?? -Infinity) - (a.pageRank ?? -Infinity)
-//       )
+    const graph = await summarizeGraph(values, edges, {
+      includePageRank: true,
+      includeDemographics: true,
+      demographicsSummarizer: usPoliticalAffiliationSummarizer,
+    })
 
-//       printTopValues(sortedValues)
+    console.log(
+      `Graph processed with ${graph.values.length} values and ${graph.edges.length} edges`
+    )
 
-//       const winningValue = sortedValues[0]
-//       console.log("\nHighest ranked value details:", winningValue)
+    if (graph.values?.length > 0) {
+      const sortedValues = [...graph.values].sort(
+        (a, b) => (b.pageRank ?? -Infinity) - (a.pageRank ?? -Infinity)
+      )
 
-//       const intervention = await generateIntervention(context.id, winningValue)
+      printTopValues(sortedValues)
 
-//       console.log(`\nSuggested Intervention: ${intervention}`)
-//     } else {
-//       console.log("No values available in the graph.")
-//     }
-//   }
-// }
+      const winningValue = sortedValues[0]
+      console.log("\nHighest ranked value details:", winningValue)
 
-// // Example usage
-// analyzeDeliberation(33, 60)
+      const intervention = await generateInterventionText(
+        context.id,
+        winningValue
+      )
+
+      console.log(`\nSuggested Intervention: ${intervention}`)
+
+      await db.intervention.create({
+        data: {
+          text: intervention,
+          contextId: context.id,
+          deliberationId,
+          questionId,
+          graph: JSON.parse(JSON.stringify(graph)),
+        },
+      })
+    } else {
+      console.log("No values available in the graph.")
+    }
+  }
+}

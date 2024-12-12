@@ -1,5 +1,6 @@
 import { LoaderFunctionArgs, json } from "@remix-run/node"
 import { summarizeGraph } from "values-tools"
+import { usPoliticalAffiliationSummarizer } from "values-tools/src/services/moral-graph"
 import { db } from "~/config.server"
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
@@ -57,7 +58,8 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
   const graph = await summarizeGraph(values, edges, {
     includePageRank: true,
-    includeDemographics,
+    includeDemographics: true,
+    demographicsSummarizer: usPoliticalAffiliationSummarizer,
   })
 
   return json(graph)
