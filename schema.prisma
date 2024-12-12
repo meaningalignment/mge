@@ -97,6 +97,7 @@ model CanonicalValuesCard {
   title              String
   description        String
   policies           String[]
+  metadata           Json?
   createdAt          DateTime                     @default(now())
   updatedAt          DateTime                     @updatedAt
   embedding          Unsupported("vector(1536)")?
@@ -202,30 +203,28 @@ model Question {
 
 model InterventionPrecedence {
   id             Int          @id @default(autoincrement())
+  interventionId Int
   description    String?
   link           String
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
-  contextId      String
-  questionId     Int
-  deliberationId Int
-  intervention   Intervention @relation(fields: [contextId, questionId, deliberationId], references: [contextId, questionId, deliberationId], onDelete: Cascade)
+  intervention   Intervention @relation(fields: [interventionId], references: [id], onDelete: Cascade)
 }
 
 model Intervention {
+  id                     Int                      @id @default(autoincrement())
   text                   String
   graph                  Json
   contextId              String
   questionId             Int
   deliberationId         Int
+  shouldDisplay          Boolean                  @default(true)
   createdAt              DateTime                 @default(now())
   updatedAt              DateTime                 @updatedAt
   context                Context                  @relation(fields: [contextId, deliberationId], references: [id, deliberationId], onDelete: Cascade)
   question               Question                 @relation(fields: [questionId], references: [id], onDelete: Cascade)
   deliberation           Deliberation             @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
   InterventionPrecedence InterventionPrecedence[]
-
-  @@id([contextId, questionId, deliberationId])
 }
 
 model ContextsForQuestions {

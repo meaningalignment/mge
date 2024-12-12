@@ -355,17 +355,9 @@ export const action: ActionFunction = async ({ request }) => {
 
   switch (type) {
     case "regenerate":
-      const contextId = formData.get("contextId") as string
-      const questionId = Number(formData.get("questionId"))
-      const deliberationId = Number(formData.get("deliberationId"))
+      const id = Number(formData.get("interventionId"))
       const intervention = await db.intervention.findUniqueOrThrow({
-        where: {
-          contextId_questionId_deliberationId: {
-            contextId,
-            questionId,
-            deliberationId,
-          },
-        },
+        where: { id },
       })
       await updateIntervention(intervention)
       return json({ success: true })
@@ -502,9 +494,7 @@ function InterventionCard({
               fetcher.submit(
                 {
                   type: "regenerate",
-                  contextId: intervention.contextId,
-                  questionId: intervention.questionId,
-                  deliberationId: intervention.deliberationId,
+                  interventionId: intervention.id,
                 },
                 { method: "post" }
               )
