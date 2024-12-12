@@ -80,7 +80,9 @@ export default function Deliberations() {
             >
               <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
             </svg>
-            <span className="ml-3 text-base font-semibold">Deliberations</span>
+            <span className="ml-3 text-base font-semibold">
+              Moral Graph Elicitation
+            </span>
           </div>
           <ScrollArea className="flex-grow">
             <div className="mb-2 px-3 text-xs font-semibold text-slate-500 ">
@@ -112,8 +114,10 @@ export default function Deliberations() {
                     >
                       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                     </svg>
-                    <span className="ml-3 flex-1 whitespace-nowrap">
-                      {delib.title}
+                    <span className="ml-3 flex-1 whitespace-nowrap overflow-hidden text-ellipsis">
+                      <span className="inline-block max-w-full truncate">
+                        {delib.title}
+                      </span>
                     </span>
                   </NavLink>
                 </li>
@@ -153,8 +157,10 @@ export default function Deliberations() {
                           <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                           <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
-                        <span className="ml-3 flex-1 whitespace-nowrap">
-                          {delib.title}
+                        <span className="ml-3 flex-1 whitespace-nowrap overflow-hidden text-ellipsis">
+                          <span className="inline-block max-w-full truncate">
+                            {delib.title}
+                          </span>
                         </span>
                       </NavLink>
                     </li>

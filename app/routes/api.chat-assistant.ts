@@ -78,17 +78,20 @@ async function submitValuesCard(
       deliberationId: chat.deliberationId,
       description,
       policies,
+      questionId,
     },
     update: {
       title,
-      chatId: chat.id,
       description,
       policies,
     },
     where: { chatId: chat.id },
   })
 
+  // Embed the card
   await embedNonCanonicalCard(card)
+
+  // Find new contexts surfaced in the chat in the background
   await inngest.send({
     name: "find-new-contexts",
     data: {
@@ -107,7 +110,7 @@ async function submitValuesCard(
   kv.set(`data:${threadId}`, JSON.stringify(data)) // Data messages are not saved, so we persist in KV for reloads.
   sendDataMessage({ role: "data", data })
 
-  return "<Submitted values card. Go ahead and thank the user.>"
+  return "Submitted the values card. Go ahead and thank the user."
 }
 
 // When the first "function call" token is streamed, we store the function name in KV

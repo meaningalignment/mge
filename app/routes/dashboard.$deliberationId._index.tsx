@@ -276,14 +276,14 @@ export default function DeliberationDashboard() {
               <span>Edit Deliberation</span>
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
             </Link>
-            {/* <Link
-              to={`/dashboard/${deliberationId}/merge`}
+            <Link
+              to={`/dashboard/${deliberationId}/values`}
               prefetch="render"
               className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  "
             >
-              <span>Merge Values</span>
+              <span>Manage Values</span>
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
-            </Link> */}
+            </Link>
             <Link
               to={`/dashboard/${deliberationId}/links`}
               prefetch="render"

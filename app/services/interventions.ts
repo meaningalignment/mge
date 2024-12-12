@@ -32,6 +32,7 @@ async function getValuesForDeliberation(
   return db.canonicalValuesCard.findMany({
     where: {
       deliberationId,
+      isExcluded: false,
       valuesCards: {
         some: {
           chat: { questionId },
@@ -234,13 +235,7 @@ export async function generateInterventions(
   for (const context of contexts) {
     console.log(`\n=== Processing Context: ${context.id} ===\n`)
 
-    const values = (
-      await getValuesForDeliberation(deliberationId, questionId)
-    ).filter((v) => {
-      if (v.metadata) {
-        return (v.metadata as any).relevantToAbortion
-      }
-    })
+    const values = await getValuesForDeliberation(deliberationId, questionId)
     const edges = await getEdgesForContext(
       deliberationId,
       questionId,

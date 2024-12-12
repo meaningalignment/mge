@@ -81,11 +81,11 @@ model ValuesCard {
   createdAt           DateTime                     @default(now())
   updatedAt           DateTime                     @updatedAt
   canonicalCardId     Int?
-  questionId          Int?
+  questionId          Int
   seedGenerationRunId String? // Present if the card was generated as a seed value.
   chatId              String?                      @unique // Present if the card was articulated in a chat.
   chat                Chat?                        @relation(fields: [chatId], references: [id], onDelete: Cascade)
-  question            Question?                    @relation(fields: [questionId], references: [id], onDelete: SetNull)
+  question            Question                     @relation(fields: [questionId], references: [id], onDelete: Cascade)
   canonicalCard       CanonicalValuesCard?         @relation(fields: [canonicalCardId], references: [id], onDelete: SetNull)
   embedding           Unsupported("vector(1536)")?
   deliberationId      Int
@@ -97,7 +97,7 @@ model CanonicalValuesCard {
   title              String
   description        String
   policies           String[]
-  metadata           Json?
+  isExcluded         Boolean                      @default(false)
   createdAt          DateTime                     @default(now())
   updatedAt          DateTime                     @updatedAt
   embedding          Unsupported("vector(1536)")?

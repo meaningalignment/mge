@@ -1,11 +1,17 @@
-import { json } from "@remix-run/node"
+import { json, LoaderFunction, LoaderFunctionArgs } from "@remix-run/node"
 import { NavLink, Outlet, useLoaderData, useParams } from "@remix-run/react"
 import { db } from "~/config.server"
 import { cn } from "~/lib/utils"
+import { Alert, AlertTitle, AlertDescription } from "~/components/ui/alert"
+import { AlertCircle } from "lucide-react"
 
-export async function loader() {
+export async function loader({ params }: LoaderFunctionArgs) {
+  const { deliberationId } = params
   const edges = await db.edge.findMany({
     orderBy: { createdAt: "desc" },
+    where: {
+      deliberationId: Number(deliberationId)!,
+    },
     select: {
       userId: true,
       createdAt: true,
@@ -51,10 +57,27 @@ export default function AdminLinks() {
   const data = useLoaderData<typeof loader>()
   const { deliberationId } = useParams()
 
+  if (data.edges.length === 0) {
+    return (
+      <div className="container mx-auto py-6">
+        <Alert className="mt-6 mb-4 bg-slate-50">
+          <div className="flex flex-row space-x-2">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>No links yet</AlertTitle>
+          </div>
+          <AlertDescription>
+            Links between values will appear here once participants start making
+            connections.
+          </AlertDescription>
+        </Alert>
+      </div>
+    )
+  }
+
   return (
     <div className="flex h-screen">
-      <div className="w-64 flex-shrink-0 border-r overflow-y-auto bg-white  px-3 py-4">
-        <div className="mb-10 flex items-center rounded-lg px-3 py-2 text-slate-900 ">
+      <div className="w-64 flex-shrink-0 border-r overflow-y-auto bg-white px-3 py-4">
+        <div className="mb-10 flex items-center rounded-lg px-3 py-2 text-slate-900">
           <svg
             className="h-5 w-5"
             xmlns="http://www.w3.org/2000/svg"
@@ -69,6 +92,7 @@ export default function AdminLinks() {
           </svg>
           <span className="ml-3 text-base font-semibold">Links</span>
         </div>
+
         <ul className="space-y-2 text-sm font-medium">
           {data.edges.map((edge) => (
             <NavLink

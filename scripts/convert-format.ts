@@ -91,21 +91,6 @@ async function convertDescriptions() {
   for (const value of values) {
     console.log(`\n=== Processing Value: ${value.id} ===\n`)
     const policies = value.policies
-    const isRelevant = await isRelevantToAbortion(policies)
-
-    if (!isRelevant) {
-      console.log(`Not relevant: ${policies.join("\n")}`)
-
-      await db.canonicalValuesCard.update({
-        where: {
-          id: value.id,
-        },
-        data: {
-          metadata: { relevantToAbortion: false },
-        },
-      })
-    }
-
     const application = await generateApplicationOfValue(policies)
 
     await db.canonicalValuesCard.update({
@@ -114,10 +99,6 @@ async function convertDescriptions() {
       },
       data: {
         description: application,
-        metadata: {
-          relevantToAbortion: true,
-          oldDescription: value.description,
-        },
       },
     })
   }

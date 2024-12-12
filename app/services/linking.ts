@@ -214,14 +214,11 @@ export const hypothesize = inngest.createFunction(
   { name: "Create Hypothetical Edges", concurrency: 1 },
   { event: "hypothesize" },
   async ({ event, step, logger, runId }) => {
-    logger.info("Creating hypothetical links for all cases.")
-
     const deliberationId = event.data!.deliberationId as number
-
     logger.info(`Running hypothetical links generation`)
 
     // Contexts are connected to values cards through the questions. Each question is connected
-    // to a series of questions. When a user finds a new context, that new context
+    // to several contexts. When a user finds a new context, that new context
     // is added to the question as well. If they identify a context as relevant to a question,
     // but it already exists for another question, then it is linked to the new question.
     const contexts = await step.run("Fetching contexts with values", async () =>
@@ -264,11 +261,12 @@ export const hypothesize = inngest.createFunction(
         continue
       }
 
-      const contextId = cluster.ContextsForQuestions[0].contextId // contexts in cluster are the same.
+      // contexts in cluster are the same.
+      const contextId = cluster.ContextsForQuestions[0].contextId
 
       const upgrades = await step.run(
         `Generate transitions for context ${contextId}`,
-        async () => generateUpgrades(values)
+        async () => generateUpgrades(values, contextId)
       )
 
       logger.info(
