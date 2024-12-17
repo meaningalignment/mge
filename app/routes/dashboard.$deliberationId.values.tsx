@@ -23,11 +23,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     include: {
       valuesCards: {
         include: {
-          chat: {
-            include: {
-              Question: true,
-            },
-          },
+          question: true,
         },
       },
     },
@@ -105,12 +101,12 @@ export default function ValuesView() {
       if (selectedQuestion === "all" && selectedContext === "all") return true
 
       return value.valuesCards.some((card) => {
-        if (!card.chat?.Question) return false
+        if (!card.question) return false
 
         // If question is selected, check if it matches
         if (
           selectedQuestion !== "all" &&
-          card.chat.Question.id.toString() !== selectedQuestion
+          card.question.id.toString() !== selectedQuestion
         ) {
           return false
         }
@@ -120,7 +116,7 @@ export default function ValuesView() {
           contexts
             .find((context) => context.id === selectedContext)
             ?.ContextsForQuestions.some(
-              (c) => c.questionId === card.chat?.Question.id
+              (c) => c.questionId === card.question.id
             )
         }
 

@@ -143,7 +143,7 @@ export async function fetchDuplicateContext(
 
 // Cron function
 export const deduplicateCron = inngest.createFunction(
-  { name: "Deduplicate Cron", concurrency: 1 },
+  { id: "deduplicate-cron", concurrency: 1 },
   { cron: "0 * * * *" },
   async ({ step, logger }) => {
     logger.info("Running deduplication cron job.")
@@ -158,7 +158,7 @@ export const deduplicateCron = inngest.createFunction(
 
     for (const deliberation of deliberations) {
       // Trigger deduplication for each deliberation
-      await step.sendEvent({
+      await step.sendEvent("deduplicate", {
         name: "deduplicate",
         data: { deliberationId: deliberation.id },
       })
@@ -172,7 +172,7 @@ export const deduplicateCron = inngest.createFunction(
 
 // Deduplication function for a specific deliberation
 export const deduplicate = inngest.createFunction(
-  { name: "Deduplicate Deliberation" },
+  { id: "deduplicate" },
   { event: "deduplicate" },
   async ({ event, step, logger }) => {
     const deliberationId = event.data.deliberationId as number
@@ -243,7 +243,7 @@ export const deduplicate = inngest.createFunction(
       `Done. Deduplicated ${cards.length} cards for deliberation ${deliberationId}.`
     )
 
-    await step.sendEvent({
+    await step.sendEvent("deduplicate-finished", {
       name: "deduplicate-finished",
       data: { deliberationId },
     })

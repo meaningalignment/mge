@@ -3,9 +3,12 @@ import { db, inngest } from "~/config.server"
 import { calculateAverageEmbedding } from "~/lib/utils"
 import { embedText, embedValue } from "values-tools"
 
-export async function embedCanonicalCard(
-  card: CanonicalValuesCard
-): Promise<void> {
+type EmbeddableCard = Pick<
+  ValuesCard | CanonicalValuesCard,
+  "id" | "title" | "description" | "policies" | "deliberationId"
+>
+
+export async function embedCanonicalCard(card: EmbeddableCard) {
   // Embed card.
   const embedding: number[] = await embedValue(card)
 
@@ -15,7 +18,7 @@ export async function embedCanonicalCard(
   )}::vector WHERE id = ${card.id};`
 }
 
-export async function embedNonCanonicalCard(card: ValuesCard): Promise<void> {
+export async function embedNonCanonicalCard(card: EmbeddableCard) {
   // Embed card.
   const embedding: number[] = await embedValue(card)
 
@@ -25,16 +28,52 @@ export async function embedNonCanonicalCard(card: ValuesCard): Promise<void> {
   )}::vector WHERE id = ${card.id};`
 }
 
-export async function getNonCanonicalCardsWithoutEmbedding(): Promise<
-  Array<ValuesCard>
-> {
-  return (await db.$queryRaw`SELECT id, title, "description", "policies" FROM "ValuesCard" WHERE "ValuesCard".embedding IS NULL`) as ValuesCard[]
+async function getNonCanonicalCardsWithoutEmbedding(deliberationId: number) {
+  return (await db.$queryRaw`
+    SELECT id, title, "description", "policies" 
+    FROM "ValuesCard" 
+    WHERE "ValuesCard".embedding IS NULL 
+    AND "deliberationId" = ${deliberationId}
+  `) as ValuesCard[]
 }
 
-export async function getCanonicalCardsWithoutEmbedding(): Promise<
-  Array<CanonicalValuesCard>
-> {
-  return (await db.$queryRaw`SELECT id, title, "description", "policies", embedding::text FROM "CanonicalValuesCard" WHERE "CanonicalValuesCard".embedding IS NULL`) as CanonicalValuesCard[]
+async function getCanonicalCardsWithoutEmbedding(deliberationId: number) {
+  return (await db.$queryRaw`
+    SELECT id, title, "description", "policies", embedding::text 
+    FROM "CanonicalValuesCard" 
+    WHERE "CanonicalValuesCard".embedding IS NULL 
+    AND "deliberationId" = ${deliberationId}
+  `) as CanonicalValuesCard[]
+}
+
+export async function getCanonicalCardsWithEmbedding(deliberationId: number) {
+  return (
+    await db.$queryRaw<Array<any>>`
+    SELECT "id", "title", "description", "policies", "deliberationId", "createdAt", "updatedAt", "isExcluded", "embedding"::text as embedding
+    FROM "CanonicalValuesCard"
+    WHERE "CanonicalValuesCard".embedding IS NOT NULL 
+    AnD "isExcluded" = false
+    AND "deliberationId" = ${deliberationId};`
+  ).map((d) => ({
+    ...d,
+    embedding: JSON.parse(d.embedding).map((v: any) => parseFloat(v)),
+  })) as (CanonicalValuesCard & { embedding: number[] })[]
+}
+
+export async function getContextEmbedding(
+  contextId: string
+): Promise<number[]> {
+  const embedding = (
+    await db.$queryRaw<{
+      embedding: any
+    }>`SELECT embedding::text FROM "Context" WHERE id = ${contextId} LIMIT 1;`
+  ).embedding
+
+  if (!embedding) {
+    return await embedContext(contextId)
+  }
+
+  return JSON.parse(embedding).map((v: any) => parseFloat(v))
 }
 
 export async function getUserEmbedding(userId: number): Promise<number[]> {
@@ -54,7 +93,7 @@ export async function getUserEmbedding(userId: number): Promise<number[]> {
   }
 }
 
-export async function embedContext(contextId: string): Promise<void> {
+export async function embedContext(contextId: string): Promise<number[]> {
   // Embed context.
   const embedding: number[] = await embedText(contextId)
 
@@ -62,57 +101,78 @@ export async function embedContext(contextId: string): Promise<void> {
   await db.$executeRaw`UPDATE "Context" SET embedding = ${JSON.stringify(
     embedding
   )}::vector WHERE id = ${contextId};`
+
+  return embedding
 }
 
 //
-// Ingest functions for embedding.
+// Ingest functions for embeddings.
 //
 
 export const embedCards = inngest.createFunction(
-  { name: "Embed all cards" },
+  { id: "Embed cards" },
   { event: "embed-cards" },
-  async ({ step, logger }) => {
-    const deduplicatedCards = (await step.run(
-      "Fetching deduplicated cards",
-      async () => getCanonicalCardsWithoutEmbedding()
-    )) as any as CanonicalValuesCard[]
+  async ({ event, step, logger }) => {
+    const deliberationId = Number(event.data.deliberationId)
+    const cardType = (event.data.cardType ?? "all") as
+      | "all"
+      | "canonical"
+      | "non-canonical"
 
-    const nonCanonicalCards = (await step.run(
-      "Fetching canonical cards",
-      async () => getNonCanonicalCardsWithoutEmbedding()
-    )) as any as ValuesCard[]
+    // Embed canonical cards.
+    if (cardType === "all" || cardType === "canonical") {
+      const deduplicatedCards = await step.run(
+        "Fetching deduplicated cards",
+        async () => getCanonicalCardsWithoutEmbedding(deliberationId)
+      )
 
-    for (const card of deduplicatedCards) {
-      await step.run("Embed deduplocated card", async () => {
-        await embedCanonicalCard(card)
-      })
+      for (const card of deduplicatedCards) {
+        await step.run("Embed deduplocated card", async () => {
+          await embedCanonicalCard(
+            card as Omit<CanonicalValuesCard, "createdAt" | "updatedAt">
+          )
+        })
+      }
+
+      logger.info(`Embedded ${deduplicatedCards.length} canonical cards.`)
     }
 
-    for (const card of nonCanonicalCards) {
-      await step.run("Embed non-canonical card", async () => {
-        await embedNonCanonicalCard(card)
-      })
+    // Embed non-canonical cards.
+    if (cardType === "all" || cardType === "non-canonical") {
+      const nonCanonicalCards = await step.run(
+        "Fetching canonical cards",
+        async () => getNonCanonicalCardsWithoutEmbedding(deliberationId)
+      )
+
+      for (const card of nonCanonicalCards) {
+        await step.run("Embed non-canonical card", async () => {
+          await embedNonCanonicalCard(card)
+        })
+      }
+
+      logger.info(`Embedded ${nonCanonicalCards.length} canonical cards.`)
     }
 
-    logger.info(
-      `Embedded ${deduplicatedCards.length} canonical cards and ${nonCanonicalCards.length} non-canonical cards.`
-    )
-
-    return {
-      message: `Embedded ${deduplicatedCards.length} canonical cards and ${nonCanonicalCards.length} non-canonical cards.`,
-    }
+    await step.sendEvent("embed-cards-finished", {
+      name: "embed-cards-finished",
+      data: { deliberationId },
+    })
+    return { message: `Embedded cards.` }
   }
 )
 
 export const embedContexts = inngest.createFunction(
-  { name: "Embed all contexts" },
+  { id: "embed-contexts" },
   { event: "embed-contexts" },
-  async ({ step, logger }) => {
+  async ({ event, step, logger }) => {
+    const deliberationId = Number(event.data.deliberationId)
+
     const contextsToEmbed = await step.run(
       "Fetching contexts without embeddings",
       async () => db.$queryRaw<Array<{ id: string }>>`
           SELECT id FROM "Context" 
-          WHERE embedding IS NULL`
+          WHERE embedding IS NULL
+          AND "deliberationId" = ${deliberationId};`
     )
 
     for (const context of contextsToEmbed) {
@@ -123,8 +183,10 @@ export const embedContexts = inngest.createFunction(
 
     logger.info(`Embedded ${contextsToEmbed.length} contexts`)
 
-    return {
-      message: `Embedded ${contextsToEmbed.length} contexts`,
-    }
+    await step.sendEvent("embed-contexts-finished", {
+      name: "embed-contexts-finished",
+      data: event.data,
+    })
+    return { message: `Embedded ${contextsToEmbed.length} contexts` }
   }
 )

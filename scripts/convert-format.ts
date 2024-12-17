@@ -81,7 +81,7 @@ async function convertDescriptions() {
       valuesCards: {
         some: {
           chat: {
-            questionId: 60,
+            questionId: 61,
           },
         },
       },

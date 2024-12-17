@@ -1,7 +1,13 @@
 import { CanonicalValuesCard, EdgeHypothesis } from "@prisma/client"
 import { db, inngest } from "~/config.server"
 import { generateUpgrades, Upgrade } from "values-tools"
-import { getUserEmbedding } from "./embedding"
+import {
+  getUserEmbedding,
+  getCanonicalCardsWithEmbedding,
+  getContextEmbedding,
+} from "./embedding"
+import { clusterValues } from "values-tools/src/services/deduplicate"
+import { cosineDistance } from "values-tools/src/utils"
 
 type EdgeHypothesisData = {
   to: CanonicalValuesCard
@@ -52,11 +58,10 @@ export async function getDraw(
   // Find edge hypotheses that the user has not linked together yet.
   const hypotheses = (await db.edgeHypothesis.findMany({
     where: {
-      AND: [
-        { deliberationId },
-        { from: { edgesFrom: { none: { userId } } } },
-        { to: { edgesTo: { none: { userId } } } },
-      ],
+      deliberationId,
+      archivedAt: null,
+      from: { edgesFrom: { none: { userId } } },
+      to: { edgesTo: { none: { userId } } },
     },
     include: {
       from: true,
@@ -98,36 +103,51 @@ export async function getDraw(
   })
 }
 
-export async function createHypothesizedUpgrades(
+export async function upsertUpgrades(
   upgrades: Upgrade[],
   hypothesisRunId: string,
-  condition: string,
+  contextId: string,
   deliberationId: number
 ): Promise<void> {
+  console.log(`Adding ${upgrades.length} new upgrades to the database.`)
+
   await Promise.all(
     upgrades.map((t) =>
-      db.edgeHypothesis.create({
-        data: {
+      db.edgeHypothesis.upsert({
+        where: {
+          fromId_toId_contextId_deliberationId_hypothesisRunId: {
+            fromId: t.a_id,
+            toId: t.b_id,
+            contextId,
+            deliberationId,
+            hypothesisRunId,
+          },
+        },
+        create: {
+          hypothesisRunId,
+          story: t.story,
           from: { connect: { id: t.a_id } },
           to: { connect: { id: t.b_id } },
+          deliberation: { connect: { id: deliberationId } },
           context: {
             connect: {
               id_deliberationId: {
-                id: condition,
+                id: contextId,
                 deliberationId,
               },
             },
           },
-          deliberation: { connect: { id: deliberationId } },
-          story: t.story,
-          hypothesisRunId,
         },
+        update: {},
       })
     )
   )
 }
 
-async function cleanupTransitions(hypothesisRunId: string): Promise<{
+async function cleanupTransitions(
+  deliberationId: number,
+  hypothesisRunId: string
+): Promise<{
   old: number
   added: number
 }> {
@@ -146,11 +166,13 @@ async function cleanupTransitions(hypothesisRunId: string): Promise<{
     `Deleting ${oldTransitions} old transitions. Adding ${newTransitions} new ones.`
   )
 
-  await db.edgeHypothesis.deleteMany({
+  await db.edgeHypothesis.updateMany({
+    data: {
+      archivedAt: new Date(),
+    },
     where: {
-      hypothesisRunId: {
-        not: hypothesisRunId,
-      },
+      deliberationId,
+      hypothesisRunId: { not: hypothesisRunId },
     },
   })
 
@@ -162,10 +184,10 @@ async function cleanupTransitions(hypothesisRunId: string): Promise<{
 //
 
 export const hypothesizeCron = inngest.createFunction(
-  { name: "Create Hypothetical Edges Cron", concurrency: 1 },
+  { id: "hypothesize-cron", concurrency: 1 },
   { cron: "0 */12 * * *" },
   async ({ step, logger }) => {
-    await step.sendEvent({ name: "hypothesize", data: {} })
+    await step.sendEvent("hypothesize", { name: "hypothesize", data: {} })
 
     // Get all deliberations
     const deliberations = await step.run(
@@ -193,7 +215,7 @@ export const hypothesizeCron = inngest.createFunction(
           new Date(Date.now() - 12 * 60 * 60 * 1000)
       ) {
         // If the card is recent, trigger the hypothesize event
-        await step.sendEvent({
+        await step.sendEvent("hypothesize", {
           name: "hypothesize",
           data: { deliberationId: deliberation.id },
         })
@@ -211,27 +233,44 @@ export const hypothesizeCron = inngest.createFunction(
 )
 
 export const hypothesize = inngest.createFunction(
-  { name: "Create Hypothetical Edges", concurrency: 1 },
+  { id: "hypothesize", concurrency: 1 },
   { event: "hypothesize" },
   async ({ event, step, logger, runId }) => {
     const deliberationId = event.data!.deliberationId as number
     logger.info(`Running hypothetical links generation`)
 
-    // Contexts are connected to values cards through the questions. Each question is connected
-    // to several contexts. When a user finds a new context, that new context
-    // is added to the question as well. If they identify a context as relevant to a question,
-    // but it already exists for another question, then it is linked to the new question.
-    const contexts = await step.run("Fetching contexts with values", async () =>
+    // Make sure all canonical cards are embedded first.
+    await step.sendEvent("embed-cards", {
+      name: "embed-cards",
+      data: { deliberationId, cardType: "canonical" },
+    })
+    await step.waitForEvent("embed-cards-finished", {
+      timeout: "15m",
+      event: "embed-cards-finished",
+      match: "data.deliberationId",
+    })
+
+    // Get contexts, and for which cards they apply.
+    const contexts = await step.run("Fetching contexts", async () =>
       db.context.findMany({
-        where: { deliberationId },
+        where: {
+          deliberationId,
+          ContextsForQuestions: {
+            some: {
+              question: {
+                deliberationId,
+              },
+            },
+          },
+        },
         include: {
           ContextsForQuestions: {
-            include: {
+            select: {
               question: {
-                include: {
+                select: {
                   ValuesCard: {
-                    include: {
-                      canonicalCard: true,
+                    select: {
+                      canonicalCardId: true,
                     },
                   },
                 },
@@ -242,41 +281,50 @@ export const hypothesize = inngest.createFunction(
       })
     )
 
+    // Get canonical values
+    const values = (await step.run("Fetching values", async () =>
+      getCanonicalCardsWithEmbedding(deliberationId)
+    )) as any as (CanonicalValuesCard & { embedding: number[] })[]
+
     //
-    // Create and upsert transitions for each context.
+    // Generate upgrades for each context, by feeding in
+    // the 30 closest values in terms of cosine distance.
     //
-    for (const cluster of contexts) {
-      // Extract unique canonical values connected to the context.
-      const values = Array.from(
-        new Map(
-          cluster.ContextsForQuestions.flatMap((c) => c.question.ValuesCard)
-            .map((card) => card.canonicalCard)
-            .filter((c): c is NonNullable<typeof c> => c !== null)
-            .map((card) => [card.id, card])
-        ).values()
+    for (const context of contexts) {
+      const contextEmbedding = await step.run(
+        "Get context embedding",
+        async () => getContextEmbedding(context.id)
       )
 
-      if (values.length < 2) {
-        logger.info(`Skipping: Not enough values.`)
+      const closestValues = values
+        // Only include canonical cards where one of the original cards
+        // was articulated for a relevant context.
+        .filter((cc) =>
+          context.ContextsForQuestions.some((c) =>
+            c.question.ValuesCard.some((vc) => vc.canonicalCardId === cc.id)
+          )
+        )
+        // Find closest values to context using cosine distance
+        .map((value) => ({
+          ...value,
+          distance: cosineDistance(contextEmbedding, value.embedding),
+        }))
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, 10)
+
+      const upgrades = await step.run(
+        `Generate upgrades for context ${context.id} from ${closestValues.length} values`,
+        async () => generateUpgrades(closestValues, context.id)
+      )
+
+      if (!upgrades.length) {
+        logger.info(`No upgrades found for context ${context.id}`)
         continue
       }
 
-      // contexts in cluster are the same.
-      const contextId = cluster.ContextsForQuestions[0].contextId
-
-      const upgrades = await step.run(
-        `Generate transitions for context ${contextId}`,
-        async () => generateUpgrades(values, contextId)
-      )
-
-      logger.info(
-        `Created ${upgrades.length} transitions for context: ${contextId}.`
-      )
-
       await step.run(
-        `Add transitions for context ${contextId} to database`,
-        async () =>
-          createHypothesizedUpgrades(upgrades, runId, contextId, deliberationId)
+        `Add upgrades for context ${context.id} to database`,
+        async () => upsertUpgrades(upgrades, runId, context.id, deliberationId)
       )
     }
 
@@ -285,16 +333,16 @@ export const hypothesize = inngest.createFunction(
     //
     const { old, added } = (await step.run(
       `Remove old transitions from database`,
-      async () => cleanupTransitions(runId)
+      async () => cleanupTransitions(deliberationId, runId)
     )) as any as { old: number; added: number }
 
-    await step.sendEvent({
+    await step.sendEvent("hypothesize-finished", {
       name: "hypothesize-finished",
       data: { deliberationId },
     })
 
     return {
-      message: `Success. Removed ${old} transitions. Added ${added} transitions.`,
+      message: `Success. Removed ${old} old transitions. Added ${added} new transitions.`,
     }
   }
 )

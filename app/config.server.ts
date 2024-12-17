@@ -28,7 +28,7 @@ export async function ensureLoggedIn(request: Request, extraParams = {}) {
 }
 
 export const inngest = new Inngest({
-  name: process.env.INNGEST_NAME ?? "Moral Graph Elicitation",
+  id: process.env.INNGEST_NAME ?? "Moral Graph Elicitation",
   apiKey: process.env.INNGEST_API_KEY,
   eventKey: process.env.INNGEST_EVENT_KEY,
 })

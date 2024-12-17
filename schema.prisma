@@ -157,19 +157,21 @@ model Edge {
 }
 
 model EdgeHypothesis {
-  id              Int                  @id @default(autoincrement())
   fromId          Int
   toId            Int
-  hypothesisRunId String?
+  hypothesisRunId String
   story           String?
   contextId       String
   createdAt       DateTime             @default(now())
   updatedAt       DateTime             @updatedAt
+  archivedAt      DateTime?
   from            CanonicalValuesCard? @relation("FromHypothesizedValueRelation", fields: [fromId], references: [id], onDelete: Cascade)
   to              CanonicalValuesCard? @relation("ToHypothesizedValueRelation", fields: [toId], references: [id], onDelete: Cascade)
   context         Context              @relation(fields: [contextId, deliberationId], references: [id, deliberationId])
   deliberationId  Int
   deliberation    Deliberation         @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
+
+  @@id([fromId, toId, contextId, deliberationId, hypothesisRunId])
 }
 
 model Context {

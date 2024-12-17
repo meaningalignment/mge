@@ -11,19 +11,22 @@ import {
 } from "~/services/generation"
 import { findNewContexts } from "~/services/contexts"
 
-const handler = serve(inngest, [
-  embedCards,
-  embedContexts,
-  hypothesize,
-  hypothesizeCron,
-  deduplicate,
-  deduplicateCron,
-  generateSeedQuestionsAndContexts,
-  generateSeedQuestions,
-  generateSeedContexts,
-  generateSeedGraph,
-  findNewContexts,
-])
+const handler = serve({
+  client: inngest,
+  functions: [
+    embedCards,
+    embedContexts,
+    hypothesize,
+    hypothesizeCron,
+    deduplicate,
+    deduplicateCron,
+    generateSeedQuestionsAndContexts,
+    generateSeedQuestions,
+    generateSeedContexts,
+    generateSeedGraph,
+    findNewContexts,
+  ],
+})
 
 export const config = {
   maxDuration: 300,

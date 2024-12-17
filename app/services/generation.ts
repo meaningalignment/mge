@@ -170,7 +170,7 @@ async function onFailure({ event, step }: { event: any; step: any }) {
 }
 
 export const generateSeedQuestionsAndContexts = inngest.createFunction(
-  { name: "Generate Seed Questions and Contexts", onFailure },
+  { id: "generate-seed-questions-and-contexts", onFailure },
   { event: "gen-seed-questions-contexts" },
 
   async ({ event, step, logger }) => {
@@ -215,7 +215,7 @@ export const generateSeedQuestionsAndContexts = inngest.createFunction(
       )
 
       contexts.push(
-        ...questionContexts.map((context) => ({
+        ...questionContexts.map((context: any) => ({
           context,
           questionId: dbQuestion.id,
         }))
@@ -235,7 +235,7 @@ export const generateSeedQuestionsAndContexts = inngest.createFunction(
 )
 
 export const generateSeedContexts = inngest.createFunction(
-  { name: "Generate Seed Contexts", onFailure },
+  { id: "gen-seed-contexts", onFailure },
   { event: "gen-seed-contexts" },
   async ({ event, step, logger }) => {
     logger.info(`Running deliberation setup.`)
@@ -264,7 +264,7 @@ export const generateSeedContexts = inngest.createFunction(
       )
 
       contexts.push(
-        ...contextsForQuestion.map((context) => ({ context, questionId }))
+        ...contextsForQuestion.map((context: any) => ({ context, questionId }))
       )
     }
 
@@ -281,7 +281,7 @@ export const generateSeedContexts = inngest.createFunction(
 )
 
 export const generateSeedGraph = inngest.createFunction(
-  { name: "Generate Seed Graph", onFailure },
+  { id: "gen-seed-graph", onFailure },
   { event: "gen-seed-graph" },
   async ({ event, step, logger, runId }) => {
     logger.info(`Starting graph generation for deliberation`)
@@ -312,8 +312,8 @@ export const generateSeedGraph = inngest.createFunction(
     for (const question of questions) {
       logger.info(`Processing question: ${question.question}`)
 
-      const contextsForQuestion = contexts.filter((c) =>
-        c.ContextsForQuestions.some((q) => q.questionId === question.id)
+      const contextsForQuestion = contexts.filter((c: any) =>
+        c.ContextsForQuestions.some((q: any) => q.questionId === question.id)
       )
 
       // Generate values for the question.
@@ -344,7 +344,7 @@ export const generateSeedGraph = inngest.createFunction(
         `Inserting values in DB and connecting to contexts`,
         async () => {
           await Promise.all(
-            values.map((v) =>
+            values.map((v: any) =>
               db.valuesCard.create({
                 data: {
                   seedGenerationRunId: runId,
@@ -362,23 +362,25 @@ export const generateSeedGraph = inngest.createFunction(
     }
 
     // Run deduplication.
-    await step.sendEvent({
+    await step.sendEvent("deduplicate", {
       name: "deduplicate",
       data: { deliberationId },
     })
     await step.waitForEvent("deduplicate-finished", {
+      event: "deduplicate-finished",
       timeout: "15m",
-      if: `async.data.deliberationId == ${deliberationId}`,
+      match: "data.deliberationId",
     })
 
     // Run hypothesization.
-    await step.sendEvent({
+    await step.sendEvent("hypothesize", {
       name: "hypothesize",
       data: { deliberationId },
     })
     await step.waitForEvent("hypothesize-finished", {
+      event: "hypothesize-finished",
       timeout: "15m",
-      if: `async.data.deliberationId == ${deliberationId}`,
+      match: "data.deliberationId",
     })
 
     await step.run(`Marking setup as finished`, async () =>
@@ -392,7 +394,7 @@ export const generateSeedGraph = inngest.createFunction(
 )
 
 export const generateSeedQuestions = inngest.createFunction(
-  { name: "Generate Seed Questions", onFailure },
+  { id: "gen-seed-questions", onFailure },
   { event: "gen-seed-questions" },
   async ({ event, step, logger }) => {
     logger.info(`Running deliberation setup.`)
@@ -425,7 +427,7 @@ export const generateSeedQuestions = inngest.createFunction(
             title: question.title,
             deliberationId,
             ContextsForQuestions: {
-              create: question.contexts.map((context) => ({
+              create: question.contexts.map((context: any) => ({
                 context: {
                   connectOrCreate: {
                     where: {
