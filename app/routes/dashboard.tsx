@@ -59,7 +59,7 @@ export default function Deliberations() {
     .filter((segment) => isNaN(Number(segment))) // Filter out numeric segments
 
   return (
-    <div className="h-screen w-screen bg-white ">
+    <div className="h-screen flex">
       <aside
         id="sidebar"
         className="fixed left-0 top-0 z-40 h-screen w-64 transition-transform"
@@ -195,9 +195,9 @@ export default function Deliberations() {
           </div>
         </div>
       </aside>
-      <main className="ml-64 p-4 overflow-auto">
+      <main className="ml-64 flex-1 flex flex-col h-full">
         {params.deliberationId && (
-          <nav className="mb-8">
+          <nav className="px-6 py-4 flex-none border-b border-slate-200">
             <ol className="flex items-center text-sm">
               <li className="font-medium text-slate-800 ">
                 <NavLink
@@ -225,7 +225,9 @@ export default function Deliberations() {
             </ol>
           </nav>
         )}
-        <Outlet />
+        <div className="flex-1 overflow-auto">
+          <Outlet />
+        </div>
       </main>
     </div>
   )

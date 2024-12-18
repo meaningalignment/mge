@@ -1,4 +1,4 @@
-import { json, LoaderFunction, LoaderFunctionArgs } from "@remix-run/node"
+import { json, LoaderFunctionArgs } from "@remix-run/node"
 import { NavLink, Outlet, useLoaderData, useParams } from "@remix-run/react"
 import { db } from "~/config.server"
 import { cn } from "~/lib/utils"
@@ -75,7 +75,7 @@ export default function AdminLinks() {
   }
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-full">
       <div className="w-64 flex-shrink-0 border-r overflow-y-auto bg-white px-3 py-4">
         <div className="mb-10 flex items-center rounded-lg px-3 py-2 text-slate-900">
           <svg
@@ -97,7 +97,7 @@ export default function AdminLinks() {
           {data.edges.map((edge) => (
             <NavLink
               prefetch="intent"
-              to={`/dashboard/${deliberationId}/links/${edge.userId}/${edge.fromId}/${edge.toId}`}
+              to={`/dashboard/${deliberationId}/votes/${edge.userId}/${edge.fromId}/${edge.toId}`}
               key={edge.userId + edge.fromId + edge.toId}
               className={({ isActive, isPending }) =>
                 cn(
@@ -120,7 +120,9 @@ export default function AdminLinks() {
         </ul>
       </div>
       <div className="flex-1 overflow-y-auto">
-        <Outlet />
+        <div className="p-6">
+          <Outlet />
+        </div>
       </div>
     </div>
   )

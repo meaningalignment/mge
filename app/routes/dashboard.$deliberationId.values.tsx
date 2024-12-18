@@ -131,80 +131,96 @@ export default function ValuesView() {
     })
 
   return (
-    <div className="container mx-auto py-6">
-      <div className="flex gap-4 mb-6">
-        <Select value={selectedQuestion} onValueChange={setSelectedQuestion}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Select Question" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Questions</SelectItem>
-            {questions.map((question) => (
-              <SelectItem key={question.id} value={question.id.toString()}>
-                {question.title}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+    <div className="h-full overflow-y-auto">
+      <div className="p-6">
+        {values.length === 0 ? (
+          <Alert className="bg-slate-50">
+            <div className="flex flex-row space-x-2">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>No values yet</AlertTitle>
+            </div>
+            <AlertDescription className="flex flex-col sm:flex-row items-center justify-between mt-2">
+              Values will appear here once they are generated
+            </AlertDescription>
+          </Alert>
+        ) : (
+          <>
+            <div className="flex gap-4 mb-6">
+              <Select value={selectedQuestion} onValueChange={setSelectedQuestion}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Select Question" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Questions</SelectItem>
+                  {questions.map((question) => (
+                    <SelectItem key={question.id} value={question.id.toString()}>
+                      {question.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
-        <Select value={selectedContext} onValueChange={setSelectedContext}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Select Context" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Contexts</SelectItem>
-            {contexts.map((context) => (
-              <SelectItem key={context.id} value={context.id}>
-                {context.id}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+              <Select value={selectedContext} onValueChange={setSelectedContext}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder="Select Context" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Contexts</SelectItem>
+                  {contexts.map((context) => (
+                    <SelectItem key={context.id} value={context.id}>
+                      {context.id}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center">
-        {filteredValues.map((value) => {
-          const isExcluded = localExclusions[value.id] ?? value.isExcluded
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center">
+              {filteredValues.map((value) => {
+                const isExcluded = localExclusions[value.id] ?? value.isExcluded
 
-          return (
-            <fetcher.Form
-              key={value.id}
-              method="post"
-              className={`group relative flex flex-col h-full cursor-pointer transition-opacity duration-200 hover:opacity-60 ${
-                isExcluded ? "opacity-30" : ""
-              }`}
-              onSubmit={(e) => {
-                // Prevent default form submission
-                e.preventDefault()
+                return (
+                  <fetcher.Form
+                    key={value.id}
+                    method="post"
+                    className={`group relative flex flex-col h-full cursor-pointer transition-opacity duration-200 hover:opacity-60 ${
+                      isExcluded ? "opacity-30" : ""
+                    }`}
+                    onSubmit={(e) => {
+                      // Prevent default form submission
+                      e.preventDefault()
 
-                // Update local state immediately
-                setLocalExclusions((prev) => ({
-                  ...prev,
-                  [value.id]: !isExcluded,
-                }))
+                      // Update local state immediately
+                      setLocalExclusions((prev) => ({
+                        ...prev,
+                        [value.id]: !isExcluded,
+                      }))
 
-                // Submit the form
-                fetcher.submit(e.currentTarget)
-              }}
-            >
-              <input type="hidden" name="cardId" value={value.id} />
-              <input
-                type="hidden"
-                name="excluded"
-                value={(!isExcluded).toString()}
-              />
-              <button type="submit" className="w-full text-left">
-                {isExcluded && (
-                  <div className="absolute top-2 right-2 z-10 bg-slate-900 text-white px-3 py-1.5 rounded-md flex items-center gap-2 text-sm font-medium shadow-lg border border-slate-700">
-                    <EyeNoneIcon className="h-[14px] w-[14px]" />
-                    <span>Excluded</span>
-                  </div>
-                )}
-                <ValuesCard card={value} detailsInline />
-              </button>
-            </fetcher.Form>
-          )
-        })}
+                      // Submit the form
+                      fetcher.submit(e.currentTarget)
+                    }}
+                  >
+                    <input type="hidden" name="cardId" value={value.id} />
+                    <input
+                      type="hidden"
+                      name="excluded"
+                      value={(!isExcluded).toString()}
+                    />
+                    <button type="submit" className="w-full text-left">
+                      {isExcluded && (
+                        <div className="absolute top-2 right-2 z-10 bg-slate-900 text-white px-3 py-1.5 rounded-md flex items-center gap-2 text-sm font-medium shadow-lg border border-slate-700">
+                          <EyeNoneIcon className="h-[14px] w-[14px]" />
+                          <span>Excluded</span>
+                        </div>
+                      )}
+                      <ValuesCard card={value} detailsInline />
+                    </button>
+                  </fetcher.Form>
+                )
+              })}
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

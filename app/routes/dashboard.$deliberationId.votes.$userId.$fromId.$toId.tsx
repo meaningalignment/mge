@@ -2,7 +2,7 @@ import { CanonicalValuesCard, Edge } from "@prisma/client"
 import { LoaderFunctionArgs, json } from "@remix-run/node"
 import { useLoaderData } from "@remix-run/react"
 import StaticChatMessage from "~/components/chat/static-chat-message"
-import { IconArrowDown, IconArrowRight } from "~/components/ui/icons"
+import { IconArrowDown } from "~/components/ui/icons"
 import { Label } from "~/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group"
 import { Separator } from "~/components/ui/separator"
@@ -35,16 +35,11 @@ export default function AdminLink() {
 
   return (
     <div className="grid place-items-center space-y-4 py-12 px-8">
-      <div className="w-full max-w-2xl">
+      <div className="w-full max-w-2xl mb-6">
         <h1 className="text-md font-bold mb-2 pl-12 md:pl-0">
           {edge.contextId}
         </h1>
-        <StaticChatMessage
-          text={'"' + edge.story + '"'}
-          onFinished={() => {}}
-          isFinished={true}
-          role="user"
-        />
+        <p className="text-gray-700">{edge.story}</p>
       </div>
       <div
         className={cn(

@@ -161,3 +161,9 @@ export function getFavicon(url: string): string {
     return "/generic.ico"
   }
 }
+
+export const encodeString = (str: string): string =>
+  btoa(encodeURIComponent(str))
+
+export const decodeString = (hash: string): string =>
+  decodeURIComponent(atob(hash))

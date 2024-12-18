@@ -257,12 +257,14 @@ export default function DeliberationDashboard() {
   }
 
   return (
-    <div className="container mx-auto py-6 max-w-2xl space-y-6">
+    <div className="container mx-auto py-6 max-w-2xl space-y-6 animate-fade-in">
       {deliberation.topic && (
-        <h1 className="text-3xl font-bold mb-8">{deliberation.topic}</h1>
+        <h1 className="text-3xl font-bold mb-8 animate-fade-in">
+          {deliberation.topic}
+        </h1>
       )}
 
-      <Card>
+      <Card className="animate-fade-in">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Options</CardTitle>
         </CardHeader>
@@ -285,11 +287,19 @@ export default function DeliberationDashboard() {
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
             </Link>
             <Link
-              to={`/dashboard/${deliberationId}/links`}
+              to={`/dashboard/${deliberationId}/upgrades`}
               prefetch="render"
               className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  "
             >
-              <span>Manage Links</span>
+              <span>Manage Upgrades</span>
+              <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
+            </Link>
+            <Link
+              to={`/dashboard/${deliberationId}/votes`}
+              prefetch="render"
+              className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  "
+            >
+              <span>Manage Votes</span>
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
             </Link>
             <Link
@@ -304,7 +314,7 @@ export default function DeliberationDashboard() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="animate-fade-in">
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Summary</CardTitle>
         </CardHeader>
@@ -431,7 +441,7 @@ export default function DeliberationDashboard() {
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-between mt-8 mb-4">
+      <div className="flex items-center justify-between mt-8 mb-4 animate-fade-in">
         <h2 className="text-2xl font-bold">Questions</h2>
         {(deliberation.setupStatus === "generating_contexts" ||
           deliberation.setupStatus === "generating_questions") && (
@@ -459,8 +469,12 @@ export default function DeliberationDashboard() {
         </Alert>
       )}
 
-      {deliberation.questions.map((question) => (
-        <Card key={question.id}>
+      {deliberation.questions.map((question, index) => (
+        <Card
+          key={question.id}
+          className="animate-fade-in"
+          style={{ animationDelay: `${400 + index * 100}ms` }}
+        >
           <CardHeader>
             <CardTitle className="text-md font-bold flex items-center">
               {question.title}
@@ -524,7 +538,7 @@ export default function DeliberationDashboard() {
           </CardContent>
         </Card>
       ))}
-      <div className="mt-12 flex justify-between">
+      <div className="mt-12 flex justify-between animate-fade-in">
         <LoadingButton
           variant="outline"
           onClick={handleResetDeliberation}
