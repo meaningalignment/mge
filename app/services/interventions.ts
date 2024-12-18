@@ -119,9 +119,7 @@ For example, when choosing a good way to act when "a democratic choice is being 
 ["CHANGES in people when entrusted with the work of self-determination", "INSIGHTS that emerge through grappling with morally fraught questions", "CAPACITIES that develop when a person tries to be free and self-directed"]
 
 Each attention policy centers on something precise that can be attended to, not a vague concept. Instead of abstractions like "LOVE and OPENNESS which emerges", it might say "FEELINGS in my chest that go along with love and openness." Instead of “DEEP UNDERSTANDING of the emotions”, it might say “A SENSE OF PEACE that comes from understanding”. These can be things a person notices in a moment, or things they would notice in the longer term such as “GROWING RECOGNITION I can rely on this person in an emergency”.
-
-
-`,
+`.trim(),
     data: {
       Question: question,
       "Attention Policies": value.policies,
@@ -184,8 +182,8 @@ export function getLastBracketNumber(text: string): number | null {
 }
 
 export async function findPrecedence(question: string, intervention: string) {
-  const prompt =
-    `Search for real-world examples of policies, programs, or interventions similar to the one described below. Focus on government policies or established organizations in other countries. 
+  const prompt = `
+Search for real-world examples of policies, programs, or interventions similar to the one described below. Focus on government policies or established organizations in other countries. 
 
 1. List specific programs/policies and reference the official sources or reputable news articles. 
 2. Include the country, year implemented (if available), and a brief description of how it's similar. The description should always be 1-2 sentences long.

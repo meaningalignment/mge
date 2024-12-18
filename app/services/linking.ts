@@ -1,13 +1,17 @@
-import { CanonicalValuesCard, EdgeHypothesis } from "@prisma/client"
+import { CanonicalValuesCard, Context, EdgeHypothesis } from "@prisma/client"
 import { db, inngest } from "~/config.server"
-import { generateUpgrades, Upgrade } from "values-tools"
+import {
+  generateUpgrades,
+  generateUpgradesToValue,
+  Upgrade,
+} from "values-tools"
 import {
   getUserEmbedding,
   getCanonicalCardsWithEmbedding,
   getContextEmbedding,
 } from "./embedding"
-import { clusterValues } from "values-tools/src/services/deduplicate"
 import { cosineDistance } from "values-tools/src/utils"
+import { Value } from "values-tools/src/types"
 
 type EdgeHypothesisData = {
   to: CanonicalValuesCard
@@ -103,24 +107,25 @@ export async function getDraw(
   })
 }
 
-export async function upsertUpgrades(
+export async function upsertUpgradesInDb(
   upgrades: Upgrade[],
   hypothesisRunId: string,
   contextId: string,
   deliberationId: number
 ): Promise<void> {
-  console.log(`Adding ${upgrades.length} new upgrades to the database.`)
+  console.log(
+    `Upserting ${upgrades.length} upgrades to the database for deliberation ${deliberationId} and context ${contextId}`
+  )
 
   await Promise.all(
     upgrades.map((t) =>
       db.edgeHypothesis.upsert({
         where: {
-          fromId_toId_contextId_deliberationId_hypothesisRunId: {
+          fromId_toId_contextId_deliberationId: {
             fromId: t.a_id,
             toId: t.b_id,
             contextId,
             deliberationId,
-            hypothesisRunId,
           },
         },
         create: {
@@ -138,7 +143,10 @@ export async function upsertUpgrades(
             },
           },
         },
-        update: {},
+        update: {
+          story: t.story,
+          hypothesisRunId,
+        },
       })
     )
   )
@@ -179,9 +187,78 @@ async function cleanupTransitions(
   return { old: oldTransitions, added: newTransitions }
 }
 
-//
-// Ingest function for creating edge hypotheses.
-//
+async function getContextsWithLinksToValues(deliberationId: number) {
+  return db.context.findMany({
+    where: {
+      deliberationId,
+      ContextsForQuestions: {
+        some: {
+          question: {
+            deliberationId,
+          },
+        },
+      },
+    },
+    include: {
+      ContextsForQuestions: {
+        select: {
+          question: {
+            select: {
+              ValuesCard: {
+                select: {
+                  canonicalCardId: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+}
+
+async function getClosestValues(
+  values: (CanonicalValuesCard & { embedding: number[] })[],
+  context: Omit<
+    Awaited<ReturnType<typeof getContextsWithLinksToValues>>[0],
+    "createdAt" | "updatedAt"
+  >,
+  limit: number = 10
+) {
+  const contextEmbedding = await getContextEmbedding(context.id)
+
+  return (
+    values
+      // Only include canonical cards where one of the original cards
+      // was articulated for a relevant context.
+      .filter((cc) =>
+        context.ContextsForQuestions.some((c) =>
+          c.question.ValuesCard.some((vc) => vc.canonicalCardId === cc.id)
+        )
+      )
+      // Find closest values to context using cosine distance
+      .map((value) => ({
+        ...value,
+        distance: cosineDistance(contextEmbedding, value.embedding),
+      }))
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, limit)
+  )
+}
+
+async function generateReversedUpgrades(
+  upgrades: Upgrade[],
+  values: Value[],
+  contextId: string
+) {
+  const reversed = upgrades.map((u) => {
+    const oldTarget = values.find((v) => v.id === u.b_id)
+    const oldSource = values.find((v) => v.id === u.a_id)
+    return generateUpgradesToValue(oldSource!, [oldTarget!], contextId)
+  })
+
+  return (await Promise.all(reversed)).flat()
+}
 
 export const hypothesizeCron = inngest.createFunction(
   { id: "hypothesize-cron", concurrency: 1 },
@@ -250,99 +327,64 @@ export const hypothesize = inngest.createFunction(
       match: "data.deliberationId",
     })
 
-    // Get contexts, and for which cards they apply.
+    // Get contexts, and for which cards they apply
     const contexts = await step.run("Fetching contexts", async () =>
-      db.context.findMany({
-        where: {
-          deliberationId,
-          ContextsForQuestions: {
-            some: {
-              question: {
-                deliberationId,
-              },
-            },
-          },
-        },
-        include: {
-          ContextsForQuestions: {
-            select: {
-              question: {
-                select: {
-                  ValuesCard: {
-                    select: {
-                      canonicalCardId: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-      })
+      getContextsWithLinksToValues(deliberationId)
     )
 
-    // Get canonical values
+    logger.info(
+      `About to generate upgrades for deliberation ${deliberationId} and these contexts: ${contexts
+        .map((c) => c.id)
+        .join(", ")}`
+    )
+
+    // Get canonical values, and their embeddings
     const values = (await step.run("Fetching values", async () =>
       getCanonicalCardsWithEmbedding(deliberationId)
     )) as any as (CanonicalValuesCard & { embedding: number[] })[]
 
     //
-    // Generate upgrades for each context, by feeding in
-    // the 30 closest values in terms of cosine distance.
+    // Generate plausible upgrades for each context.
+    // Also generate the upgrades in reverse.
     //
+    const allUpgrades: Upgrade[] = []
+
     for (const context of contexts) {
-      const contextEmbedding = await step.run(
-        "Get context embedding",
-        async () => getContextEmbedding(context.id)
+      const closestValues = await step.run("Get closest values", async () =>
+        getClosestValues(values, context, 12)
       )
 
-      const closestValues = values
-        // Only include canonical cards where one of the original cards
-        // was articulated for a relevant context.
-        .filter((cc) =>
-          context.ContextsForQuestions.some((c) =>
-            c.question.ValuesCard.some((vc) => vc.canonicalCardId === cc.id)
-          )
-        )
-        // Find closest values to context using cosine distance
-        .map((value) => ({
-          ...value,
-          distance: cosineDistance(contextEmbedding, value.embedding),
-        }))
-        .sort((a, b) => a.distance - b.distance)
-        .slice(0, 10)
-
-      const upgrades = await step.run(
+      const plausibleUpgrades = await step.run(
         `Generate upgrades for context ${context.id} from ${closestValues.length} values`,
         async () => generateUpgrades(closestValues, context.id)
       )
 
-      if (!upgrades.length) {
+      if (!plausibleUpgrades.length) {
         logger.info(`No upgrades found for context ${context.id}`)
         continue
       }
 
+      const reverseUpgrades = await step.run(
+        `Reversing ${plausibleUpgrades.length} upgrades for context ${context.id}`,
+        async () =>
+          generateReversedUpgrades(plausibleUpgrades, values, context.id)
+      )
+
+      const newUpgrades = [...plausibleUpgrades, ...reverseUpgrades]
+      allUpgrades.push(...newUpgrades)
+
       await step.run(
-        `Add upgrades for context ${context.id} to database`,
-        async () => upsertUpgrades(upgrades, runId, context.id, deliberationId)
+        `Add upgrades & reverse upgrades for context ${context.id} to database`,
+        async () =>
+          upsertUpgradesInDb(newUpgrades, runId, context.id, deliberationId)
       )
     }
-
-    //
-    // Clear out old transitions.
-    //
-    const { old, added } = (await step.run(
-      `Remove old transitions from database`,
-      async () => cleanupTransitions(deliberationId, runId)
-    )) as any as { old: number; added: number }
 
     await step.sendEvent("hypothesize-finished", {
       name: "hypothesize-finished",
       data: { deliberationId },
     })
 
-    return {
-      message: `Success. Removed ${old} old transitions. Added ${added} new transitions.`,
-    }
+    return { message: `Success! Created ${allUpgrades.length} new upgrades.` }
   }
 )

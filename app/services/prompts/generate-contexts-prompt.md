@@ -1,4 +1,4 @@
-You will be given a transcript of a chat , and a user's value for how to act in similar situations (formatted as a list of attention policies). Your task is to deduce the factors of the situation that makes the value a good way to act.
+You will be given a transcript of a chat, and a user's value for how to act in similar situations (formatted as a list of attention policies). Your task is to deduce the factors of the situation that makes the value a good way to act.
 
 # Attention Policies
 A values card is made up of several attention policies. Attention policies list what a person pays attention to when they do a kind of discernment about how to act in a certain situation. However, they only specify what is meaningful to pay attention to – that is, something that is consitutively good, in their view – as opposed to instrumental to some other meaningful goal.

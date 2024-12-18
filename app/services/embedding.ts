@@ -52,7 +52,7 @@ export async function getCanonicalCardsWithEmbedding(deliberationId: number) {
     SELECT "id", "title", "description", "policies", "deliberationId", "createdAt", "updatedAt", "isExcluded", "embedding"::text as embedding
     FROM "CanonicalValuesCard"
     WHERE "CanonicalValuesCard".embedding IS NOT NULL 
-    AnD "isExcluded" = false
+    AND "isExcluded" = false
     AND "deliberationId" = ${deliberationId};`
   ).map((d) => ({
     ...d,

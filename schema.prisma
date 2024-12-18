@@ -171,7 +171,7 @@ model EdgeHypothesis {
   deliberationId  Int
   deliberation    Deliberation         @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
 
-  @@id([fromId, toId, contextId, deliberationId, hypothesisRunId])
+  @@id([fromId, toId, contextId, deliberationId])
 }
 
 model Context {
