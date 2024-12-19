@@ -3,6 +3,8 @@ import { db } from "~/config.server"
 import { Upgrade } from "values-tools"
 import { getUserEmbedding } from "./embedding"
 
+type SelectionCriteria = "popular" | "convergence" | "sparse"
+
 type EdgeHypothesisData = {
   to: CanonicalValuesCard
   from: CanonicalValuesCard
@@ -10,14 +12,14 @@ type EdgeHypothesisData = {
   story: string
   hypothesisRunId: string
   deliberationId: number
-  reason?: {
+  reason: {
     totalVotes: number
     totalAgrees: number
-    selecedDueTo: "agrees" | "interesting" | "sparsity"
+    selecedDueTo: SelectionCriteria
   }
 }
 
-function sortedOnInterestingness(
+function sortOnConvergence(
   hypothesesWithVotes: (EdgeHypothesis & {
     to: CanonicalValuesCard
     from: CanonicalValuesCard
@@ -53,7 +55,7 @@ function sortedOnInterestingness(
 }
 
 /**
- * Sorts hypotheses based on a combination of:
+ * Draw `size` hypotheses based on a weighted random combination of:
  * 1. How many people agree with it (popularity)
  * 2. How "interesting" it is (points to popular values but itself isn't highly voted)
  * 3. How sparsely voted on it is (to surface under-explored hypotheses)
@@ -61,7 +63,7 @@ function sortedOnInterestingness(
 export async function drawFreceny(
   deliberationId: number,
   size: number = 5,
-  weights = { agrees: 0.3, interesting: 0.3, sparsity: 0.4 }
+  weights = { popularity: 0.3, convergence: 0.3, sparsity: 0.4 }
 ): Promise<EdgeHypothesisData[]> {
   // Find edge hypotheses that the user has not linked together yet.
   const hypotheses = (await db.edgeHypothesis.findMany({
@@ -95,10 +97,10 @@ export async function drawFreceny(
     }
   })
 
-  const sortedOnAgrees = hypothesesWithFrequency.toSorted(
+  const sortedOnPopularity = hypothesesWithFrequency.toSorted(
     (a, b) => b.totalAgrees - a.totalAgrees
   )
-  const sortedOnInteresting = sortedOnInterestingness(hypothesesWithFrequency)
+  const sortedOnConvergence = sortOnConvergence(hypothesesWithFrequency)
 
   const sortedOnSparsity = hypothesesWithFrequency.toSorted(
     (a, b) => a.totalVotes - b.totalVotes
@@ -114,23 +116,23 @@ export async function drawFreceny(
   while (result.length < size) {
     const roll = Math.random()
     let hypothesis: (typeof hypothesesWithFrequency)[0] | undefined
-    let reason: "agrees" | "interesting" | "sparsity" | undefined
+    let reason: SelectionCriteria | undefined
 
-    if (roll < weights.agrees) {
-      hypothesis = sortedOnAgrees.find(
+    if (roll < weights.popularity) {
+      hypothesis = sortedOnPopularity.find(
         (h) => !used.has(`${h.fromId}-${h.toId}`)
       )
-      reason = "agrees"
-    } else if (roll < weights.agrees + weights.interesting) {
-      hypothesis = sortedOnInteresting.find(
+      reason = "popular"
+    } else if (roll < weights.popularity + weights.convergence) {
+      hypothesis = sortedOnConvergence.find(
         (h) => !used.has(`${h.fromId}-${h.toId}`)
       )
-      reason = "interesting"
+      reason = "convergence"
     } else {
       hypothesis = sortedOnSparsity.find(
         (h) => !used.has(`${h.fromId}-${h.toId}`)
       )
-      reason = "sparsity"
+      reason = "sparse"
     }
 
     if (!hypothesis) break
