@@ -20,14 +20,14 @@ import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group"
 import { Label } from "~/components/ui/label"
 import { Textarea } from "~/components/ui/textarea"
 import va from "@vercel/analytics"
-import { getDraw } from "~/services/hypotheses"
+import { getDrawFrecency } from "~/services/hypothesis-generation"
 
 type Relationship = "upgrade" | "no_upgrade" | "not_sure"
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const deliberationId = parseInt(params.deliberationId!)
   const userId = await auth.getUserId(request)
-  const draw = await getDraw(userId, deliberationId, 3)
+  const draw = await getDrawFrecency(userId, deliberationId, 3)
 
   return json({ draw })
 }
