@@ -2,7 +2,7 @@ import { serve } from "inngest/remix"
 import { deduplicateCron, deduplicate } from "~/services/deduplication"
 import { embedCards, embedContexts } from "~/services/embedding"
 import { inngest } from "~/config.server"
-import { hypothesize, hypothesizeCron } from "~/services/hypotheses"
+import { hypothesize, hypothesizeCron } from "~/services/hypothesis-generation"
 import {
   generateSeedQuestionsAndContexts,
   generateSeedQuestions,

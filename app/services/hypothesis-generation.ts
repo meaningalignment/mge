@@ -1,4 +1,4 @@
-import { CanonicalValuesCard, Context, EdgeHypothesis } from "@prisma/client"
+import { CanonicalValuesCard, EdgeHypothesis } from "@prisma/client"
 import { db, inngest } from "~/config.server"
 import {
   generateUpgrades,
@@ -6,106 +6,11 @@ import {
   Upgrade,
 } from "values-tools"
 import {
-  getUserEmbedding,
   getCanonicalCardsWithEmbedding,
   getContextEmbedding,
 } from "./embedding"
 import { cosineDistance } from "values-tools/src/utils"
 import { Value } from "values-tools/src/types"
-
-type EdgeHypothesisData = {
-  to: CanonicalValuesCard
-  from: CanonicalValuesCard
-  contextId: string
-  story: string
-  hypothesisRunId: string
-  deliberationId: number
-}
-
-async function getDistanceFromUserValuesMap(
-  userId: number,
-  deliberationId: number
-): Promise<Map<number, number>> {
-  // Get the user's embedding vector.
-  const vector = await getUserEmbedding(userId)
-
-  // Get the values ordered by their similarity to the vector.
-  const result = await db.$queryRaw<Array<{ id: number; _distance: number }>>`
-    SELECT
-      cvc.id,
-      cvc.embedding <=> ${JSON.stringify(vector)}::vector as "_distance"
-    FROM
-      "CanonicalValuesCard" cvc
-    INNER JOIN "EdgeHypothesis" eh
-    ON eh."fromId" = cvc.id
-    WHERE
-      eh."deliberationId" = ${deliberationId}
-    ORDER BY
-      "_distance" DESC
-    LIMIT 500;`
-
-  // Convert the array to a map.
-  const map = new Map<number, number>()
-  for (const r of result) {
-    map.set(r.id, r._distance)
-  }
-
-  // Return the map.
-  return map
-}
-
-export async function getDraw(
-  userId: number,
-  deliberationId: number,
-  size: number = 3
-): Promise<EdgeHypothesisData[]> {
-  // Find edge hypotheses that the user has not linked together yet.
-  const hypotheses = (await db.edgeHypothesis.findMany({
-    where: {
-      deliberationId,
-      archivedAt: null,
-      from: { edgesFrom: { none: { userId } } },
-      to: { edgesTo: { none: { userId } } },
-    },
-    include: {
-      from: true,
-      to: true,
-    },
-  })) as (EdgeHypothesis & {
-    from: CanonicalValuesCard
-    to: CanonicalValuesCard
-  })[]
-
-  // The unique values that are linked to a more comprehensive value.
-  const fromValues = [...new Set(hypotheses.map((h) => h.fromId))].map(
-    (id) => hypotheses.find((h) => h.fromId === id)!.from!
-  )
-
-  // The map of distances between the user's embedding and the "from" values.
-  const distances = await getDistanceFromUserValuesMap(userId, deliberationId)
-
-  //
-  // Sort the hypotheses on similarity to the user's embedding.
-  //
-  const sortedHypotheses = hypotheses.sort((a, b) => {
-    const distanceA = distances.get(a.fromId) ?? 0
-    const distanceB = distances.get(b.fromId) ?? 0
-
-    // Sort values with a smaller distance as fallback.
-    return distanceA - distanceB
-  })
-
-  // Return the most relevant hypotheses.
-  return sortedHypotheses.slice(0, size).map((h) => {
-    return {
-      to: h.to,
-      from: h.from,
-      story: h.story,
-      contextId: h.contextId,
-      deliberationId: h.deliberationId,
-    } as EdgeHypothesisData
-  })
-}
 
 export async function upsertUpgradesInDb(
   upgrades: Upgrade[],
@@ -152,40 +57,40 @@ export async function upsertUpgradesInDb(
   )
 }
 
-async function cleanupTransitions(
-  deliberationId: number,
-  hypothesisRunId: string
-): Promise<{
-  old: number
-  added: number
-}> {
-  const newTransitions = await db.edgeHypothesis.count({
-    where: { hypothesisRunId },
-  })
-  const oldTransitions = await db.edgeHypothesis.count({
-    where: { hypothesisRunId: { not: hypothesisRunId } },
-  })
+// async function cleanupTransitions(
+//   deliberationId: number,
+//   hypothesisRunId: string
+// ): Promise<{
+//   old: number
+//   added: number
+// }> {
+//   const newTransitions = await db.edgeHypothesis.count({
+//     where: { hypothesisRunId },
+//   })
+//   const oldTransitions = await db.edgeHypothesis.count({
+//     where: { hypothesisRunId: { not: hypothesisRunId } },
+//   })
 
-  if (newTransitions < 1) {
-    throw Error("No new transitions found by prompt, will break screen 3")
-  }
+//   if (newTransitions < 1) {
+//     throw Error("No new transitions found by prompt, will break screen 3")
+//   }
 
-  console.log(
-    `Deleting ${oldTransitions} old transitions. Adding ${newTransitions} new ones.`
-  )
+//   console.log(
+//     `Deleting ${oldTransitions} old transitions. Adding ${newTransitions} new ones.`
+//   )
 
-  await db.edgeHypothesis.updateMany({
-    data: {
-      archivedAt: new Date(),
-    },
-    where: {
-      deliberationId,
-      hypothesisRunId: { not: hypothesisRunId },
-    },
-  })
+//   await db.edgeHypothesis.updateMany({
+//     data: {
+//       archivedAt: new Date(),
+//     },
+//     where: {
+//       deliberationId,
+//       hypothesisRunId: { not: hypothesisRunId },
+//     },
+//   })
 
-  return { old: oldTransitions, added: newTransitions }
-}
+//   return { old: oldTransitions, added: newTransitions }
+// }
 
 async function getContextsWithLinksToValues(deliberationId: number) {
   return db.context.findMany({
