@@ -376,6 +376,20 @@ function findNodeById(interventions: any[], nodeId: number) {
     .find((v) => v.id === nodeId)
 }
 
+// Add this helper function to get a numeric score for support level
+function getSupportLevelScore(
+  supportLevel: "broadly supported" | "some support" | "contested"
+): number {
+  switch (supportLevel) {
+    case "broadly supported":
+      return 3
+    case "some support":
+      return 2
+    case "contested":
+      return 1
+  }
+}
+
 function InterventionCard({
   intervention,
   isOwner,
@@ -390,7 +404,7 @@ function InterventionCard({
   )
 
   const variants = {
-    "broadly supported": "success",
+    "broadly supported": "default",
     "some support": "secondary",
     contested: "outline",
   } as const
@@ -474,12 +488,7 @@ function InterventionCard({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger>
-                  <Badge
-                    variant="outline"
-                    className="bg-[length:120%_100%] bg-[position:-1px_0] bg-gradient-to-r from-blue-600 to-red-600 text-white border-transparent"
-                  >
-                    Cross-partisan
-                  </Badge>
+                  <Badge variant="secondary">Cross-partisan</Badge>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>This value is supported across political affiliations</p>
@@ -519,7 +528,8 @@ function InterventionCard({
 }
 
 export default function ReportView() {
-  const { interventions, isOwner } = useLoaderData<typeof loader>()
+  const { interventions: unsortedInterventions, isOwner } =
+    useLoaderData<typeof loader>()
   const { deliberationId, questionId } = useParams()
   const fetcher = useFetcher()
 
@@ -527,16 +537,40 @@ export default function ReportView() {
   const [selectedLink, setSelectedLink] = useState<Edge | null>(null)
   const [selectedContext, setSelectedContext] = useState<string | null>(null)
 
+  // Sort interventions by support level and number of values
+  const interventions = useMemo(() => {
+    return [...unsortedInterventions].sort((a, b) => {
+      const graphA = a.graph as unknown as MoralGraph
+      const graphB = b.graph as unknown as MoralGraph
+
+      const supportLevelA = categorizeSupportLevel(
+        graphA.values.map((v) => v.pageRank!)
+      )
+      const supportLevelB = categorizeSupportLevel(
+        graphB.values.map((v) => v.pageRank!)
+      )
+
+      // Compare support levels first
+      const supportDiff =
+        getSupportLevelScore(supportLevelB) -
+        getSupportLevelScore(supportLevelA)
+      if (supportDiff !== 0) return supportDiff
+
+      // If support levels are equal, compare number of values
+      return graphB.values.length - graphA.values.length
+    })
+  }, [unsortedInterventions])
+
   return (
     <div className="container mx-auto px-8 py-8 animate-fade-in">
-      <div className="flex flex-col items-center justify-center mb-12 space-y-4">
-        <h1 className="text-3xl md:text-4xl font-bold text-center max-w-2xl leading-tight text-slate-900">
+      <div className="flex flex-col items-center justify-center mb-20 mt-12 space-y-4 max-w-7xl mx-auto">
+        <h1 className="text-3xl md:text-4xl font-bold text-center leading-tight text-slate-900">
           How could US abortion policy support christian girls considering
           abortion?
         </h1>
       </div>
 
-      <div className="mb-16">
+      <div className="mb-16 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <Card className="relative overflow-hidden bg-white">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
@@ -680,26 +714,31 @@ export default function ReportView() {
         </div>
 
         <h2 className="text-3xl font-bold mb-2 mt-6 py-0 text-slate-900">
-          Suggested Actions
+          {interventions.length} Suggested Actions
         </h2>
       </div>
 
       {interventions.map((intervention, index) => (
         <div
           key={index}
-          className="animate-fade-in"
+          className="animate-fade-in max-w-7xl mx-auto"
           style={{ animationDelay: `${index * 100}ms` }}
         >
           {index > 0 && <Separator className="my-16" />}
-          <h3 className="text-lg font-semibold mb-4 flex justify-between items-center">
-            {contextDisplayName(intervention.contextId)}
-            <span className="text-sm text-muted-foreground">
-              {countVotes(intervention.graph as unknown as MoralGraph)}{" "}
-              {"Votes"}
+          <div className="flex items-center gap-4 mb-4">
+            <span className="text-4xl font-bold text-primary/20">
+              {index + 1}
             </span>
-          </h3>
+            <h3 className="text-lg font-semibold flex justify-between items-center flex-1">
+              {contextDisplayName(intervention.contextId)}
+              <span className="text-sm text-muted-foreground">
+                {countVotes(intervention.graph as unknown as MoralGraph)}{" "}
+                {"Votes"}
+              </span>
+            </h3>
+          </div>
 
-          <div className="flex flex-col md:flex-row gap-8">
+          <div className="flex flex-col lg:flex-row gap-8">
             <div className="flex-1">
               <p className="text-sm font-normal text-muted-foreground mb-2">
                 Intervention
@@ -712,14 +751,12 @@ export default function ReportView() {
                 fetcher={fetcher}
               />
             </div>
-            <div className="w-full md:w-[450px]">
+            <div className="w-full lg:w-[450px]">
               <p className="text-sm font-normal text-muted-foreground mb-2">
                 Values
               </p>
               <div
-                className={`h-[${getGraphHeight(
-                  intervention as unknown as InterventionWithPrecedence
-                )}px] bg-slate-50 rounded-lg overflow-hidden shadow-inner hover:shadow-inner-lg`}
+                className={`bg-slate-50 rounded-lg overflow-hidden shadow-inner hover:shadow-inner-lg`}
               >
                 <ForceGraphWrapper
                   selectedValue={selectedValue}

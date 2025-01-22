@@ -73,7 +73,28 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     },
   })
 
-  return { deliberation }
+  const firstIntervention = await db.intervention.findFirst({
+    where: {
+      deliberationId,
+      shouldDisplay: true,
+    },
+    select: {
+      questionId: true,
+    },
+  })
+
+  const interventionsCount = await db.intervention.count({
+    where: {
+      deliberationId,
+      shouldDisplay: true,
+    },
+  })
+
+  return {
+    deliberation,
+    interventionsCount,
+    firstQuestionId: firstIntervention?.questionId,
+  }
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -197,7 +218,8 @@ function ValueContextInfo() {
 }
 
 export default function DeliberationDashboard() {
-  const { deliberation } = useLoaderData<typeof loader>()
+  const { deliberation, interventionsCount, firstQuestionId } =
+    useLoaderData<typeof loader>()
   const fetcher = useFetcher()
   const revalidator = useRevalidator()
   const { deliberationId } = useParams()
@@ -258,6 +280,35 @@ export default function DeliberationDashboard() {
     <div className="container mx-auto py-6 max-w-2xl space-y-6">
       {deliberation.topic && (
         <h1 className="text-3xl font-bold mb-8">{deliberation.topic}</h1>
+      )}
+
+      {interventionsCount > 0 && firstQuestionId && (
+        <Card className="mb-8 relative overflow-hidden animate-fade-in bg-white">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5" />
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold">Report Ready</h3>
+                <p className="text-sm text-muted-foreground">
+                  View the report to see {interventionsCount} suggested actions
+                  based on participant values
+                </p>
+              </div>
+              <Link
+                to={`/deliberation/${deliberationId}/${firstQuestionId}/report`}
+                prefetch="render"
+                className="relative group"
+              >
+                <Button
+                  variant="outline"
+                  className="relative flex items-center gap-2 group-hover:border-primary/50 transition-colors ml-4"
+                >
+                  View Report
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       <Card>
@@ -433,7 +484,7 @@ export default function DeliberationDashboard() {
       </div>
 
       {deliberation.questions.length === 0 && (
-        <Alert className="mt-6 mb-4 bg-slate-50">
+        <Alert className="mt-6 mb-4">
           <div className="flex flex-row space-x-2">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle className="mb-2">No questions yet</AlertTitle>
@@ -446,11 +497,7 @@ export default function DeliberationDashboard() {
       )}
 
       {deliberation.questions.map((question, index) => (
-        <Card
-          key={question.id}
-          className="animate-fade-in"
-          style={{ animationDelay: `${400 + index * 100}ms` }}
-        >
+        <Card key={question.id}>
           <CardHeader>
             <CardTitle className="text-md font-bold flex items-center">
               {question.title}
