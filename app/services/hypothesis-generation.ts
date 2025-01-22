@@ -1,4 +1,4 @@
-import { CanonicalValuesCard, EdgeHypothesis } from "@prisma/client"
+import { CanonicalValuesCard } from "@prisma/client"
 import { db, inngest } from "~/config.server"
 import {
   generateUpgrades,
@@ -56,41 +56,6 @@ export async function upsertUpgradesInDb(
     )
   )
 }
-
-// async function cleanupTransitions(
-//   deliberationId: number,
-//   hypothesisRunId: string
-// ): Promise<{
-//   old: number
-//   added: number
-// }> {
-//   const newTransitions = await db.edgeHypothesis.count({
-//     where: { hypothesisRunId },
-//   })
-//   const oldTransitions = await db.edgeHypothesis.count({
-//     where: { hypothesisRunId: { not: hypothesisRunId } },
-//   })
-
-//   if (newTransitions < 1) {
-//     throw Error("No new transitions found by prompt, will break screen 3")
-//   }
-
-//   console.log(
-//     `Deleting ${oldTransitions} old transitions. Adding ${newTransitions} new ones.`
-//   )
-
-//   await db.edgeHypothesis.updateMany({
-//     data: {
-//       archivedAt: new Date(),
-//     },
-//     where: {
-//       deliberationId,
-//       hypothesisRunId: { not: hypothesisRunId },
-//     },
-//   })
-
-//   return { old: oldTransitions, added: newTransitions }
-// }
 
 async function getContextsWithLinksToValues(deliberationId: number) {
   return db.context.findMany({
