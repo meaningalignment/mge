@@ -14,6 +14,7 @@ generator client {
 model User {
   id           Int            @id @default(autoincrement())
   email        String         @unique
+  prolificId   String?
   name         String?
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
@@ -97,7 +98,7 @@ model CanonicalValuesCard {
   title              String
   description        String
   policies           String[]
-  isExcluded         Boolean                      @default(false)
+  isArchived         Boolean                      @default(false)
   createdAt          DateTime                     @default(now())
   updatedAt          DateTime                     @updatedAt
   embedding          Unsupported("vector(1536)")?
@@ -164,7 +165,7 @@ model EdgeHypothesis {
   contextId       String
   createdAt       DateTime             @default(now())
   updatedAt       DateTime             @updatedAt
-  archivedAt      DateTime?
+  isArchived      Boolean              @default(false)
   from            CanonicalValuesCard? @relation("FromHypothesizedValueRelation", fields: [fromId], references: [id], onDelete: Cascade)
   to              CanonicalValuesCard? @relation("ToHypothesizedValueRelation", fields: [toId], references: [id], onDelete: Cascade)
   context         Context              @relation(fields: [contextId, deliberationId], references: [id, deliberationId])
@@ -197,6 +198,7 @@ model Question {
   seedMessage          String?
   ContextsForQuestions ContextsForQuestions[]
   deliberationId       Int
+  isArchived           Boolean                @default(false)
   deliberation         Deliberation           @relation(fields: [deliberationId], references: [id], onDelete: Cascade)
   chats                Chat[]
   ValuesCard           ValuesCard[]

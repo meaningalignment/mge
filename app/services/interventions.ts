@@ -32,7 +32,6 @@ async function getValuesForDeliberation(
   return db.canonicalValuesCard.findMany({
     where: {
       deliberationId,
-      isExcluded: false,
       valuesCards: {
         some: {
           chat: { questionId },

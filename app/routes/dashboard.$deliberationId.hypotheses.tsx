@@ -22,7 +22,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
       orderBy: { createdAt: "desc" },
       where: {
         deliberationId: Number(deliberationId)!,
-        archivedAt: null,
       },
       select: {
         fromId: true,
@@ -194,9 +193,9 @@ export default function AdminHypotheses() {
           {filteredHypotheses.map((hypothesis) => (
             <NavLink
               prefetch="intent"
-              to={`/dashboard/${deliberationId}/upgrades/${hypothesis.fromId}/${
-                hypothesis.toId
-              }/${encodeString(hypothesis.contextId)}`}
+              to={`/dashboard/${deliberationId}/hypotheses/${
+                hypothesis.fromId
+              }/${hypothesis.toId}/${encodeString(hypothesis.contextId)}`}
               key={`${hypothesis.fromId}-${hypothesis.toId}-${hypothesis.contextId}`}
               className={({ isActive, isPending }) =>
                 cn(

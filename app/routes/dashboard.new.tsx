@@ -1,5 +1,10 @@
-import { ActionFunction, json, redirect } from "@remix-run/node"
-import { Form, useActionData, useNavigate } from "@remix-run/react"
+import { ActionFunction, json, redirect, LoaderFunction } from "@remix-run/node"
+import {
+  Form,
+  useActionData,
+  useNavigate,
+  useLoaderData,
+} from "@remix-run/react"
 import { useEffect, useState } from "react"
 import { auth, db, inngest } from "~/config.server"
 import { Button } from "~/components/ui/button"
@@ -210,8 +215,15 @@ export const action: ActionFunction = async ({ request }) => {
   }
 }
 
+export const loader: LoaderFunction = async () => {
+  return json({
+    enableAlternativeInputs: process.env.ENABLE_ALTERNATIVE_INPUTS === "true",
+  })
+}
+
 export default function NewDeliberation() {
   const navigate = useNavigate()
+  const { enableAlternativeInputs } = useLoaderData<typeof loader>()
   const [topic, setQuestion] = useState("")
   const [title, setTitle] = useState("")
   const [inputMethod, setInputMethod] = useState<
@@ -262,27 +274,29 @@ export default function NewDeliberation() {
         </div>
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">Questions</h2>
-          <RadioGroup
-            defaultValue="topic"
-            value={inputMethod}
-            onValueChange={(value) =>
-              setInputMethod(value as "topic" | "questions" | "contexts")
-            }
-            className="flex space-x-8"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="topic" id="topic-input" />
-              <Label htmlFor="topic-input">Generate From Topic</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="questions" id="questions-input" />
-              <Label htmlFor="questions-input">Upload Questions</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="contexts" id="contexts-input" />
-              <Label htmlFor="contexts-input">Upload Schema</Label>
-            </div>
-          </RadioGroup>
+          {enableAlternativeInputs && (
+            <RadioGroup
+              defaultValue="topic"
+              value={inputMethod}
+              onValueChange={(value) =>
+                setInputMethod(value as "topic" | "questions" | "contexts")
+              }
+              className="flex space-x-8"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="topic" id="topic-input" />
+                <Label htmlFor="topic-input">Generate From Topic</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="questions" id="questions-input" />
+                <Label htmlFor="questions-input">Upload Questions</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="contexts" id="contexts-input" />
+                <Label htmlFor="contexts-input">Upload Schema</Label>
+              </div>
+            </RadioGroup>
+          )}
         </div>
 
         {inputMethod === "topic" ? (

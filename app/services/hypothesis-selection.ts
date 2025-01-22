@@ -69,7 +69,7 @@ export async function drawFreceny(
   const hypotheses = (await db.edgeHypothesis.findMany({
     where: {
       deliberationId,
-      archivedAt: null,
+      isArchived: false,
     },
     include: {
       from: true,

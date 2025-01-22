@@ -14,7 +14,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
   const [allQuestions, deliberation] = await Promise.all([
     db.question.findMany({
-      where: { deliberationId: Number(deliberationId!) },
+      where: { deliberationId: Number(deliberationId!), isArchived: false },
     }),
     db.deliberation.findUnique({
       where: { id: Number(deliberationId!) },

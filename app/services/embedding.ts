@@ -49,10 +49,9 @@ async function getCanonicalCardsWithoutEmbedding(deliberationId: number) {
 export async function getCanonicalCardsWithEmbedding(deliberationId: number) {
   return (
     await db.$queryRaw<Array<any>>`
-    SELECT "id", "title", "description", "policies", "deliberationId", "createdAt", "updatedAt", "isExcluded", "embedding"::text as embedding
+    SELECT "id", "title", "description", "policies", "deliberationId", "createdAt", "updatedAt", "embedding"::text as embedding
     FROM "CanonicalValuesCard"
     WHERE "CanonicalValuesCard".embedding IS NOT NULL 
-    AND "isExcluded" = false
     AND "deliberationId" = ${deliberationId};`
   ).map((d) => ({
     ...d,

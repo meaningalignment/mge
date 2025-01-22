@@ -140,7 +140,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     return json({ success: true })
   } else if (action === "generateSeedGraph") {
     const deliberationId = Number(params.deliberationId)!
-    const numValues = Number(formData.get("numValues")) || 10
 
     await db.deliberation.update({
       where: { id: deliberationId },
@@ -149,7 +148,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     await inngest.send({
       name: "gen-seed-graph",
-      data: { deliberationId, numValues },
+      data: { deliberationId, numValues: 12 },
     })
 
     return json({ success: true, refetch: true })
@@ -204,7 +203,6 @@ export default function DeliberationDashboard() {
   const { deliberationId } = useParams()
   const [openQuestionId, setOpenQuestionId] = useState<number | null>(null)
   const [isGeneratingGraph, setIsGeneratingGraph] = useState(false)
-  const [numValues, setNumValues] = useState(10)
 
   // Poll for setup status if the deliberation is not ready
   useEffect(() => {
@@ -241,7 +239,7 @@ export default function DeliberationDashboard() {
   const handleGenerateSeedGraph = () => {
     setIsGeneratingGraph(true)
     fetcher.submit(
-      { action: "generateSeedGraph", numValues: numValues.toString() },
+      { action: "generateSeedGraph", numValues: "10" },
       { method: "post" }
     )
   }
@@ -257,14 +255,12 @@ export default function DeliberationDashboard() {
   }
 
   return (
-    <div className="container mx-auto py-6 max-w-2xl space-y-6 animate-fade-in">
+    <div className="container mx-auto py-6 max-w-2xl space-y-6">
       {deliberation.topic && (
-        <h1 className="text-3xl font-bold mb-8 animate-fade-in">
-          {deliberation.topic}
-        </h1>
+        <h1 className="text-3xl font-bold mb-8">{deliberation.topic}</h1>
       )}
 
-      <Card className="animate-fade-in">
+      <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Options</CardTitle>
         </CardHeader>
@@ -287,11 +283,11 @@ export default function DeliberationDashboard() {
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
             </Link>
             <Link
-              to={`/dashboard/${deliberationId}/upgrades`}
+              to={`/dashboard/${deliberationId}/hypotheses`}
               prefetch="render"
               className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  "
             >
-              <span>Manage Upgrades</span>
+              <span>Manage Hypotheses</span>
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
             </Link>
             <Link
@@ -314,7 +310,7 @@ export default function DeliberationDashboard() {
         </CardContent>
       </Card>
 
-      <Card className="animate-fade-in">
+      <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Summary</CardTitle>
         </CardHeader>
@@ -370,7 +366,7 @@ export default function DeliberationDashboard() {
                 <AlertTitle>No responses yet</AlertTitle>
               </div>
 
-              <AlertDescription className="flex flex-col sm:flex-row items-center justify-between">
+              <AlertDescription className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
                   <span className="pr-4">
                     Would you like to generate a moral graph to seed the
@@ -387,33 +383,13 @@ export default function DeliberationDashboard() {
                     <span className="text-gray-400">Generating Graph...</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Input
-                            type="number"
-                            min="1"
-                            max="50"
-                            value={numValues}
-                            onChange={(e) =>
-                              setNumValues(Number(e.target.value))
-                            }
-                            className="w-16"
-                            aria-label="Number of values to generate for the moral graph"
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>
-                            Number of values to generate for the moral graph
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <Button variant="outline" onClick={handleGenerateSeedGraph}>
-                      Generate graph with {numValues} values
-                    </Button>
-                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={handleGenerateSeedGraph}
+                    className="mt-2 sm:mt-0"
+                  >
+                    Generate Graph
+                  </Button>
                 )}
               </AlertDescription>
             </Alert>
@@ -441,11 +417,11 @@ export default function DeliberationDashboard() {
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-between mt-8 mb-4 animate-fade-in">
+      <div className="flex items-center justify-between mt-8 mb-4">
         <h2 className="text-2xl font-bold">Questions</h2>
         {(deliberation.setupStatus === "generating_contexts" ||
           deliberation.setupStatus === "generating_questions") && (
-          <div className="bg-white rounded-md px-2 py-1 border flex flex-row items-center gap-1 animate-pulse">
+          <div className="bg-white rounded-md px-2 py-1 border flex flex-row items-center gap-1">
             <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
             <span className="text-gray-400 text-sm">
               {deliberation.setupStatus === "generating_contexts"
@@ -538,7 +514,7 @@ export default function DeliberationDashboard() {
           </CardContent>
         </Card>
       ))}
-      <div className="mt-12 flex justify-between animate-fade-in">
+      <div className="mt-12 flex justify-between">
         <LoadingButton
           variant="outline"
           onClick={handleResetDeliberation}

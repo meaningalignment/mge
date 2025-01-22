@@ -1,5 +1,5 @@
-import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node"
-import { useLoaderData, useFetcher } from "@remix-run/react"
+import { LoaderFunctionArgs, json } from "@remix-run/node"
+import { useLoaderData } from "@remix-run/react"
 import { db } from "~/config.server"
 import ValuesCard from "~/components/values-card"
 import { useState } from "react"
@@ -10,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select"
-import { EyeNoneIcon } from "@radix-ui/react-icons"
 import { Alert, AlertTitle, AlertDescription } from "~/components/ui/alert"
 import { AlertCircle } from "lucide-react"
 
@@ -60,27 +59,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return json({ values, questions, contexts })
 }
 
-export async function action({ request }: ActionFunctionArgs) {
-  const formData = await request.formData()
-  const cardId = Number(formData.get("cardId"))
-  const isExcluded = formData.get("excluded") === "true"
-
-  await db.canonicalValuesCard.update({
-    where: { id: cardId },
-    data: { isExcluded },
-  })
-
-  return json({ success: true })
-}
-
 export default function ValuesView() {
   const { values, questions, contexts } = useLoaderData<typeof loader>()
   const [selectedQuestion, setSelectedQuestion] = useState<string>("all")
   const [selectedContext, setSelectedContext] = useState<string>("all")
-  const [localExclusions, setLocalExclusions] = useState<
-    Record<number, boolean>
-  >({})
-  const fetcher = useFetcher()
 
   if (values.length === 0) {
     return (
@@ -113,11 +95,14 @@ export default function ValuesView() {
 
         // If context is selected, check if the question is linked to this context
         if (selectedContext !== "all") {
-          contexts
-            .find((context) => context.id === selectedContext)
-            ?.ContextsForQuestions.some(
-              (c) => c.questionId === card.question.id
-            )
+          const contextExists =
+            contexts
+              .find((context) => context.id === selectedContext)
+              ?.ContextsForQuestions.some(
+                (c) => c.questionId === card.question.id
+              ) ?? false
+
+          return contextExists
         }
 
         return true
@@ -145,22 +130,31 @@ export default function ValuesView() {
           </Alert>
         ) : (
           <>
-            <div className="flex gap-4 mb-6">
-              <Select value={selectedQuestion} onValueChange={setSelectedQuestion}>
+            <div className="flex gap-4 mb-6 items-center">
+              <Select
+                value={selectedQuestion}
+                onValueChange={setSelectedQuestion}
+              >
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Select Question" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Questions</SelectItem>
                   {questions.map((question) => (
-                    <SelectItem key={question.id} value={question.id.toString()}>
+                    <SelectItem
+                      key={question.id}
+                      value={question.id.toString()}
+                    >
                       {question.title}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
 
-              <Select value={selectedContext} onValueChange={setSelectedContext}>
+              <Select
+                value={selectedContext}
+                onValueChange={setSelectedContext}
+              >
                 <SelectTrigger className="w-[200px]">
                   <SelectValue placeholder="Select Context" />
                 </SelectTrigger>
@@ -173,51 +167,22 @@ export default function ValuesView() {
                   ))}
                 </SelectContent>
               </Select>
+
+              <span className="text-sm text-muted-foreground">
+                {filteredValues.length} value
+                {filteredValues.length !== 1 ? "s" : ""} found
+              </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center">
-              {filteredValues.map((value) => {
-                const isExcluded = localExclusions[value.id] ?? value.isExcluded
-
-                return (
-                  <fetcher.Form
-                    key={value.id}
-                    method="post"
-                    className={`group relative flex flex-col h-full cursor-pointer transition-opacity duration-200 hover:opacity-60 ${
-                      isExcluded ? "opacity-30" : ""
-                    }`}
-                    onSubmit={(e) => {
-                      // Prevent default form submission
-                      e.preventDefault()
-
-                      // Update local state immediately
-                      setLocalExclusions((prev) => ({
-                        ...prev,
-                        [value.id]: !isExcluded,
-                      }))
-
-                      // Submit the form
-                      fetcher.submit(e.currentTarget)
-                    }}
-                  >
-                    <input type="hidden" name="cardId" value={value.id} />
-                    <input
-                      type="hidden"
-                      name="excluded"
-                      value={(!isExcluded).toString()}
-                    />
-                    <button type="submit" className="w-full text-left">
-                      {isExcluded && (
-                        <div className="absolute top-2 right-2 z-10 bg-slate-900 text-white px-3 py-1.5 rounded-md flex items-center gap-2 text-sm font-medium shadow-lg border border-slate-700">
-                          <EyeNoneIcon className="h-[14px] w-[14px]" />
-                          <span>Excluded</span>
-                        </div>
-                      )}
-                      <ValuesCard card={value} detailsInline />
-                    </button>
-                  </fetcher.Form>
-                )
-              })}
+              {filteredValues.map((value) => (
+                <div
+                  key={value.id}
+                  className="group relative flex flex-col h-full"
+                >
+                  <ValuesCard card={value} detailsInline />
+                </div>
+              ))}
             </div>
           </>
         )}
