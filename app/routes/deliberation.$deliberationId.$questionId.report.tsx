@@ -183,28 +183,25 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     where: { id: Number(deliberationId!) },
   })
 
-  const interventions = (
-    await db.intervention.findMany({
-      where: {
-        deliberationId: Number(deliberationId!),
-        questionId: Number(questionId!),
-        shouldDisplay: true,
-      },
-      include: {
-        InterventionPrecedence: true,
-      },
-    })
-  ).filter((i) =>
-    [
-      "When in distress",
-      "When being introspective",
-      "When making decisions",
-    ].includes(i.contextId)
-  )
+  const question = await db.question.findFirstOrThrow({
+    where: { id: Number(questionId!) },
+  })
+
+  const interventions = await db.intervention.findMany({
+    where: {
+      deliberationId: Number(deliberationId!),
+      questionId: Number(questionId!),
+      shouldDisplay: true,
+    },
+    include: {
+      InterventionPrecedence: true,
+    },
+  })
 
   return {
     interventions,
     isOwner: user?.id === deliberation.createdBy,
+    question: question.question,
   }
 }
 
@@ -351,7 +348,6 @@ function countAllValues(
   ).size
 }
 
-// Define the action
 export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData()
   const type = formData.get("type")
@@ -369,14 +365,12 @@ export const action: ActionFunction = async ({ request }) => {
   }
 }
 
-// Add this helper function
 function findNodeById(interventions: any[], nodeId: number) {
   return interventions
     .flatMap((i) => (i.graph as unknown as MoralGraph).values)
     .find((v) => v.id === nodeId)
 }
 
-// Add this helper function to get a numeric score for support level
 function getSupportLevelScore(
   supportLevel: "broadly supported" | "some support" | "contested"
 ): number {
@@ -528,8 +522,11 @@ function InterventionCard({
 }
 
 export default function ReportView() {
-  const { interventions: unsortedInterventions, isOwner } =
-    useLoaderData<typeof loader>()
+  const {
+    interventions: unsortedInterventions,
+    isOwner,
+    question,
+  } = useLoaderData<typeof loader>()
   const { deliberationId, questionId } = useParams()
   const fetcher = useFetcher()
 
@@ -565,8 +562,7 @@ export default function ReportView() {
     <div className="container mx-auto px-8 py-8 animate-fade-in">
       <div className="flex flex-col items-center justify-center mb-20 mt-12 space-y-4 max-w-7xl mx-auto">
         <h1 className="text-3xl md:text-4xl font-bold text-center leading-tight text-slate-900">
-          How could US abortion policy support christian girls considering
-          abortion?
+          {question}
         </h1>
       </div>
 
