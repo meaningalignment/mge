@@ -14,3 +14,4 @@ cache.sqlite
 /components
 /scripts/test.ts
 /dft-data
+/local
