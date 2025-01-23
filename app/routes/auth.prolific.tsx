@@ -35,7 +35,6 @@ export async function action({ request }: ActionFunctionArgs) {
     user = await db.user.create({
       data: {
         email: prolificId,
-        signupType: "PROLIFIC",
         prolificId,
       },
     })

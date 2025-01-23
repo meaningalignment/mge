@@ -65,6 +65,7 @@ async function getContextsWithLinksToValues(deliberationId: number) {
         some: {
           question: {
             deliberationId,
+            isArchived: false,
           },
         },
       },
