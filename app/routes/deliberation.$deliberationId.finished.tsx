@@ -85,7 +85,7 @@ export default function FinishedScreen() {
           </p>
         </div>
 
-        {!prolificId && (
+        {prolificId && (
           <div className="my-16">
             <Button
               size="lg"
