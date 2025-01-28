@@ -22,39 +22,37 @@ export async function upsertUpgradesInDb(
     `Upserting ${upgrades.length} upgrades to the database for deliberation ${deliberationId} and context ${contextId}`
   )
 
-  await Promise.all(
-    upgrades.map((t) =>
-      db.edgeHypothesis.upsert({
-        where: {
-          fromId_toId_contextId_deliberationId: {
-            fromId: t.a_id,
-            toId: t.b_id,
-            contextId,
-            deliberationId,
-          },
+  for (const upgrade of upgrades) {
+    await db.edgeHypothesis.upsert({
+      where: {
+        fromId_toId_contextId_deliberationId: {
+          fromId: upgrade.a_id,
+          toId: upgrade.b_id,
+          contextId,
+          deliberationId,
         },
-        create: {
-          hypothesisRunId,
-          story: t.story,
-          from: { connect: { id: t.a_id } },
-          to: { connect: { id: t.b_id } },
-          deliberation: { connect: { id: deliberationId } },
-          context: {
-            connect: {
-              id_deliberationId: {
-                id: contextId,
-                deliberationId,
-              },
+      },
+      create: {
+        hypothesisRunId,
+        story: upgrade.story,
+        from: { connect: { id: upgrade.a_id } },
+        to: { connect: { id: upgrade.b_id } },
+        deliberation: { connect: { id: deliberationId } },
+        context: {
+          connect: {
+            id_deliberationId: {
+              id: contextId,
+              deliberationId,
             },
           },
         },
-        update: {
-          story: t.story,
-          hypothesisRunId,
-        },
-      })
-    )
-  )
+      },
+      update: {
+        story: upgrade.story,
+        hypothesisRunId,
+      },
+    })
+  }
 }
 
 async function getContextsWithLinksToValues(deliberationId: number) {
@@ -259,3 +257,70 @@ export const hypothesize = inngest.createFunction(
     return { message: `Success! Created ${allUpgrades.length} new upgrades.` }
   }
 )
+
+export async function hypothesizeManual(
+  deliberationId: number,
+  pairs: {
+    fromId: number
+    toId: number
+    contextId: string
+  }[]
+) {
+  const runId = `manual-${Date.now()}`
+  const uniqueIds = new Set<number>()
+  pairs.forEach((pair: any) => {
+    uniqueIds.add(pair.fromId)
+    uniqueIds.add(pair.toId)
+  })
+  const valueIds = Array.from(uniqueIds)
+  const values = await db.canonicalValuesCard.findMany({
+    where: {
+      id: {
+        in: valueIds,
+      },
+    },
+  })
+
+  for (const pair of pairs) {
+    const sourceValue = values.find((v) => v.id === pair.fromId)
+    const targetValue = values.find((v) => v.id === pair.toId)
+
+    if (sourceValue && targetValue) {
+      // Generate forward upgrade
+      const forwardUpgrade = (
+        await generateUpgradesToValue(
+          sourceValue,
+          [targetValue],
+          pair.contextId
+        )
+      )[0]
+
+      // Generate reverse upgrade
+      const reverseUpgrade = (
+        await generateUpgradesToValue(
+          targetValue,
+          [sourceValue],
+          pair.contextId
+        )
+      )[0]
+
+      const upgrades = [forwardUpgrade, reverseUpgrade].filter(Boolean)
+
+      if (upgrades.length > 0) {
+        console.log(
+          `Upserting upgrades for pair ${sourceValue.id} <-> ${targetValue.id} in db`
+        )
+        await upsertUpgradesInDb(
+          upgrades,
+          runId,
+          pair.contextId,
+          deliberationId
+        )
+      } else {
+        console.error(
+          `No upgrades found for pair ${sourceValue.id} <-> ${targetValue.id}`
+        )
+      }
+    }
+  }
+}

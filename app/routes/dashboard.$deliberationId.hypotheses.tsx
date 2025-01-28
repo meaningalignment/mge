@@ -1,6 +1,12 @@
 import { json, LoaderFunctionArgs } from "@remix-run/node"
-import { NavLink, Outlet, useLoaderData, useParams } from "@remix-run/react"
-import { db } from "~/config.server"
+import {
+  NavLink,
+  Outlet,
+  useLoaderData,
+  useParams,
+  useFetcher,
+} from "@remix-run/react"
+import { db, inngest } from "~/config.server"
 import { cn, encodeString } from "~/lib/utils"
 import { Alert, AlertTitle, AlertDescription } from "~/components/ui/alert"
 import { AlertCircle } from "lucide-react"
@@ -11,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select"
+import { Button } from "~/components/ui/button"
 import { useState } from "react"
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -69,9 +76,21 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return json({ hypotheses, questions, contexts })
 }
 
+export async function action({ request, params }: LoaderFunctionArgs) {
+  const { deliberationId } = params
+
+  await inngest.send({
+    name: "hypothesize",
+    data: { deliberationId: Number(deliberationId) },
+  })
+
+  return json({ success: true })
+}
+
 export default function AdminHypotheses() {
   const data = useLoaderData<typeof loader>()
   const { deliberationId } = useParams()
+  const fetcher = useFetcher()
   const [selectedQuestion, setSelectedQuestion] = useState<string>("all")
   const [selectedContext, setSelectedContext] = useState<string>("all")
   const [selectedRunId, setSelectedRunId] = useState<string>("all")
@@ -88,7 +107,10 @@ export default function AdminHypotheses() {
     if (selectedContext !== "all" && hypothesis.contextId !== selectedContext)
       return false
 
-    if (selectedRunId !== "all" && hypothesis.hypothesisRunId !== selectedRunId)
+    if (
+      selectedRunId !== "all" &&
+      hypothesis.hypothesisRunId?.toString() !== selectedRunId
+    )
       return false
 
     if (selectedQuestion !== "all") {
@@ -187,6 +209,17 @@ export default function AdminHypotheses() {
               ))}
             </SelectContent>
           </Select>
+
+          <fetcher.Form method="post" className="w-full">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full"
+              disabled={fetcher.state !== "idle"}
+            >
+              {fetcher.state !== "idle" ? "Generating..." : "Generate More"}
+            </Button>
+          </fetcher.Form>
         </div>
 
         <ul className="space-y-2 text-sm font-medium">

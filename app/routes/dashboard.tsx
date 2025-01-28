@@ -301,8 +301,11 @@ export default function Deliberations() {
                         .slice(0, index + 1)
                         .join("/")}`}
                       className="font-medium text-slate-500 capitalize hover:text-slate-700 transition-colors"
+                      title={segment}
                     >
-                      {segment}
+                      {segment.length > 17
+                        ? `${segment.slice(0, 17)}...`
+                        : segment}
                     </NavLink>
                   </li>
                 ))}
