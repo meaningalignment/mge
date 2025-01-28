@@ -14,6 +14,7 @@ import { Loader2 } from "lucide-react"
  * Should be deactivated when not running a prolific study (remove the env var)
  */
 export async function action({ request }: ActionFunctionArgs) {
+  console.log(process.env.PROLIFIC_SIGNUP_ENABLED)
   if (process.env.PROLIFIC_SIGNUP_ENABLED !== "true") {
     throw new Error("Prolific signup attempted but is not enabled.")
   }
@@ -76,7 +77,7 @@ export default function ProlificScreen() {
             This process will take about 15 minutes to complete.
           </h1>
           <p className="text-neutral-500">
-            Your Prolific completion code will be shown on the last page.
+            You will be reidrected to Prolific once done.
           </p>
         </div>
         <div className="grid justify-center items-center">
