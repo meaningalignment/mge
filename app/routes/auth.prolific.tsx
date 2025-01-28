@@ -74,10 +74,10 @@ export default function ProlificScreen() {
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 max-w-xs">
         <div className="my-8 p-8 border-2 border-border rounded-xl text-center">
           <h1 className="text-2xl mb-8">
-            This process will take about 15 minutes to complete.
+            This process will take about 10 minutes to complete.
           </h1>
           <p className="text-neutral-500">
-            You will be reidrected to Prolific once done.
+            You will be redirected to Prolific once done.
           </p>
         </div>
         <div className="grid justify-center items-center">
