@@ -311,7 +311,9 @@ export default function Deliberations() {
           </nav>
         )}
         <div className="h-full">
-          <Outlet />
+          <div className="px-4 sm:px-6 py-4">
+            <Outlet />
+          </div>
         </div>
       </main>
     </div>
