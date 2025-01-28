@@ -5,12 +5,20 @@ import {
   redirect,
   useParams,
   useLocation,
+  Form,
 } from "@remix-run/react"
 import type { LoaderFunctionArgs } from "@remix-run/node"
 import { auth, db } from "~/config.server"
 import { Button } from "~/components/ui/button"
 import { ScrollArea } from "~/components/ui/scroll-area"
 import { cn } from "~/lib/utils"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu"
+import { useState } from "react"
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await auth.getCurrentUser(request)
@@ -40,13 +48,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       ],
     },
   })
-  return { deliberations, participatingIn }
+  return { deliberations, participatingIn, user }
 }
 
 export default function Deliberations() {
-  const { deliberations, participatingIn } = useLoaderData<typeof loader>()
+  const { deliberations, participatingIn, user } =
+    useLoaderData<typeof loader>()
   const params = useParams()
   const location = useLocation()
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   const currentDeliberation = [...deliberations, ...participatingIn].find(
     (d) => d.id === Number(params.deliberationId)
@@ -60,29 +70,42 @@ export default function Deliberations() {
 
   return (
     <div className="h-screen flex">
+      {/* Mobile Overlay */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       <aside
         id="sidebar"
-        className="fixed left-0 top-0 z-40 h-screen w-64 transition-transform"
+        className={cn(
+          "fixed left-0 top-0 z-40 h-screen w-64 transition-transform lg:translate-x-0",
+          !isSidebarOpen && "-translate-x-full"
+        )}
         aria-label="Sidebar"
       >
-        <div className="flex h-full flex-col overflow-y-auto border-r border-slate-200 bg-white px-3 py-4  ">
-          <div className="mb-10 flex items-center rounded-lg px-3 py-2 text-slate-900 ">
-            <svg
-              className="h-5 w-5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
-            </svg>
-            <span className="ml-3 text-base font-semibold">
-              Moral Graph Elicitation
-            </span>
+        <div className="flex h-full flex-col overflow-y-auto border-r border-slate-200 bg-white px-3 py-4">
+          <div className="mb-10 flex items-center justify-between rounded-lg px-3 py-2 text-slate-900">
+            <div className="flex items-center">
+              <svg
+                className="h-5 w-5"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
+              </svg>
+              <span className="ml-3 text-base font-semibold">
+                Moral Graph Elicitation
+              </span>
+            </div>
           </div>
           <ScrollArea className="flex-grow">
             <div className="mb-2 px-3 text-xs font-semibold text-slate-500 ">
@@ -169,7 +192,38 @@ export default function Deliberations() {
               </>
             )}
           </ScrollArea>
-          <div className="mt-auto pt-4">
+          <div className="mt-auto space-y-4 pt-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full">
+                  <div className="flex items-center justify-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 mr-2"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                      <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <span className="truncate">{user.email}</span>
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <Form action="/auth/logout" method="post">
+                  <DropdownMenuItem asChild>
+                    <button className="w-full text-left cursor-pointer">
+                      Logout
+                    </button>
+                  </DropdownMenuItem>
+                </Form>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button variant="outline" className="w-full">
               <NavLink
                 to="/dashboard/new"
@@ -195,34 +249,65 @@ export default function Deliberations() {
           </div>
         </div>
       </aside>
-      <main className="ml-64 flex-1 flex flex-col h-full">
+      <main className="lg:ml-64 flex-1 flex flex-col h-full">
         {params.deliberationId && (
           <nav className="px-6 py-4 flex-none border-b border-slate-200">
-            <ol className="flex items-center text-sm">
-              <li className="font-medium text-slate-800 ">
-                <NavLink
-                  prefetch="render"
-                  to={`/dashboard/${params.deliberationId}`}
-                  className="hover:text-slate-600  transition-colors"
+            <div className="flex items-center">
+              <button
+                type="button"
+                className="lg:hidden -ml-2 mr-2 p-2 rounded-md text-slate-500 hover:bg-slate-100"
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
                 >
-                  {currentDeliberation?.title}
-                </NavLink>
-              </li>
-              {pathSegments.map((segment, index) => (
-                <li key={segment} className="flex items-center">
-                  <span className="mx-2 text-slate-400 ">/</span>
+                  {isSidebarOpen ? (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  ) : (
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  )}
+                </svg>
+              </button>
+              <ol className="flex items-center text-sm">
+                <li className="font-medium text-slate-800">
                   <NavLink
-                    prefetch="intent"
-                    to={`/dashboard/${params.deliberationId}/${pathSegments
-                      .slice(0, index + 1)
-                      .join("/")}`}
-                    className="font-medium text-slate-500  capitalize hover:text-slate-700  transition-colors"
+                    prefetch="render"
+                    to={`/dashboard/${params.deliberationId}`}
+                    className="hover:text-slate-600 transition-colors"
                   >
-                    {segment}
+                    {currentDeliberation?.title}
                   </NavLink>
                 </li>
-              ))}
-            </ol>
+                {pathSegments.map((segment, index) => (
+                  <li key={segment} className="flex items-center">
+                    <span className="mx-2 text-slate-400">/</span>
+                    <NavLink
+                      prefetch="intent"
+                      to={`/dashboard/${params.deliberationId}/${pathSegments
+                        .slice(0, index + 1)
+                        .join("/")}`}
+                      className="font-medium text-slate-500 capitalize hover:text-slate-700 transition-colors"
+                    >
+                      {segment}
+                    </NavLink>
+                  </li>
+                ))}
+              </ol>
+            </div>
           </nav>
         )}
         <div className="flex-1 overflow-auto">
