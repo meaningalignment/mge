@@ -153,6 +153,7 @@ export default function LinkScreen() {
             isFinished={showCards}
             text={'"' + draw[index].story + '"'}
             role="user"
+            fastMode={true}
           />
         </div>
         <div

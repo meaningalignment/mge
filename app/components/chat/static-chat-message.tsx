@@ -6,11 +6,13 @@ export default function StaticChatMessage({
   isFinished,
   onFinished,
   role,
+  fastMode,
 }: {
   text: string
   isFinished: boolean
   onFinished: () => void
   role?: "assistant" | "user"
+  fastMode?: boolean
 }) {
   const [currentText, setCurrentText] = useState("")
 
@@ -33,7 +35,7 @@ export default function StaticChatMessage({
       i += 1
 
       if (i < wordArray.length) {
-        setTimeout(addNextWord, 50)
+        setTimeout(addNextWord, fastMode ? 20 : 40)
       } else {
         onFinished()
       }
