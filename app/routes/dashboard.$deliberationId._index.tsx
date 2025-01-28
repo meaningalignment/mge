@@ -257,14 +257,12 @@ export default function DeliberationDashboard() {
   }
 
   return (
-    <div className="container mx-auto py-6 max-w-2xl space-y-6 animate-fade-in">
+    <div className="container mx-auto py-6 max-w-2xl space-y-6">
       {deliberation.topic && (
-        <h1 className="text-3xl font-bold mb-8 animate-fade-in">
-          {deliberation.topic}
-        </h1>
+        <h1 className="text-3xl font-bold mb-8">{deliberation.topic}</h1>
       )}
 
-      <Card className="animate-fade-in">
+      <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Options</CardTitle>
         </CardHeader>
@@ -314,7 +312,7 @@ export default function DeliberationDashboard() {
         </CardContent>
       </Card>
 
-      <Card className="animate-fade-in">
+      <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">Summary</CardTitle>
         </CardHeader>
@@ -441,11 +439,11 @@ export default function DeliberationDashboard() {
         </CardContent>
       </Card>
 
-      <div className="flex items-center justify-between mt-8 mb-4 animate-fade-in">
+      <div className="flex items-center justify-between mt-8 mb-4">
         <h2 className="text-2xl font-bold">Questions</h2>
         {(deliberation.setupStatus === "generating_contexts" ||
           deliberation.setupStatus === "generating_questions") && (
-          <div className="bg-white rounded-md px-2 py-1 border flex flex-row items-center gap-1 animate-pulse">
+          <div className="bg-white rounded-md px-2 py-1 border flex flex-row items-center gap-1">
             <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
             <span className="text-gray-400 text-sm">
               {deliberation.setupStatus === "generating_contexts"
@@ -538,7 +536,7 @@ export default function DeliberationDashboard() {
           </CardContent>
         </Card>
       ))}
-      <div className="mt-12 flex justify-between animate-fade-in">
+      <div className="mt-12 flex justify-between">
         <LoadingButton
           variant="outline"
           onClick={handleResetDeliberation}

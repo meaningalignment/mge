@@ -22,7 +22,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
       orderBy: { createdAt: "desc" },
       where: {
         deliberationId: Number(deliberationId)!,
-        archivedAt: null,
       },
       select: {
         fromId: true,

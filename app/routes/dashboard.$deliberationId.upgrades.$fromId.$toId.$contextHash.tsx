@@ -20,7 +20,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
       fromId: Number(fromId),
       toId: Number(toId),
       contextId,
-      archivedAt: null,
     },
     include: {
       from: true,
