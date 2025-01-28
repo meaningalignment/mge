@@ -69,7 +69,7 @@ export default function Deliberations() {
     .filter((segment) => isNaN(Number(segment))) // Filter out numeric segments
 
   return (
-    <div className="h-screen flex">
+    <div className="min-h-screen flex">
       {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div
@@ -249,9 +249,9 @@ export default function Deliberations() {
           </div>
         </div>
       </aside>
-      <main className="lg:ml-64 flex-1 flex flex-col h-full">
+      <main className="lg:ml-64 flex-1">
         {params.deliberationId && (
-          <nav className="px-6 py-4 flex-none border-b border-slate-200">
+          <nav className="sticky top-0 z-10 px-6 py-4 flex-none border-b border-slate-200 bg-white">
             <div className="flex items-center">
               <button
                 type="button"
@@ -310,7 +310,7 @@ export default function Deliberations() {
             </div>
           </nav>
         )}
-        <div className="flex-1 overflow-auto">
+        <div className="h-full">
           <Outlet />
         </div>
       </main>
