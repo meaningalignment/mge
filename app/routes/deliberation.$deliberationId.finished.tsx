@@ -1,11 +1,13 @@
-import { LoaderFunctionArgs, json } from "@remix-run/node"
+import { LoaderFunctionArgs, json, redirect } from "@remix-run/node"
 import Header from "~/components/header"
 import { useLoaderData } from "@remix-run/react"
 import { auth, db } from "~/config.server"
 import Carousel from "~/components/carousel"
+import { Button } from "~/components/ui/button"
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const userId = await auth.getUserId(request)
+  const user = await auth.getCurrentUser(request)
+  if (!user) return redirect("/auth/login")
   const deliberationId = parseInt(params.deliberationId!)
 
   const [
@@ -18,7 +20,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       where: {
         deliberationId,
         chat: {
-          userId,
+          userId: user.id,
         },
       },
     }),
@@ -49,11 +51,13 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     totalValuesCount,
     totalRelationships,
     carouselValues,
+    prolificId: user.prolificId,
   })
 }
 
 export default function FinishedScreen() {
   const {
+    prolificId,
     userValuesCount,
     totalValuesCount,
     totalRelationships,
@@ -80,6 +84,19 @@ export default function FinishedScreen() {
             have been submitted.
           </p>
         </div>
+
+        {!prolificId && (
+          <div className="my-16">
+            <Button
+              size="lg"
+              onClick={() => {
+                window.location.href = `https://app.prolific.com/submissions/complete?cc=CXW439N1`
+              }}
+            >
+              Complete Study
+            </Button>
+          </div>
+        )}
 
         <div className="overflow-x-hidden w-screen h-full flex justify-center mt-16">
           <Carousel cards={carouselValues as any[]} />

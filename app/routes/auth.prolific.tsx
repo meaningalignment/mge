@@ -22,6 +22,7 @@ export async function action({ request }: ActionFunctionArgs) {
   const prolificId = formData.get("prolificId") as string
   const sessionId = formData.get("sessionId") as string
   const studyId = formData.get("studyId") as string
+  const redirectTo = decodeURIComponent(formData.get("redirectTo") as string)
 
   // See if the prolific user already exists.
   let user = (await db.user.findFirst({
@@ -50,7 +51,7 @@ export async function action({ request }: ActionFunctionArgs) {
   session.set("email", prolificId)
   session.set("roles", [...(user.role || [])])
 
-  return redirect("/", {
+  return redirect(redirectTo || "/", {
     headers: {
       "Set-Cookie": await auth.storage.commitSession(session),
     },
@@ -63,6 +64,9 @@ export default function ProlificScreen() {
   const prolificId = searchParams.get("PROLIFIC_PID") as string
   const studyId = searchParams.get("STUDY_ID") as string
   const sessionId = searchParams.get("SESSION_ID") as string
+  const redirectTo = searchParams.get("redirectTo")
+    ? decodeURIComponent(searchParams.get("redirectTo")!)
+    : "/"
 
   return (
     <div className="grid h-screen place-items-center p-8">
@@ -80,6 +84,7 @@ export default function ProlificScreen() {
             <input type="hidden" name="prolificId" value={prolificId} />
             <input type="hidden" name="studyId" value={studyId} />
             <input type="hidden" name="sessionId" value={sessionId} />
+            <input type="hidden" name="redirectTo" value={redirectTo} />
             <Button
               type="submit"
               className="mx-auto"
