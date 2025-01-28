@@ -6,7 +6,7 @@ import {
 import {
   configureValuesTools,
   generateUpgrades,
-  generateValueContext,
+  generateValueFromContext,
   PromptCache,
 } from "values-tools"
 import fs from "fs/promises"
@@ -55,10 +55,10 @@ export async function generateGraph(
     console.log(`Generating values for each context...`)
     const newValues = await Promise.all(
       contexts.map((context) =>
-        generateValueContext(question.question, context, {
+        generateValueFromContext(question.question, context, {
           includeStory: true,
           includeTitle: true,
-        }).then((data) => ({
+        }).then((data: any) => ({
           id: valueIdCounter++,
           title: (data as any).title,
           description: (data as any).fictionalStory,

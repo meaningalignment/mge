@@ -73,7 +73,28 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     },
   })
 
-  return { deliberation }
+  const firstIntervention = await db.intervention.findFirst({
+    where: {
+      deliberationId,
+      shouldDisplay: true,
+    },
+    select: {
+      questionId: true,
+    },
+  })
+
+  const interventionsCount = await db.intervention.count({
+    where: {
+      deliberationId,
+      shouldDisplay: true,
+    },
+  })
+
+  return {
+    deliberation,
+    interventionsCount,
+    firstQuestionId: firstIntervention?.questionId,
+  }
 }
 
 export const action = async ({ request, params }: ActionFunctionArgs) => {
@@ -140,7 +161,6 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     return json({ success: true })
   } else if (action === "generateSeedGraph") {
     const deliberationId = Number(params.deliberationId)!
-    const numValues = Number(formData.get("numValues")) || 10
 
     await db.deliberation.update({
       where: { id: deliberationId },
@@ -149,7 +169,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
     await inngest.send({
       name: "gen-seed-graph",
-      data: { deliberationId, numValues },
+      data: { deliberationId, numValues: 12 },
     })
 
     return json({ success: true, refetch: true })
@@ -198,13 +218,13 @@ function ValueContextInfo() {
 }
 
 export default function DeliberationDashboard() {
-  const { deliberation } = useLoaderData<typeof loader>()
+  const { deliberation, interventionsCount, firstQuestionId } =
+    useLoaderData<typeof loader>()
   const fetcher = useFetcher()
   const revalidator = useRevalidator()
   const { deliberationId } = useParams()
   const [openQuestionId, setOpenQuestionId] = useState<number | null>(null)
   const [isGeneratingGraph, setIsGeneratingGraph] = useState(false)
-  const [numValues, setNumValues] = useState(10)
 
   // Poll for setup status if the deliberation is not ready
   useEffect(() => {
@@ -241,7 +261,7 @@ export default function DeliberationDashboard() {
   const handleGenerateSeedGraph = () => {
     setIsGeneratingGraph(true)
     fetcher.submit(
-      { action: "generateSeedGraph", numValues: numValues.toString() },
+      { action: "generateSeedGraph", numValues: "10" },
       { method: "post" }
     )
   }
@@ -285,11 +305,11 @@ export default function DeliberationDashboard() {
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
             </Link>
             <Link
-              to={`/dashboard/${deliberationId}/upgrades`}
+              to={`/dashboard/${deliberationId}/hypotheses`}
               prefetch="render"
               className="flex items-center rounded-lg px-3 py-2 text-slate-900 hover:bg-slate-100  "
             >
-              <span>Manage Upgrades</span>
+              <span>Manage Hypotheses</span>
               <ChevronRightIcon className="ml-auto h-4 w-4 text-slate-400" />
             </Link>
             <Link
@@ -368,7 +388,7 @@ export default function DeliberationDashboard() {
                 <AlertTitle>No responses yet</AlertTitle>
               </div>
 
-              <AlertDescription className="flex flex-col sm:flex-row items-center justify-between">
+              <AlertDescription className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
                   <span className="pr-4">
                     Would you like to generate a moral graph to seed the
@@ -385,33 +405,13 @@ export default function DeliberationDashboard() {
                     <span className="text-gray-400">Generating Graph...</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 mt-2 sm:mt-0">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Input
-                            type="number"
-                            min="1"
-                            max="50"
-                            value={numValues}
-                            onChange={(e) =>
-                              setNumValues(Number(e.target.value))
-                            }
-                            className="w-16"
-                            aria-label="Number of values to generate for the moral graph"
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>
-                            Number of values to generate for the moral graph
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <Button variant="outline" onClick={handleGenerateSeedGraph}>
-                      Generate graph with {numValues} values
-                    </Button>
-                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={handleGenerateSeedGraph}
+                    className="mt-2 sm:mt-0"
+                  >
+                    Generate Graph
+                  </Button>
                 )}
               </AlertDescription>
             </Alert>
@@ -455,7 +455,7 @@ export default function DeliberationDashboard() {
       </div>
 
       {deliberation.questions.length === 0 && (
-        <Alert className="mt-6 mb-4 bg-slate-50">
+        <Alert className="mt-6 mb-4">
           <div className="flex flex-row space-x-2">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle className="mb-2">No questions yet</AlertTitle>
@@ -468,11 +468,7 @@ export default function DeliberationDashboard() {
       )}
 
       {deliberation.questions.map((question, index) => (
-        <Card
-          key={question.id}
-          className="animate-fade-in"
-          style={{ animationDelay: `${400 + index * 100}ms` }}
-        >
+        <Card key={question.id}>
           <CardHeader>
             <CardTitle className="text-md font-bold flex items-center">
               {question.title}

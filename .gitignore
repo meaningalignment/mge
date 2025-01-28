@@ -13,4 +13,9 @@ node_modules.nosync
 cache.sqlite
 /components
 /scripts
+<<<<<<< HEAD
 /dft-data
+=======
+/dft-data
+/local
+>>>>>>> 0b51c7b65e6e

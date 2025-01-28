@@ -156,7 +156,7 @@ export function contextDisplayName(contextId: string) {
 export function getFavicon(url: string): string {
   try {
     const hostname = new URL(url).hostname
-    return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`
+    return `https://www.google.com/s2/favicons?domain=${hostname}&sz=48`
   } catch (e) {
     return "/generic.ico"
   }

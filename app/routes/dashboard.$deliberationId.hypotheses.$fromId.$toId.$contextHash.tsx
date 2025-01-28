@@ -77,7 +77,7 @@ export default function HypothesisView() {
         <h1 className="font-bold mr-auto">User Responses</h1>
         {relatedEdges.length === 0 ? (
           <p className="text-sm text-slate-500 mt-4">
-            No users have verified or contradicted this hypothesis yet.
+            No users have agreed or disagreed with this hypothesis yet.
           </p>
         ) : (
           <div className="w-full space-y-4 mt-4">
@@ -101,10 +101,10 @@ export default function HypothesisView() {
                     }
                   >
                     {edge.type === "upgrade"
-                      ? "Verified"
+                      ? "Agree"
                       : edge.type === "not_sure"
                       ? "Unsure"
-                      : "Contradicted"}
+                      : "Disagree"}
                   </Badge>
                 </div>
                 {edge.comment && (

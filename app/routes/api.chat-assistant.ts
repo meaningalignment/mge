@@ -92,13 +92,17 @@ async function submitValuesCard(
   await embedNonCanonicalCard(card)
 
   // Find new contexts surfaced in the chat in the background
-  await inngest.send({
-    name: "find-new-contexts",
-    data: {
-      deliberationId,
-      chatId: chat.id,
-    },
-  })
+  try {
+    await inngest.send({
+      name: "find-new-contexts",
+      data: {
+        deliberationId,
+        chatId: chat.id,
+      },
+    })
+  } catch (e) {
+    console.error("Error sending find-new-contexts event", e)
+  }
 
   const data = {
     type: "values_card",

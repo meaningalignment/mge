@@ -70,6 +70,16 @@ export async function drawFreceny(
     where: {
       deliberationId,
       isArchived: false,
+      context: {
+        ContextsForQuestions: {
+          some: {
+            question: {
+              deliberationId,
+              isArchived: false,
+            },
+          },
+        },
+      },
     },
     include: {
       from: true,

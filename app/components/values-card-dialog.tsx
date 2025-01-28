@@ -33,8 +33,11 @@ export default function ValuesCardDialog({
         {value && (
           <div key={value.id} className="space-y-4">
             <div className="flex items-center gap-2 mb-2">
-              <Badge variant={value.isWinningValue ? "default" : "secondary"}>
-                PR Score: {value.pageRank?.toFixed(2)}
+              <Badge
+                variant={value.isWinningValue ? "default" : "secondary"}
+                className="cursor-default"
+              >
+                PageRank Score: {value.pageRank?.toFixed(2)}
               </Badge>
             </div>
 
