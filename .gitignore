@@ -12,6 +12,6 @@ node_modules.nosync
 
 cache.sqlite
 /components
-/scripts/test.ts
+/scripts
 /dft-data
 /local
