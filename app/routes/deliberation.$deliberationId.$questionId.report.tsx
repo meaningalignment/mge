@@ -80,9 +80,10 @@ function convertMoralGraphToForceGraph(moralGraph: MoralGraph) {
   const minPageRank = Math.min(...moralGraph.values.map((v) => v.pageRank || 0))
 
   // Sort values by pageRank and take top 6
-  const topValues = [...moralGraph.values]
-    .sort((a, b) => (b.pageRank || 0) - (a.pageRank || 0))
-    .slice(0, 6)
+  const topValues = [...moralGraph.values].sort(
+    (a, b) => (b.pageRank || 0) - (a.pageRank || 0)
+  )
+  // .slice(0, 6)
 
   // Find the winning value
   const winningValue = topValues[0]
@@ -393,8 +394,9 @@ function InterventionCard({
   isOwner: boolean
   fetcher: any
 }) {
+  const graph = intervention.graph as unknown as MoralGraph
   const supportLevel = categorizeSupportLevel(
-    (intervention.graph as unknown as MoralGraph).values.map((v) => v.pageRank!)
+    graph.values.map((v) => v.pageRank!)
   )
 
   const variants = {
@@ -478,18 +480,6 @@ function InterventionCard({
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          {supportLevel === "broadly supported" && (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Badge variant="secondary">Cross-partisan</Badge>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>This value is supported across political affiliations</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
         </div>
         {isOwner && (
           <Button

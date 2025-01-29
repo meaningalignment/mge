@@ -148,6 +148,8 @@ export function contextDisplayName(contextId: string) {
       return "Assisting girls in reflecting on their values"
     case "When making decisions":
       return "Assisting their decision-making"
+    case "When being religious":
+      return "Assisting girls with their religious beliefs"
     default:
       return contextId
   }

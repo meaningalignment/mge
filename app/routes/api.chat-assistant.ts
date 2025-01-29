@@ -93,19 +93,15 @@ async function submitValuesCard(
 
   // Find new contexts surfaced in the chat in the background
   try {
-    if (process.env.FIND_NEW_CONTEXTS === "true") {
-      await inngest.send({
-        name: "find-new-contexts",
-        data: {
-          deliberationId,
-          chatId: chat.id,
-        },
-      })
-    } else {
-      console.log("Skipping `find-new-contexts`, disabled by env var")
-    }
+    await inngest.send({
+      name: "find-new-contexts",
+      data: {
+        deliberationId,
+        chatId: chat.id,
+      },
+    })
   } catch (e) {
-    console.error("Error sending find-new-contexts event", e)
+    console.error("Error sending `find-new-contexts` event", e)
   }
 
   const data = {

@@ -19,7 +19,7 @@ async function getContextsForDeliberation(
     where: {
       deliberationId,
       ContextsForQuestions: {
-        some: { questionId },
+        some: { questionId, question: { isArchived: false } },
       },
     },
   })
@@ -105,11 +105,13 @@ async function generateInterventionText(context: string, value: Value) {
 
   return await genObj({
     prompt: `
-You will be given a values card made up of attention policies, and a question. Your task is to generate a suggested action or intervention that is in line with the way of life expressed in the policies.
+You will be given a values card made up of attention policies, and a question. Your task is to generate a suggested action or intervention that is in line with the way of life expressed in the policies. 
 
-# Note
-The values card given to you was articulated in response to how ChatGPT should behave, not directly in response to the question. So you'll have to first understand the value behind how ChatGPT should act specifically, as dictated by the value, and then ideate on how to apply that value to the question at hand.
-    
+# Instructions
+1. Generate 3-5 intervention ideas based on the values card and the question.
+2. Choose the intervention idea that most skillfully, effectively, and realistically applies the values card to the question, and which would be most effective in the real world. Take into account what affordances for example a government would have. Don't include ideas that are better suited for startups, individuals or small groups. Make sure the idea is specific and actionable.
+3. Expand on the bvest idea. Describe how it could be implemented in the real world.
+
 # Attention Policies
 A values card is made up of several attention policies. Attention policies list what a person pays attention to when they do a kind of discernment about how to act in a certain situation. However, they only specify what is meaningful to pay attention to – that is, something that is consitutively good, in their view – as opposed to instrumental to some other meaningful goal.
 
@@ -131,7 +133,7 @@ Each attention policy centers on something precise that can be attended to, not 
         interventionIdea: z
           .string()
           .describe(
-            `The intervention idea that most skillfully, effectively, and realistically applies the values card to the question`
+            `The intervention idea that most skillfully, effectively, and realistically applies the values card to the question, and which is suitable to be implemented in the real world by for example a government (and not a startup, indvidual or small group). For example, a hotline is better than an app, as this is more realistic for a government to do.`
           ),
         reasonForBeingBest: z
           .string()
@@ -180,7 +182,11 @@ export function getLastBracketNumber(text: string): number | null {
   return number
 }
 
-export async function findPrecedence(question: string, intervention: string) {
+export async function generatePrecedence(
+  question: string,
+  intervention: string,
+  interventionId: number
+) {
   const prompt = `
 Search for real-world examples of policies, programs, or interventions similar to the one described below. Focus on government policies or established organizations in other countries. 
 
@@ -205,9 +211,9 @@ ${intervention}`.trim()
   ]
 
   const res = await perplexity.chat.completions.create({
-    model: "llama-3.1-sonar-large-128k-online",
+    model: "sonar-pro",
     messages: messages,
-    max_tokens: 1024,
+    max_tokens: 2048,
     temperature: 0.2,
   })
   const text = res.choices[0].message.content!
@@ -216,16 +222,30 @@ ${intervention}`.trim()
   const citations = (res as any).citations as string[]
   const citeIndex = getLastBracketNumber(text)
   const citation = citeIndex ? citations[citeIndex] : undefined
-  if (!citation || !description) return null
-  return { description, citation }
+  if (!citation || !description) {
+    console.log("No precedence found.")
+    return
+  } else {
+    console.log(`Precedence found: ${description}`)
+    await db.interventionPrecedence.create({
+      data: {
+        interventionId,
+        description,
+        link: citation,
+      },
+    })
+  }
 }
 
 export async function generateInterventions(
   deliberationId: number,
   questionId: number,
+  ctxts?: { id: string }[],
   excludeUsersWithoutDemographics = false
 ) {
-  const contexts = await getContextsForDeliberation(deliberationId, questionId)
+  const contexts = ctxts
+    ? ctxts
+    : await getContextsForDeliberation(deliberationId, questionId)
 
   console.log("Processing contexts:", contexts)
 
@@ -256,26 +276,20 @@ export async function generateInterventions(
       const sortedValues = [...graph.values].sort(
         (a, b) => (b.pageRank ?? -Infinity) - (a.pageRank ?? -Infinity)
       )
+      const winningValue = sortedValues[0]
+      const text = await generateInterventionText(context.id, winningValue)
 
       printTopValues(sortedValues)
-
-      const winningValue = sortedValues[0]
       console.log("\nHighest ranked value details:", winningValue)
-
-      const intervention = await generateInterventionText(
-        context.id,
-        winningValue
-      )
-
-      console.log(`\nSuggested Intervention: ${intervention}`)
+      console.log(`\nSuggested Intervention: ${text}`)
 
       await db.intervention.create({
         data: {
-          text: intervention,
+          graph: JSON.parse(JSON.stringify(graph)),
           contextId: context.id,
           deliberationId,
           questionId,
-          graph: JSON.parse(JSON.stringify(graph)),
+          text,
         },
       })
     } else {

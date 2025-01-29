@@ -27,6 +27,7 @@ type Relationship = "upgrade" | "no_upgrade" | "not_sure"
 export async function loader({ params }: LoaderFunctionArgs) {
   const deliberationId = parseInt(params.deliberationId!)
   const draw = await drawFreceny(deliberationId, 5)
+  console.log(draw)
   return json({ draw })
 }
 

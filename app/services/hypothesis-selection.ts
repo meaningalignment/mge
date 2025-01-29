@@ -66,66 +66,29 @@ export async function drawFreceny(
   weights = { popularity: 0.3, convergence: 0.3, sparsity: 0.4 }
 ): Promise<EdgeHypothesisData[]> {
   // Find edge hypotheses that the user has not linked together yet.
-  const hypotheses = (
-    (await db.edgeHypothesis.findMany({
-      where: {
-        deliberationId,
-        isArchived: false,
-        context: {
-          ContextsForQuestions: {
-            some: {
-              question: {
-                deliberationId,
-                isArchived: false,
-              },
+  const hypotheses = (await db.edgeHypothesis.findMany({
+    where: {
+      deliberationId,
+      isArchived: false,
+      context: {
+        ContextsForQuestions: {
+          some: {
+            question: {
+              deliberationId,
+              isArchived: false,
             },
           },
         },
       },
-      include: {
-        from: true,
-        to: true,
-      },
-    })) as (EdgeHypothesis & {
-      from: CanonicalValuesCard
-      to: CanonicalValuesCard
-    })[]
-  ).filter((h) => {
-    const allowedPairs = [
-      {
-        contextId: "When being introspective",
-        fromId: 289,
-        toId: 276,
-      },
-      {
-        contextId: "When being introspective",
-        fromId: 352,
-        toId: 276,
-      },
-      {
-        contextId: "When in distress",
-        fromId: 272,
-        toId: 340,
-      },
-      {
-        contextId: "When in distress",
-        fromId: 351,
-        toId: 340,
-      },
-      {
-        contextId: "When being religious",
-        fromId: 360,
-        toId: 366,
-      },
-    ]
-
-    return allowedPairs.some(
-      (pair) =>
-        pair.fromId === h.fromId &&
-        pair.toId === h.toId &&
-        pair.contextId === h.contextId
-    )
-  })
+    },
+    include: {
+      from: true,
+      to: true,
+    },
+  })) as (EdgeHypothesis & {
+    from: CanonicalValuesCard
+    to: CanonicalValuesCard
+  })[]
 
   const links = await db.edge.findMany({
     where: { deliberationId },
