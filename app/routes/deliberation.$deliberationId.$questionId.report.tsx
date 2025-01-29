@@ -226,6 +226,7 @@ function ForceGraphWrapper({
   setSelectedLink: (link: Edge | null) => void
   intervention: InterventionWithPrecedence
 }) {
+  const { deliberationId } = useParams()
   const [ForceGraph, setForceGraph] = useState<any>(null)
   const isDialogOpen = selectedValue || selectedLink
 
@@ -265,7 +266,7 @@ function ForceGraphWrapper({
   }
 
   return (
-    <>
+    <div className="relative">
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -314,7 +315,15 @@ function ForceGraphWrapper({
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-    </>
+      <Link
+        to={`/deliberation/${deliberationId}/graph?contextId=${encodeURIComponent(
+          intervention.contextId
+        )}`}
+        className="absolute top-2 right-2 text-xs text-muted-foreground hover:text-foreground"
+      >
+        View Full Graph
+      </Link>
+    </div>
   )
 }
 

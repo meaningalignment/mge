@@ -20,16 +20,44 @@ function LoadingScreen() {
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const questions = await db.question.findMany({
-    where: { deliberationId: Number(params.deliberationId) },
+    where: { deliberationId: Number(params.deliberationId), isArchived: false },
   })
-  return { questions }
+  const contexts = await db.context.findMany({
+    where: {
+      deliberationId: Number(params.deliberationId),
+      ContextsForQuestions: {
+        some: {
+          question: {
+            deliberationId: Number(params.deliberationId),
+            isArchived: false,
+          },
+        },
+      },
+    },
+    include: {
+      ContextsForQuestions: {
+        select: {
+          question: {
+            select: {
+              id: true,
+            },
+          },
+        },
+      },
+    },
+  })
+  return { questions, contexts }
 }
 
 export default function GraphPage() {
-  const { questions } = useLoaderData<typeof loader>()
+  const { questions, contexts } = useLoaderData<typeof loader>()
+  const [searchParams] = useSearchParams()
+  const contextIdParam = searchParams.get("contextId")
+
   const [settings, setSettings] = useState<GraphSettings>({
     questions,
     questionId: null,
+    contextId: contextIdParam,
     visualizeEdgeCertainty: true,
     visualizeWisdomScore: true,
   })
@@ -42,7 +70,7 @@ export default function GraphPage() {
     if (!graph && !isLoading) {
       fetchData(settings)
     }
-  }, [])
+  }, [contextIdParam])
 
   const fetchData = async (newSettings: GraphSettings) => {
     setIsLoading(true)
@@ -56,22 +84,21 @@ export default function GraphPage() {
       params.questionId = newSettings.questionId.toString()
     }
 
+    if (newSettings.contextId) {
+      params.contextId = newSettings.contextId
+    }
+
     const graph = await fetch(
       "/api/data/graph?" + new URLSearchParams(params).toString(),
       { headers }
     ).then((res) => res.json())
 
-    // Update settings with new questions and other data
     setSettings((prevSettings) => ({
       ...prevSettings,
       ...newSettings,
     }))
     setGraph(graph)
     setIsLoading(false)
-  }
-
-  function onUpdateSettings(newSettings: GraphSettings) {
-    fetchData(newSettings)
   }
 
   return (
@@ -107,7 +134,8 @@ export default function GraphPage() {
         <MoralGraphSettings
           key={JSON.stringify(settings)}
           initialSettings={settings}
-          onUpdateSettings={onUpdateSettings}
+          onUpdateSettings={fetchData}
+          contexts={contexts}
         />
       </div>
     </div>

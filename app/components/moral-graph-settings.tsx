@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import { useState } from "react"
 import { Button } from "~/components/ui/button"
 import { Label } from "~/components/ui/label"
 import {
@@ -13,6 +13,7 @@ import { Checkbox } from "~/components/ui/checkbox"
 export type GraphSettings = {
   questions: { id: number; title: string; question: string }[]
   questionId: number | null
+  contextId: string | null
   visualizeEdgeCertainty: boolean
   visualizeWisdomScore: boolean
 }
@@ -20,6 +21,7 @@ export type GraphSettings = {
 export const defaultGraphSettings: GraphSettings = {
   questions: [],
   questionId: null,
+  contextId: null,
   visualizeEdgeCertainty: true,
   visualizeWisdomScore: true,
 }
@@ -27,46 +29,76 @@ export const defaultGraphSettings: GraphSettings = {
 export default function MoralGraphSettings({
   initialSettings,
   onUpdateSettings,
+  contexts,
 }: {
   initialSettings: GraphSettings
   onUpdateSettings: (newSettings: GraphSettings) => void
+  contexts: { id: string }[]
 }) {
   const [settings, setSettings] = useState<GraphSettings>(initialSettings)
   const selectedQuestion = settings.questions?.find(
     (q) => q.id === settings.questionId
   )
 
-  console.log(settings)
   return (
     <div className="flex h-full flex-col overflow-y-auto border-l-2 bg-white px-6 py-8">
       <h2 className="text-lg font-bold mb-6">Graph Settings</h2>
 
-      {/* Case Dropdown */}
-      <div className="mb-2">
-        <Label htmlFor="run">Question</Label>
+      {/* Question Dropdown - Only show if there are multiple questions */}
+      {settings.questions.length > 1 && (
+        <div className="mb-2">
+          <Label htmlFor="question">Question</Label>
+          <Select
+            onValueChange={(value: any) => {
+              setSettings({
+                ...settings,
+                questionId: value !== "all" ? Number(value) : null,
+              })
+            }}
+          >
+            <SelectTrigger id="question">
+              <SelectValue
+                placeholder={selectedQuestion?.title ?? "All Questions"}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Questions</SelectItem>
+              {settings.questions.map((q) => (
+                <SelectItem key={q.id} value={q.id.toString()}>
+                  {q.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      )}
+
+      {/* Context Dropdown */}
+      <div className="mb-4">
+        <Label htmlFor="context">Context</Label>
         <Select
-          onValueChange={(value: any) => {
+          value={settings.contextId ?? "all"}
+          onValueChange={(value: string) => {
             setSettings({
               ...settings,
-              questionId: value !== "all" ? Number(value) : null,
+              contextId: value !== "all" ? value : null,
             })
           }}
         >
-          <SelectTrigger id="run">
-            <SelectValue
-              placeholder={selectedQuestion?.title ?? "All Questions"}
-            />
+          <SelectTrigger id="context">
+            <SelectValue placeholder="All Contexts" />
           </SelectTrigger>
-          <SelectContent defaultValue={selectedQuestion?.title ?? "all"}>
-            <SelectItem value="all">All Questions</SelectItem>
-            {settings.questions.map((q) => (
-              <SelectItem key={q.id} value={q.id.toString()}>
-                {q.title}
+          <SelectContent>
+            <SelectItem value="all">All Contexts</SelectItem>
+            {contexts.map((context: any) => (
+              <SelectItem key={context.id} value={context.id}>
+                {context.id}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
+
       {settings.questionId ? (
         <p className="text-xs text-gray-400 mb-4">
           Showing values articulated when users were asked:
@@ -74,6 +106,15 @@ export default function MoralGraphSettings({
           <br />
           <span className="text-sm text-black italic">
             {selectedQuestion!.question}
+          </span>
+        </p>
+      ) : settings.questions.length === 1 ? (
+        <p className="text-xs text-gray-400 mb-4">
+          Showing values articulated when users were asked:
+          <br />
+          <br />
+          <span className="text-sm text-black italic">
+            {settings.questions[0].question}
           </span>
         </p>
       ) : (
